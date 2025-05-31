@@ -1,0 +1,28 @@
+import styles from "./Home.module.css";
+import PlaceSlider from "../Components/PlacesSlider.jsx";
+import { Link } from "react-router-dom";
+import { useTheme } from "../store/ThemeContext.jsx";
+
+export default function Home() {
+  const { theme } = useTheme();
+  return (
+    <>
+      <div
+        className={`${styles.home} ${
+          theme === "dark" ? styles.dark : styles.light
+        }`}
+      >
+        <div className={styles.hero}>
+          <h1>Discover & Review Amazing Places</h1>
+          <p>
+            Find the best spots to visit and share your experiences with others.
+          </p>
+          <Link to="/places">
+            <button className={styles.btn}>Explore</button>
+          </Link>
+        </div>
+      </div>
+      <PlaceSlider />
+    </>
+  );
+}
