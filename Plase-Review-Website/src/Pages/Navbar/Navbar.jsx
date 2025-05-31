@@ -9,12 +9,18 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const navItems = ["Home", "Places", "Reviews", "About", "Contact"];
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "Places", path: "/places" },
+    { name: "Reviews", path: "/reviews" },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
+  ];
 
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <Link to="/home">PlaceReview</Link>
+        <Link to="/">PlaceReview</Link>
       </div>
 
       <div className={styles.topRightButtons}>
@@ -30,22 +36,24 @@ export default function Navbar() {
           className={styles.menuToggle}
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-label="Toggle Menu"
+          aria-expanded={menuOpen}
         >
           ☰
         </button>
       </div>
 
       <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
-        {navItems.map((item) => (
-          <li key={item}>
+        {navItems.map(({ name, path }) => (
+          <li key={name}>
             <NavLink
-              to={`/${item.toLowerCase()}`}
+              to={path}
+              end={path === "/"}
               className={({ isActive }) =>
                 `${styles.link} ${isActive ? styles.active : ""}`
               }
               onClick={() => setMenuOpen(false)}
             >
-              {item}
+              {name}
             </NavLink>
           </li>
         ))}

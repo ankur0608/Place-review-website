@@ -24,23 +24,25 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      { path: "home", element: <Home /> },
+      { index: true, element: <Home /> },
       { path: "about", element: <About /> },
       { path: "places", element: <Places /> },
       { path: "reviews", element: <Reviews /> },
       { path: "contact", element: <Contact /> },
-      { path: "signup", element: <Signup /> },
-      { path: "login", element: <Login /> },
-      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },
+  { path: "signup", element: <Signup /> },
+  { path: "login", element: <Login /> },
+  { path: "forgot-password", element: <ForgotPassword /> },
 ]);
 
 function App() {
   const { theme } = useTheme();
+
   return (
     <div className={`app-container ${theme}`}>
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </div>
   );
 }

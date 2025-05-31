@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import styles from "./Signup.module.css";
-import { Link } from "react-router-dom";
-import { useTheme } from "../store/ThemeContext"; // ThemeContext hook
+import { Link, useNavigate } from "react-router-dom";
+import { useTheme } from "../store/ThemeContext";
 
 const Signup = () => {
   const { theme } = useTheme();
@@ -11,10 +11,10 @@ const Signup = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const navigator = useNavigate();
   const onSubmit = (data) => {
     console.log("Form Submitted:", data);
-    // Call your API here
+    navigator("/login");
   };
 
   return (
@@ -22,25 +22,6 @@ const Signup = () => {
       <div className={styles.card}>
         <h2 className={styles.heading}>Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          {/* Role */}
-          <div className={styles.formGroup}>
-            <label htmlFor="role" className={styles.label}>
-              Role
-            </label>
-            <select
-              id="role"
-              {...register("role", { required: "Role is required" })}
-              className={styles.inputField}
-            >
-              <option value="">Select a role</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-            </select>
-            {errors.role && (
-              <p className={styles.error}>{errors.role.message}</p>
-            )}
-          </div>
-
           {/* Username */}
           <div className={styles.formGroup}>
             <label htmlFor="username" className={styles.label}>
@@ -80,7 +61,7 @@ const Signup = () => {
           </div>
 
           {/* Name */}
-          <div className={styles.formGroup}>
+          {/* <div className={styles.formGroup}>
             <label htmlFor="name" className={styles.label}>
               Name
             </label>
@@ -93,7 +74,7 @@ const Signup = () => {
             {errors.name && (
               <p className={styles.error}>{errors.name.message}</p>
             )}
-          </div>
+          </div> */}
 
           {/* Password */}
           <div className={styles.formGroup}>

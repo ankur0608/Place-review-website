@@ -23,6 +23,7 @@ const ForgotPassword = () => {
         <p className={styles.subtext}>
           Enter your email and we’ll send you a reset link.
         </p>
+
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className={styles.formGroup}>
             <label htmlFor="email" className={styles.label}>

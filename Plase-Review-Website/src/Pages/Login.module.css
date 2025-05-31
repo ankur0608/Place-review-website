@@ -1,67 +1,115 @@
+/* Login.module.css */
+
 .container {
-  margin: 2rem auto;
-  padding: 2rem;
-  max-width: 420px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: var(--background);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: var(--text-color);
+  box-sizing: border-box;
+  max-width: 100%;
   border-radius: 12px;
-  transition: background-color 0.3s, color 0.3s;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Light Theme */
+.light {
+  --background: #f9f9f9;
+  --card-bg: #ffffff;
+  --text-color: #222;
+  --input-bg: #fff;
+  --input-border: #ccc;
+  --button-bg: #007bff;
+  --button-hover-bg: #0056b3;
+  --error-color: #d93025;
+  --link-color: #007bff;
+}
+
+/* Dark Theme */
+.dark {
+  --background: #121212;
+  --card-bg: #1e1e1e;
+  --text-color: #eee;
+  --input-bg: #2c2c2c;
+  --input-border: #555;
+  --button-bg: #1a73e8;
+  --button-hover-bg: #155ab6;
+  --error-color: #ff6b6b;
+  --link-color: #8ab4f8;
+}
+
 .card {
+  background-color: var(--card-bg);
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
 }
 
 .heading {
-  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: var(--text-color);
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
 }
 
 .formGroup {
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .label {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-weight: 500;
-}
-
-.inputField,
-.inputField:focus {
-  width: 100%;
-  padding: 0.6rem;
+  margin-bottom: 8px;
+  font-weight: 600;
   font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  color: var(--text-color);
+}
+
+.inputField {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1.5px solid var(--input-border);
+  border-radius: 6px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   box-sizing: border-box;
-  outline: none;
-  transition: border 0.2s, background-color 0.2s;
 }
 
 .inputField:focus {
-  border-color: #0984e3;
-  box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.2);
+  outline: 2px solid var(--button-bg);
+  border-color: var(--button-bg);
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
 }
 
 .error {
-  color: red;
-  font-size: 0.85rem;
-  margin-top: 0.3rem;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--error-color);
 }
 
 .forgotPasswordContainer {
   text-align: right;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .forgotPasswordLink {
-  font-size: 0.9rem;
-  color: #0984e3;
+  font-size: 1rem;
+  color: var(--link-color);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
 .forgotPasswordLink:hover {
@@ -70,44 +118,19 @@
 
 .button {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #0984e3;
-  color: white;
+  padding: 12px;
+  background-color: var(--button-bg);
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-sizing: border-box;
 }
 
 .button:hover {
-  background-color: #74b9ff;
-}
-
-/* Light Theme */
-.light {
-  background-color: #ffffff;
-  color: #1e1e1e;
-}
-
-.light .inputField {
-  background-color: #ffffff;
-  color: #1e1e1e;
-  border: 1px solid #ccc;
-}
-
-/* Dark Theme */
-.dark {
-  background-color: #1e1e1e;
-  color: #f0f0f0;
-  border: 1px solid #444;
-}
-.dark.container{
-  background-color: #1e1e1e;
-}
-
-.dark .inputField {
-  background-color: #2c2c2c;
-  color: #f0f0f0;
-  border: 1px solid #555;
+  background-color: var(--button-hover-bg);
+  transform: translateY(-1px);
 }
