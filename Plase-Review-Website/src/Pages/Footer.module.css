@@ -1,0 +1,25 @@
+.footer {
+  background-color: #222;
+  color: #fff;
+  padding: 1rem 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}
+
+.links {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.links a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}

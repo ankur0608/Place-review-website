@@ -1,43 +1,84 @@
-/* Home.module.css */
-
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+}
 .home {
-  padding: 2rem;
-  min-height: 80vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  transition: background 0.3s, color 0.3s;
+  padding: 3rem 2rem;
+  min-height: 100vh;
+  gap: 2rem;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.light {
+  background-color: #e7e7e7;
+  color: #1f2937;
+}
+
+.dark {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
 }
 
 .hero {
-  text-align: center;
-  max-width: 700px;
+  flex: 1;
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.hero h1 span {
+  color: var(--primary);
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: inherit;
+}
+
+/* Button */
 .btn {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
   border: none;
-  border-radius: 10px;
-  margin-top: 1rem;
-  cursor: pointer;
-  background-color: #007bff;
+  border-radius: 8px;
+  background-color: var(--primary);
   color: white;
-  transition: background 0.3s;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: fit-content;
 }
 
 .btn:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover);
 }
 
-/* Light Theme */
-.light {
-  background-color: #f9f9f9;
-  color: #111;
+/* RIGHT side image */
+.home > div:last-child {
+  flex: 1;
+  max-width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Dark Theme */
-.dark {
-  background-color: #121212;
-  color: #fff;
+.home img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

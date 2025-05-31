@@ -1,20 +1,27 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { lazy, Suspense } from "react";
+
 import Signup from "./Pages/Sign-up.jsx";
-import Home from "./Pages/Home.jsx";
 import About from "./Pages/About.jsx";
 import Reviews from "./Pages/Reviews.jsx";
 import Navbar from "./Pages/Navbar/Navbar.jsx";
 import Contact from "./Pages/Contact.jsx";
-import Places from "./Pages/Places.jsx";
 import Login from "./Pages/Login.jsx";
 import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import { useTheme } from "./store/ThemeContext.jsx";
+import Footer from "./Pages/Footer.jsx";
+
+// Lazy loaded components
+const Home = lazy(() => import("./Pages/Home.jsx"));
+const Places = lazy(() => import("./Pages/Places.jsx"));
+const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
 
 const Layout = () => (
   <>
     <Navbar />
     <main>
       <Outlet />
+      <Footer />
     </main>
   </>
 );
@@ -24,9 +31,39 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <Home /> },
+      {
+        index: true,
+        element: (
+          <Suspense fallback={<div>Loading Home...</div>}>
+            <Home />
+          </Suspense>
+        ),
+      },
+      {
+        path: "home",
+        element: (
+          <Suspense fallback={<div>Loading Home...</div>}>
+            <Home />
+          </Suspense>
+        ),
+      },
       { path: "about", element: <About /> },
-      { path: "places", element: <Places /> },
+      {
+        path: "places",
+        element: (
+          <Suspense fallback={<div>Loading Places...</div>}>
+            <Places />
+          </Suspense>
+        ),
+      },
+      {
+        path: "places/:id",
+        element: (
+          <Suspense fallback={<div>Loading Place Details...</div>}>
+            <PlaceDetails />
+          </Suspense>
+        ),
+      },
       { path: "reviews", element: <Reviews /> },
       { path: "contact", element: <Contact /> },
       { path: "*", element: <h2>404 - Page Not Found</h2> },

@@ -1,0 +1,81 @@
+.popup {
+  width: 90%;
+  max-width: 400px;
+  margin: auto;
+  padding: 2rem;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  background-color: #ffffff;
+  animation: fadeIn 0.3s ease-in-out;
+  box-sizing: border-box;
+}
+
+/* Image styling */
+.img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+/* OK button styling */
+.btn-ok {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #0984e3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-ok:hover {
+  background-color: #74b9ff;
+}
+
+/* Animation for popup appearance */
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .popup {
+    padding: 1.5rem 1rem;
+    width: 95%;
+  }
+
+  .btn-ok {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .img {
+    width: 80px;
+  }
+}
+
+@media (min-width: 768px) {
+  .popup {
+    padding: 2.5rem;
+  }
+
+  .btn-ok {
+    font-size: 1.1rem;
+  }
+
+  .img {
+    width: 120px;
+  }
+}

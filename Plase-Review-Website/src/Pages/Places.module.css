@@ -1,0 +1,108 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block; /* make whole card clickable */
+}
+
+.heading {
+  font-size: 2rem;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.searchWrapper {
+  position: relative;
+  width: 250px;
+}
+
+.searchInput {
+  width: 80%;
+  padding: 8px 32px 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.clearButton {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #888;
+  line-height: 1;
+  padding: 0;
+}
+
+.clearButton:hover {
+  color: #333;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.15);
+}
+
+.image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 15px;
+}
+
+.name {
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+}
+
+.location {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}

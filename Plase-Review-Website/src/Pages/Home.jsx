@@ -1,8 +1,8 @@
 import styles from "./Home.module.css";
-import PlaceSlider from "../Components/PlacesSlider.jsx";
+import PlaceSlider from "../Components/placesSlider.jsx";
 import { Link } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext.jsx";
-
+import heroimg from "../assets/photo.webp";
 export default function Home() {
   const { theme } = useTheme();
   return (
@@ -13,13 +13,18 @@ export default function Home() {
         }`}
       >
         <div className={styles.hero}>
-          <h1>Discover & Review Amazing Places</h1>
+          <h1>
+            Discover & <span>Review Amazing </span>Places
+          </h1>
           <p>
             Find the best spots to visit and share your experiences with others.
           </p>
           <Link to="/places">
             <button className={styles.btn}>Explore</button>
           </Link>
+        </div>
+        <div>
+          <img src={heroimg} />
         </div>
       </div>
       <PlaceSlider />

@@ -11,17 +11,16 @@ export default function PlaceSlider() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    const fetchPlaces = async () => {
+    async function fetchPlaces() {
       try {
         const response = await fetch("http://localhost:5000/places");
         if (!response.ok) throw new Error("Failed to fetch places.");
         const data = await response.json();
-        console.log("Fetched places:", data); // Log data
         setPlaces(data);
       } catch (error) {
         console.error("Error fetching places:", error.message);
       }
-    };
+    }
 
     fetchPlaces();
   }, []);
@@ -54,7 +53,6 @@ export default function PlaceSlider() {
 
       <Slider {...sliderSettings}>
         {places.map((place) => {
-          console.log(place.image); // logs image url during render
           return (
             <div key={place.id} className="place-card">
               <img src={place.image} alt={place.name} className="place-image" />

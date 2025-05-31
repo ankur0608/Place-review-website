@@ -1,0 +1,60 @@
+/* PlaceDetails.module.css */
+
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  text-align: center;
+  color: #222;
+}
+
+.image {
+  display: block;
+  max-width: 100%;
+  height: 150px;
+  margin: 0 auto 24px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.button:hover {
+  background-color: #005fa3;
+}
+
+.info {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.locationLabel {
+  font-weight: 600;
+  color: #555;
+}
+
+.description {
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #444;
+}

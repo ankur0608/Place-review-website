@@ -5,12 +5,12 @@
 }
 
 .slider-container.light-theme {
-  background-color: white;
+  background-color: #e7e7e7;
   color: black;
 }
 
 .slider-container.dark-theme {
-  background-color: #121212;
+  /* background-color: #121212; */
   color: white;
 }
 
@@ -60,14 +60,14 @@
 
 /* Theme-specific card overrides */
 .dark-theme .place-card {
-  background-color: #222;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #1a1a1a;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   color: white;
 }
 
 .light-theme .place-card {
-  background-color: #faf2f2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  box-shadow: 0 2px 9px rgba(5, 5, 5, 0.1);
   color: black;
 }
 
