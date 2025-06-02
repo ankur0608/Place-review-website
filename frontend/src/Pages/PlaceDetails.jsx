@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
 import styles from "./PlaceDetails.module.css";
-
+const PlaceSlider = lazy(() => import("../Components/placesSlider.jsx"));
 export default function PlaceDetails() {
   const { id } = useParams();
   const [place, setPlace] = useState(null);
@@ -29,17 +29,22 @@ export default function PlaceDetails() {
   if (!place) return <p>No place found.</p>;
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>{place.name}</h1>
-      <img src={place.image} alt={place.name} className={styles.image} />
-      <p className={styles.info}>
-        <strong className={styles.locationLabel}>Location:</strong>{" "}
-        {place.location}
-      </p>
-      <p className={styles.description}>{place.description}</p>
-      <Link to="/places">
-        <button className={styles.button}>Go Back</button>
-      </Link>
-    </div>
+    <>
+      <div className={styles.container}>
+        <h1 className={styles.title}>{place.name}</h1>
+        <img src={place.image} alt={place.name} className={styles.image} />
+        <p className={styles.info}>
+          <strong className={styles.locationLabel}>Location:</strong>{" "}
+          {place.location}
+        </p>
+        <p className={styles.description}>{place.description}</p>
+        <Link to="/places">
+          <button className={styles.button}>Go Back</button>
+        </Link>
+      </div>
+      <Suspense fallback={<div>Loading Places...</div>}>
+        <PlaceSlider />
+      </Suspense>
+    </>
   );
 }

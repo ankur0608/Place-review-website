@@ -1,8 +1,9 @@
 import styles from "./About.module.css";
-
+import { useTheme } from "../store/ThemeContext";
 export default function About() {
+  const { theme } = useTheme();
   return (
-    <div className={styles.aboutPage}>
+    <div className={`${styles.aboutPage} ${styles[theme]}`}>
       <main className={styles.content}>
         <h2>About Us</h2>
         <p>

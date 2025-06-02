@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // <-- Import Link
+import { Link } from "react-router-dom";
 import styles from "./Places.module.css";
-
+import { useTheme } from "../store/ThemeContext";
 export default function Places() {
   const [places, setPlaces] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const { theme } = useTheme();
 
   useEffect(() => {
     async function fetchPlaces() {
@@ -30,7 +31,7 @@ export default function Places() {
   });
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${styles[theme]}`}>
       <div className={styles.headerRow}>
         <h1 className={styles.heading}>All Places</h1>
         <div className={styles.searchWrapper}>
@@ -57,8 +58,8 @@ export default function Places() {
         {filteredPlaces.map((place) => (
           <Link
             key={place.id}
-            to={`/places/${place.id}`} // <-- Link to detail page
-            className={styles.cardLink} // Add styling to remove default link styles
+            to={`/places/${place.id}`}
+            className={styles.cardLink}
           >
             <div className={styles.card}>
               <img
@@ -69,7 +70,6 @@ export default function Places() {
               <div className={styles.cardContent}>
                 <h2 className={styles.name}>{place.name}</h2>
                 <p className={styles.location}>{place.location}</p>
-                {/* <p className={styles.description}>{place.description}</p> */}
               </div>
             </div>
           </Link>

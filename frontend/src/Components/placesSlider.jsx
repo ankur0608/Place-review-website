@@ -54,12 +54,22 @@ export default function PlaceSlider() {
       <Slider {...sliderSettings}>
         {places.map((place) => {
           return (
-            <div key={place.id} className="place-card">
-              <img src={place.image} alt={place.name} className="place-image" />
-              <h3 className={place.name}>{place.name}</h3>
-              <p className="place-location">{place.location}</p>
-              <p className="place-description">{place.description}</p>
-            </div>
+            <Link
+              key={place.id}
+              to={`/places/${place.id}`}
+              className="cardLink"
+            >
+              <div key={place.id} className="place-card">
+                <img
+                  src={place.image}
+                  alt={place.name}
+                  className="place-image"
+                />
+                <h3 className={place.name}>{place.name}</h3>
+                <p className="place-location">{place.location}</p>
+                <p className="place-description">{place.description}</p>
+              </div>
+            </Link>
           );
         })}
       </Slider>

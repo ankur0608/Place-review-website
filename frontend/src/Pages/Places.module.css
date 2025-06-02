@@ -14,7 +14,7 @@
 .cardLink {
   text-decoration: none;
   color: inherit;
-  display: block; /* make whole card clickable */
+  display: block;
 }
 
 .heading {
@@ -105,4 +105,119 @@
   text-align: center;
   color: #888;
   font-style: italic;
+}
+/* === Dark Theme === */
+.dark {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+}
+
+.dark .card {
+  background-color: #2a2a2a;
+  border-color: #3a3a3a;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05);
+}
+
+.dark .card:hover {
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark .heading {
+  color: #ffffff;
+}
+
+.dark .searchInput {
+  background-color: #2c2c2c;
+  border-color: #555;
+  color: #f0f0f0;
+}
+
+.dark .searchInput::placeholder {
+  color: #aaa;
+}
+
+.dark .clearButton {
+  color: #bbb;
+}
+
+.dark .clearButton:hover {
+  color: #fff;
+}
+
+.dark .name {
+  color: #ffffff;
+}
+
+.dark .location {
+  color: #ccc;
+}
+
+.dark .description {
+  color: #aaa;
+}
+
+.dark .noResults {
+  color: #aaa;
+}
+
+/* ✅ Responsive styles */
+@media (max-width: 768px) {
+  .headerRow {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .searchWrapper {
+    width: 100%;
+    margin: 10px 0 0;
+  }
+
+  .searchInput {
+    width: 87%;
+    font-size: 15px;
+  }
+
+  .heading {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .image {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .heading {
+    font-size: 1.4rem;
+  }
+
+  .name {
+    font-size: 1.1rem;
+  }
+
+  .location {
+    font-size: 0.95rem;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .searchInput {
+    font-size: 14px;
+  }
+
+  .clearButton {
+    font-size: 16px;
+  }
 }

@@ -1,8 +1,10 @@
+import { lazy, Suspense } from "react";
 import styles from "./Home.module.css";
-import PlaceSlider from "../Components/placesSlider.jsx";
+
 import { Link } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext.jsx";
 import heroimg from "../assets/photo.webp";
+const PlaceSlider = lazy(() => import("../Components/placesSlider.jsx"));
 export default function Home() {
   const { theme } = useTheme();
   return (
@@ -16,9 +18,13 @@ export default function Home() {
           <h1>
             Discover & <span>Review Amazing </span>Places
           </h1>
-          <p>
-            Find the best spots to visit and share your experiences with others.
-          </p>
+          <div>
+            <p>
+              Find the best spots to visit and share your experiences with
+              others.
+            </p>
+          </div>
+
           <Link to="/places">
             <button className={styles.btn}>Explore</button>
           </Link>
@@ -27,7 +33,9 @@ export default function Home() {
           <img src={heroimg} />
         </div>
       </div>
-      <PlaceSlider />
+      <Suspense fallback={<div>Loading Places...</div>}>
+        <PlaceSlider />
+      </Suspense>
     </>
   );
 }

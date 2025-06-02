@@ -10,9 +10,7 @@ import Login from "./Pages/Login.jsx";
 import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import { useTheme } from "./store/ThemeContext.jsx";
 import Footer from "./Pages/Footer.jsx";
-
-// Lazy loaded components
-const Home = lazy(() => import("./Pages/Home.jsx"));
+import Home from "./Pages/Home.jsx";
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
 
@@ -33,20 +31,9 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <Suspense fallback={<div>Loading Home...</div>}>
-            <Home />
-          </Suspense>
-        ),
+        element: <Home />,
       },
-      {
-        path: "home",
-        element: (
-          <Suspense fallback={<div>Loading Home...</div>}>
-            <Home />
-          </Suspense>
-        ),
-      },
+
       { path: "about", element: <About /> },
       {
         path: "places",

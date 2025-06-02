@@ -2,15 +2,17 @@
   --primary: #3b82f6;
   --primary-hover: #2563eb;
 }
+
 .home {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 3rem 2rem;
+  padding: 2rem 1rem;
   min-height: 100vh;
   gap: 2rem;
   box-sizing: border-box;
   transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: center;
 }
 
 .light {
@@ -24,19 +26,17 @@
 }
 
 .hero {
-  flex: 1;
-  max-width: 50%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
 }
 
 .hero h1 {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   font-weight: 900;
   margin-bottom: 1rem;
-  font-weight: bold;
-  line-height: 1.2;
+  line-height: 1.5;
 }
 
 .hero h1 span {
@@ -44,41 +44,71 @@
 }
 
 .hero p {
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
   color: inherit;
 }
 
 /* Button */
 .btn {
-  padding: 0.75rem 2rem;
-  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+  font-size: 1.2rem;
   border: none;
   border-radius: 8px;
   background-color: var(--primary);
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: fit-content;
 }
 
 .btn:hover {
   background-color: var(--primary-hover);
 }
 
-/* RIGHT side image */
+/* Image section */
 .home > div:last-child {
-  flex: 1;
-  max-width: 50%;
+  max-width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .home img {
-  max-width: 100%;
+  width: 90%;
+  max-width: 400px;
   height: auto;
   object-fit: cover;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Enhance layout on larger screens */
+@media (min-width: 768px) {
+  .home {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    padding: 3rem 2rem;
+  }
+
+  .hero {
+    max-width: 40%;
+    align-items: flex-start;
+  }
+
+  .hero h1 {
+    font-size: 2.8rem;
+  }
+
+  .hero p {
+    font-size: 1.25rem;
+  }
+
+  .home > div:last-child {
+    max-width: 50%;
+  }
+
+  .home img {
+    width: 100%;
+  }
 }

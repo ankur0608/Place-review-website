@@ -10,10 +10,15 @@
 }
 
 .slider-container.dark-theme {
-  /* background-color: #121212; */
+  background-color: #121212;
   color: white;
 }
 
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block; /* make whole card clickable */
+}
 /* === Header and Link === */
 .slider-title {
   text-align: center;
