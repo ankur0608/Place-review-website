@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import styles from "./ForgotPassword.module.css";
 import { useTheme } from "../store/ThemeContext";
-
+import { IoMailOutline } from "react-icons/io5";
 const ForgotPassword = () => {
   const { theme } = useTheme();
 
@@ -29,19 +29,22 @@ const ForgotPassword = () => {
             <label htmlFor="email" className={styles.label}>
               Email
             </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              className={styles.inputField}
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "Enter a valid email address",
-                },
-              })}
-            />
+            <div className={styles.inputWrapper}>
+              <IoMailOutline className={styles.inputIcon} />
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                className={styles.inputField}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: "Enter a valid email address",
+                  },
+                })}
+              />
+            </div>
             {errors.email && (
               <p className={styles.error}>{errors.email.message}</p>
             )}

@@ -3,7 +3,6 @@ import { lazy, Suspense } from "react";
 
 import Signup from "./Pages/Sign-up.jsx";
 import About from "./Pages/About.jsx";
-import Reviews from "./Pages/Reviews.jsx";
 import Navbar from "./Pages/Navbar/Navbar.jsx";
 import Contact from "./Pages/Contact.jsx";
 import Login from "./Pages/Login.jsx";
@@ -51,7 +50,7 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      { path: "reviews", element: <Reviews /> },
+
       { path: "contact", element: <Contact /> },
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],

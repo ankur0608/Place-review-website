@@ -4,6 +4,8 @@ import { useTheme } from "../store/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import Modal from "../Components/Modal";
+import { TbLockPassword } from "react-icons/tb";
+import { IoMailOutline } from "react-icons/io5";
 
 export default function Login() {
   const { theme } = useTheme();
@@ -30,7 +32,11 @@ export default function Login() {
 
   return (
     <>
-      <Modal ref={modalRef} buttonCaption="Okay" onModalclose={handleCloseModal}>
+      <Modal
+        ref={modalRef}
+        buttonCaption="Okay"
+        onModalclose={handleCloseModal}
+      >
         <h2>Login successful!</h2>
       </Modal>
 
@@ -42,18 +48,21 @@ export default function Login() {
               <label htmlFor="email" className={styles.label}>
                 Email
               </label>
-              <input
-                id="email"
-                placeholder="Enter your email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: "Invalid email address",
-                  },
-                })}
-                className={styles.inputField}
-              />
+              <div className={styles.inputWrapper}>
+                <IoMailOutline className={styles.inputIcon} />
+                <input
+                  id="email"
+                  placeholder="Enter your email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  className={styles.inputField}
+                />
+              </div>
               {errors.email && (
                 <p className={styles.error}>{errors.email.message}</p>
               )}
@@ -63,19 +72,22 @@ export default function Login() {
               <label htmlFor="password" className={styles.label}>
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
-                className={styles.inputField}
-              />
+              <div className={styles.inputWrapper}>
+                <TbLockPassword className={styles.inputIcon} />
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Enter your password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                  className={styles.inputField}
+                />
+              </div>
               {errors.password && (
                 <p className={styles.error}>{errors.password.message}</p>
               )}
@@ -90,6 +102,11 @@ export default function Login() {
             <button type="submit" className={styles.button}>
               Login
             </button>
+            <div className={styles.sigupcontainer}>
+              <Link to="/signup" className={styles.siguplink}>
+                Don't have an account? Sign up
+              </Link>
+            </div>
           </form>
         </div>
       </div>

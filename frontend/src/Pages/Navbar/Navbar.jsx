@@ -86,7 +86,7 @@ export default function Navbar() {
               className={styles.themeButton}
               aria-label="Toggle Theme"
             >
-              {theme === "light" ? <CiDark size={24} /> : <LuSun size={24} />}
+              {theme === "light" ? <CiDark size={26} /> : <LuSun size={26} />}
             </button>
           </div>
 

@@ -68,9 +68,27 @@
   color: var(--text-color);
 }
 
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  font-size: 1.2rem;
+  color: #868686;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.dark .inputIcon {
+  color: #ffffff;
+}
 .inputField {
   width: 100%;
   padding: 10px 14px;
+  padding-left: 2.2rem; /* Make space for the icon */
   font-size: 1rem;
   border: 1.5px solid var(--input-border);
   border-radius: 6px;
@@ -94,7 +112,7 @@
 
 .button {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   background-color: var(--button-bg);
   border: none;
   border-radius: 8px;
@@ -119,7 +137,7 @@
 .loginLink {
   margin-top: 18px;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text-color);
 }
 

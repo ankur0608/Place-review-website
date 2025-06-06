@@ -19,13 +19,14 @@
   --border-color: #444;
   --accent-color: #4e9eff;
   --accent-color-hover: #1a73e8;
-} /* Container layout */
+}
+ /* Container layout */
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  min-height: 100vh;
+  min-height: 80vh;
   transition: background-color 0.3s, color 0.3s;
 }
 

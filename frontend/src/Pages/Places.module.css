@@ -1,135 +1,177 @@
 .container {
-  max-width: 1000px;
+  max-width: 1110px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  padding: 32px 20px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #e7e7e7;
+  border-radius: 16px;
+  /* box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07); */
 }
 
 .headerRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+  gap: 16px;
 }
+
 .cardLink {
   text-decoration: none;
   color: inherit;
   display: block;
+  transition: transform 0.15s;
+}
+
+.cardLink:hover {
+  transform: translateY(-4px) scale(1.02);
 }
 
 .heading {
-  font-size: 2rem;
+  font-size: 2.3rem;
+  font-weight: 700;
   text-align: center;
   flex-grow: 1;
+  color: #1a237e;
+  letter-spacing: 1px;
 }
 
 .searchWrapper {
   position: relative;
-  width: 250px;
+  width: 270px;
 }
 
 .searchInput {
   width: 80%;
-  padding: 8px 32px 8px 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 10px 38px 10px 14px;
+  font-size: 17px;
+  border: 1.5px solid #bdbdbd;
+  border-radius: 6px;
+  background: #e7e7e7;
+  transition: border 0.2s;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: #3949ab;
 }
 
 .clearButton {
   position: absolute;
-  right: 8px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   color: #888;
   line-height: 1;
   padding: 0;
+  transition: color 0.2s;
 }
 
 .clearButton:hover {
-  color: #333;
+  color: #3949ab;
 }
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 28px;
 }
 
 .card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  cursor: pointer;
+  border: none;
+  border-radius: 12px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
-  transition: box-shadow 0.3s ease;
+  box-shadow: 0 2px 12px rgba(60, 60, 100, 0.08);
+  transition: box-shadow 0.3s, transform 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 340px;
 }
 
 .card:hover {
-  box-shadow: 0 4px 10px rgb(0 0 0 / 0.15);
+  box-shadow: 0 8px 24px rgba(60, 60, 100, 0.16);
+  transform: translateY(-2px) scale(1.01);
 }
 
 .image {
   width: 100%;
-  height: 150px;
+  height: 170px;
   object-fit: cover;
+  background: #e3e3e3;
 }
 
 .cardContent {
-  padding: 15px;
+  padding: 18px 16px 16px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .name {
-  font-size: 1.2rem;
-  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 7px 0;
+  color: #283593;
 }
 
 .location {
-  font-weight: bold;
-  color: #555;
+  font-weight: 500;
+  color: #5c6bc0;
   margin-bottom: 8px;
+  font-size: 1rem;
 }
 
 .description {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: 0.98rem;
+  color: #444;
+  margin-bottom: 0;
+  flex: 1;
 }
 
 .noResults {
   grid-column: 1 / -1;
   text-align: center;
-  color: #888;
+  color: #b0b0b0;
   font-style: italic;
+  font-size: 1.1rem;
+  padding: 32px 0;
 }
+
 /* === Dark Theme === */
 .dark {
   background-color: #1e1e1e;
-  color: #f0f0f0;
+  color: #e0e0e0;
+}
+
+.dark .container {
+  background: #1e1e1e;
+  /* box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25); */
 }
 
 .dark .card {
-  background-color: #2a2a2a;
-  border-color: #3a3a3a;
-  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05);
+  background-color: #23263a;
+  /* box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); */
 }
 
 .dark .card:hover {
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
 .dark .heading {
-  color: #ffffff;
+  color: #90caf9;
 }
 
 .dark .searchInput {
-  background-color: #2c2c2c;
-  border-color: #555;
-  color: #f0f0f0;
+  background-color: #23263a;
+  border-color: #3949ab;
+  color: #e0e0e0;
 }
 
 .dark .searchInput::placeholder {
@@ -141,31 +183,46 @@
 }
 
 .dark .clearButton:hover {
-  color: #fff;
+  color: #90caf9;
 }
 
 .dark .name {
-  color: #ffffff;
+  color: #90caf9;
 }
 
 .dark .location {
-  color: #ccc;
+  color: #b39ddb;
 }
 
 .dark .description {
-  color: #aaa;
+  color: #b0b0b0;
 }
 
 .dark .noResults {
   color: #aaa;
 }
 
-/* ✅ Responsive styles */
+/* Responsive styles */
+@media (max-width: 900px) {
+  .container {
+    padding: 18px 6px;
+  }
+  .searchInput {
+    width: 60%;
+  }
+  .cardGrid {
+    width: 70%;
+    margin: 0 auto;
+    gap: 18px;
+  }
+}
+
 @media (max-width: 768px) {
   .headerRow {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
+    gap: 10px;
   }
 
   .searchWrapper {
@@ -174,39 +231,40 @@
   }
 
   .searchInput {
-    width: 87%;
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .heading {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     margin-bottom: 10px;
   }
-
+  .card {
+    min-height: 0;
+  }
   .cardGrid {
     grid-template-columns: 1fr;
   }
 
   .image {
-    height: 180px;
+    height: 150px;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 10px;
+    padding: 8px 2px;
   }
 
   .heading {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
   .name {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .location {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
   }
 
   .description {

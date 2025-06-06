@@ -4,7 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext";
 import { useRef, useState } from "react";
 import Modal from "../Components/Modal";
-
+import { FaRegUser } from "react-icons/fa";
+import { TbLockPassword } from "react-icons/tb";
+import { IoMailOutline } from "react-icons/io5";
 export default function Signup() {
   const { theme } = useTheme();
   const [showModal, setShowModal] = useState(false);
@@ -19,7 +21,7 @@ export default function Signup() {
   const onSubmit = (data) => {
     console.log("Form Submitted:", data);
     setShowModal(true);
-    modalRef.current.open(); 
+    modalRef.current.open();
   };
 
   const handleCloseModal = () => {
@@ -46,12 +48,17 @@ export default function Signup() {
               <label htmlFor="username" className={styles.label}>
                 Username
               </label>
-              <input
-                id="username"
-                placeholder="Enter your username"
-                {...register("username", { required: "Username is required" })}
-                className={styles.inputField}
-              />
+              <div className={styles.inputWrapper}>
+                <FaRegUser className={styles.inputIcon} />
+                <input
+                  id="username"
+                  placeholder="Enter your username"
+                  {...register("username", {
+                    required: "Username is required",
+                  })}
+                  className={styles.inputField}
+                />
+              </div>
               {errors.username && (
                 <p className={styles.error}>{errors.username.message}</p>
               )}
@@ -62,18 +69,21 @@ export default function Signup() {
               <label htmlFor="email" className={styles.label}>
                 Email
               </label>
-              <input
-                id="email"
-                placeholder="Enter your email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: "Invalid email address",
-                  },
-                })}
-                className={styles.inputField}
-              />
+              <div className={styles.inputWrapper}>
+                <IoMailOutline className={styles.inputIcon} />
+                <input
+                  id="email"
+                  placeholder="Enter your email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  className={styles.inputField}
+                />
+              </div>
               {errors.email && (
                 <p className={styles.error}>{errors.email.message}</p>
               )}
@@ -84,19 +94,22 @@ export default function Signup() {
               <label htmlFor="password" className={styles.label}>
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
-                className={styles.inputField}
-              />
+              <div className={styles.inputWrapper}>
+                <TbLockPassword className={styles.inputIcon} />
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Enter your password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                  className={styles.inputField}
+                />
+              </div>
               {errors.password && (
                 <p className={styles.error}>{errors.password.message}</p>
               )}
@@ -108,7 +121,7 @@ export default function Signup() {
           </form>
 
           <p className={styles.loginLink}>
-            Already have an account? <Link to="/login">Log In</Link>
+            <Link to="/login">Already have an account? Log In</Link>
           </p>
         </div>
       </div>

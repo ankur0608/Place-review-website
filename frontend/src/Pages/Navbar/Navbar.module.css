@@ -12,9 +12,11 @@
 
 .logo a {
   text-decoration: none;
-  color: var(--text-color);
-  font-size: 1.5rem;
+  color: var(--accent-color);
+  font-size: 2rem;
   font-weight: bold;
+  letter-spacing: 1px;
+  transition: color 0.2s;
 }
 
 .links {
@@ -29,10 +31,12 @@
   color: var(--text-color);
   font-weight: 500;
 }
-
+.link:hover {
+  color: var(--accent-color);
+}
 .active {
   color: var(--accent-color);
-  border-bottom: 2px solid var(--accent-color);
+  border-bottom: 2.9px solid var(--accent-color);
 }
 
 .btn {
@@ -48,22 +52,37 @@
   border: none;
   color: var(--text-color);
   cursor: pointer;
+  font-size: 1.3rem;
+  margin-left: 1rem;
+  margin-top: 10px;
+  transition: color 0.18s;
 }
 
-.authButtons {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+.themeButton:hover {
+  color: var(--accent-color);
+  background: none;
 }
 
 .menuToggle {
   display: none;
   background: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: var(--text-color);
   border: none;
   cursor: pointer;
+  transition: color 0.18s;
 }
+
+.menuToggle:hover {
+  color: var(--accent-color);
+  background: none;
+}
+.authButtons {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
 .mobileExtras {
   display: none;
 }

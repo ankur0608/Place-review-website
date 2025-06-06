@@ -1,25 +1,56 @@
+/* Footer.module.css */
+
 .footer {
-  background-color: #222;
-  color: #fff;
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
   text-align: center;
   font-size: 0.9rem;
-  margin-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.footer p {
+  margin: 0;
+  font-weight: 500;
 }
 
 .links {
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   display: flex;
   justify-content: center;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .links a {
-  color: #ccc;
   text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-.links a:hover {
-  color: #fff;
-  text-decoration: underline;
+/* Light Theme */
+.light {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.light .links a {
+  color: #0077cc;
+}
+
+.light .links a:hover {
+  color: #005fa3;
+}
+
+/* Dark Theme */
+.dark {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+.dark .links a {
+  color: #4ea1ff;
+}
+
+.dark .links a:hover {
+  color: #89caff;
 }
