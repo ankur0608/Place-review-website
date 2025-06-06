@@ -22,6 +22,8 @@
 /* === Header and Link === */
 .slider-title {
   text-align: center;
+  color: #3b82f6;
+  font-size: 35px;
   margin-bottom: 15px;
 }
 

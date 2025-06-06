@@ -91,7 +91,7 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  min-height: 340px;
+  min-height: 290px;
 }
 
 .card:hover {

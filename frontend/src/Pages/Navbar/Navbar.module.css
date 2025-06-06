@@ -18,7 +18,9 @@
   letter-spacing: 1px;
   transition: color 0.2s;
 }
-
+.logo a:hover {
+  color: var(--text-color);
+}
 .links {
   display: flex;
   font-size: 18px;
