@@ -11,15 +11,22 @@ export default function Review({ onSubmit }) {
     reset,
     formState: { errors },
   } = useForm();
+
   const [rating, setRating] = useState(0);
   const { theme } = useTheme();
 
   function onFormSubmit(data) {
     if (rating === 0) return alert("Please select a rating.");
 
-    onSubmit({ ...data, rating });
+    const finalRating = rating;
+
+    onSubmit({ ...data, rating: finalRating });
     setRating(0);
     reset();
+  }
+
+  function handleRatingChange(value) {
+    setRating(value);
   }
 
   return (
@@ -27,7 +34,13 @@ export default function Review({ onSubmit }) {
       <h3>Write a Review</h3>
 
       <div>
-        <Rating onClick={setRating} ratingValue={rating} size={25} />
+        <Rating
+          onClick={handleRatingChange}
+          ratingValue={rating}
+          allowHalfIcon
+          size={25}
+          transition
+        />
       </div>
 
       <form onSubmit={handleSubmit(onFormSubmit)} className={styles.form}>

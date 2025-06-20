@@ -3,29 +3,35 @@ import { Link, useParams } from "react-router-dom";
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import ReviewForm from "../Components/Reviews.jsx";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+
 const PlaceSlider = lazy(() => import("../Components/PlacesSlider.jsx"));
 
 export default function PlaceDetails() {
   const { id } = useParams();
   const { theme } = useTheme();
+
   const [place, setPlace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [reviews, setReviews] = useState([]);
+
+  // const reviews = useQuery(api.reviews.list, { placeId: id });
+  const reviews = useQuery(
+    api.reviews.list,
+    place ? { placeId: String(id) } : "skip"
+  );
+
+  const addReview = useMutation(api.reviews.add);
 
   async function handleReviewSubmit(reviewData) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/places/${id}/reviews`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(reviewData),
-        }
-      );
-      if (!response.ok) throw new Error("Failed to submit review");
-      const updatedReviews = await response.json();
-      setReviews(updatedReviews);
+      // await addReview({ ...reviewData, placeId: id });
+      await addReview({
+        ...reviewData,
+        placeId: String(id),
+        placeName: place.name,
+      });
     } catch (err) {
       alert("Error submitting review: " + err.message);
     }
@@ -38,7 +44,6 @@ export default function PlaceDetails() {
         if (!response.ok) throw new Error("Place not found");
         const data = await response.json();
         setPlace(data);
-        setReviews(data.reviews || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -62,18 +67,18 @@ export default function PlaceDetails() {
         <h1 className={styles.title}>{place.name}</h1>
         <img src={place.image} alt={place.name} className={styles.image} />
         <p className={styles.info}>
-          <strong className={styles.locationLabel}>Location:</strong>{" "}
+          <strong className={styles.locationLabel}>Location:</strong>
           {place.location}
         </p>
         <p className={styles.description}>{place.description}</p>
 
         <ReviewForm onSubmit={handleReviewSubmit} />
 
-        {reviews.length > 0 && (
+        {reviews?.length > 0 && (
           <div className={styles.reviewsSection}>
             <h3>User Reviews</h3>
             {reviews.map((review, index) => (
-              <div key={index} className={styles.reviewItem}>
+              <div key={review._id} className={styles.reviewItem}>
                 <p>
                   <strong>{review.name}</strong> rated it ⭐ {review.rating}/5
                 </p>
