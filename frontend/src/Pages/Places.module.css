@@ -5,7 +5,6 @@
   font-family: "Segoe UI", Arial, sans-serif;
   background: #e7e7e7;
   border-radius: 16px;
-  /* box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07); */
 }
 
 .headerRow {
@@ -14,42 +13,36 @@
   justify-content: space-between;
   margin-bottom: 28px;
   gap: 16px;
-}
-
-.cardLink {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  transition: transform 0.15s;
-}
-
-.cardLink:hover {
-  transform: translateY(-4px) scale(1.02);
+  flex-wrap: wrap;
 }
 
 .heading {
   font-size: 2.3rem;
   font-weight: 700;
-  text-align: center;
-  flex-grow: 1;
   color: #1a237e;
   letter-spacing: 1px;
+  flex: 1;
+  text-align: center;
 }
 
 .searchWrapper {
   position: relative;
-  width: 270px;
+  max-width: 400px;
+  width: 100%;
+  margin: 24px auto;
+  display: flex;
+  justify-content: center;
 }
 
 .searchInput {
-  width: 80%;
+  width: 100%;
   padding: 10px 38px 10px 14px;
-  font-size: 17px;
+  font-size: 16px;
   border: 1.5px solid #bdbdbd;
   border-radius: 6px;
   background: #e7e7e7;
-  transition: border 0.2s;
   outline: none;
+  transition: border 0.2s;
 }
 
 .searchInput:focus {
@@ -75,10 +68,53 @@
   color: #3949ab;
 }
 
+.categoryTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.tabButton {
+  padding: 8px 16px;
+  font-size: 15px;
+  border-radius: 20px;
+  background-color: transparent;
+  color: #444;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tabButton:hover {
+  background-color: #f0f0f0;
+  border-color: #888;
+  color: #222;
+}
+
+.activeTab {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+  font-weight: 600;
+}
+
 .cardGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
   gap: 28px;
+}
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 0.15s ease;
+}
+
+.cardLink:hover {
+  transform: translateY(-4px) scale(1.02);
 }
 
 .card {
@@ -87,11 +123,12 @@
   overflow: hidden;
   background: #fff;
   box-shadow: 0 2px 12px rgba(60, 60, 100, 0.08);
-  transition: box-shadow 0.3s, transform 0.2s;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   min-height: 290px;
+  transition:
+    box-shadow 0.3s,
+    transform 0.2s;
 }
 
 .card:hover {
@@ -103,36 +140,34 @@
   width: 100%;
   height: 170px;
   object-fit: cover;
-  background: #e3e3e3;
+  background-color: #dcdcdc;
 }
 
 .cardContent {
-  padding: 18px 16px 16px 16px;
-  flex: 1;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  flex-grow: 1;
 }
 
 .name {
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 7px 0;
   color: #283593;
+  margin: 0 0 6px;
 }
 
 .location {
-  font-weight: 500;
-  color: #5c6bc0;
-  margin-bottom: 8px;
   font-size: 1rem;
+  color: #5c6bc0;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
 .description {
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   color: #444;
-  margin-bottom: 0;
-  flex: 1;
+  flex-grow: 1;
 }
 
 .noResults {
@@ -146,22 +181,12 @@
 
 /* === Dark Theme === */
 .dark {
-  background-color: #1e1e1e;
+  background-color: #121212;
   color: #e0e0e0;
 }
 
 .dark .container {
-  background: #1e1e1e;
-  /* box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25); */
-}
-
-.dark .card {
-  background-color: #23263a;
-  /* box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18); */
-}
-
-.dark .card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  background-color: #1e1e1e;
 }
 
 .dark .heading {
@@ -169,9 +194,9 @@
 }
 
 .dark .searchInput {
-  background-color: #23263a;
+  background-color: #121212;
+  color: #fff;
   border-color: #3949ab;
-  color: #e0e0e0;
 }
 
 .dark .searchInput::placeholder {
@@ -186,6 +211,30 @@
   color: #90caf9;
 }
 
+.dark .tabButton {
+  border-color: #555;
+  color: #ccc;
+}
+
+.dark .tabButton:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.dark .activeTab {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.dark .card {
+  background-color: #23263a;
+}
+
+.dark .card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
 .dark .name {
   color: #90caf9;
 }
@@ -195,54 +244,32 @@
 }
 
 .dark .description {
-  color: #b0b0b0;
+  color: #c7c7c7;
 }
 
 .dark .noResults {
   color: #aaa;
 }
 
-/* Responsive styles */
-@media (max-width: 900px) {
-  .container {
-    padding: 18px 6px;
-  }
-  .searchInput {
-    width: 60%;
-  }
-  .cardGrid {
-    width: 70%;
-    margin: 0 auto;
-    gap: 18px;
-  }
-}
-
+/* === Responsive === */
 @media (max-width: 768px) {
   .headerRow {
     flex-direction: column;
-    align-items: stretch;
     text-align: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   .searchWrapper {
     width: 100%;
-    margin: 10px 0 0;
-  }
-
-  .searchInput {
-    font-size: 16px;
   }
 
   .heading {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+    font-size: 1.8rem;
   }
-  .card {
-    min-height: 0;
-  }
+
   .cardGrid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .image {
@@ -251,16 +278,16 @@
 }
 
 @media (max-width: 480px) {
-  .container {
-    padding: 8px 2px;
+  .heading {
+    font-size: 1.5rem;
   }
 
-  .heading {
-    font-size: 1.2rem;
+  .searchInput {
+    font-size: 14px;
   }
 
   .name {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .location {
@@ -269,13 +296,5 @@
 
   .description {
     font-size: 0.85rem;
-  }
-
-  .searchInput {
-    font-size: 14px;
-  }
-
-  .clearButton {
-    font-size: 16px;
   }
 }

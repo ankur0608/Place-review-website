@@ -6,11 +6,15 @@ import { useRef, useState } from "react";
 import Modal from "../Components/Modal";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
+import { useConvex } from "convex/react";
+
+import { api } from "../../convex/_generated/api";
 
 export default function Login() {
   const { theme } = useTheme();
   const [showSuccess, setShowSuccess] = useState(false);
   const modalRef = useRef();
+
   const {
     register,
     handleSubmit,
@@ -18,12 +22,46 @@ export default function Login() {
   } = useForm();
   const navigator = useNavigate();
 
-  function onSubmit(data) {
-    console.log("Login data:", data);
+  const convex = useConvex();
 
-    setShowSuccess(true);
-    modalRef.current.open();
-  }
+  const onSubmit = async (data) => {
+    try {
+      // Step 1: Get user from Convex by email
+      const user = await convex.query(api.users.getUserByEmail, {
+        email: data.email,
+      });
+
+      if (!user) {
+        alert("User not found");
+        return;
+      }
+
+      // Step 2: Send to backend for password check
+      const res = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: data.password, user }),
+      });
+
+      const result = await res.json();
+
+      // Step 3: Check login result
+      if (result.success) {
+        console.log("✅ Login successful");
+
+        localStorage.setItem("token", result.token); // store token
+        setShowSuccess(true);
+        modalRef.current.open();
+      } else {
+        alert("Invalid password");
+      }
+    } catch (err) {
+      console.error("🔴 Login error:", err);
+      alert("Something went wrong. Please try again.");
+    }
+  };
 
   function handleCloseModal() {
     setShowSuccess(false);

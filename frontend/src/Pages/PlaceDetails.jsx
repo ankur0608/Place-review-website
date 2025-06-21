@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import ReviewForm from "../Components/Reviews.jsx";
@@ -11,12 +11,21 @@ const PlaceSlider = lazy(() => import("../Components/PlacesSlider.jsx"));
 export default function PlaceDetails() {
   const { id } = useParams();
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
   const [place, setPlace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // const reviews = useQuery(api.reviews.list, { placeId: id });
+  // 🔒 Check login before loading place
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to view this page.");
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const reviews = useQuery(
     api.reviews.list,
     place ? { placeId: String(id) } : "skip"
@@ -26,7 +35,6 @@ export default function PlaceDetails() {
 
   async function handleReviewSubmit(reviewData) {
     try {
-      // await addReview({ ...reviewData, placeId: id });
       await addReview({
         ...reviewData,
         placeId: String(id),
@@ -77,7 +85,7 @@ export default function PlaceDetails() {
         {reviews?.length > 0 && (
           <div className={styles.reviewsSection}>
             <h3>User Reviews</h3>
-            {reviews.map((review, index) => (
+            {reviews.map((review) => (
               <div key={review._id} className={styles.reviewItem}>
                 <p>
                   <strong>{review.name}</strong> rated it ⭐ {review.rating}/5

@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Places.module.css";
 import { useTheme } from "../store/ThemeContext";
+
 export default function Places() {
   const [places, setPlaces] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -22,38 +24,65 @@ export default function Places() {
     fetchPlaces();
   }, []);
 
+  const categories = [
+    "All",
+    ...new Set(places.map((p) => p.category).filter(Boolean)),
+  ];
+
   const filteredPlaces = places.filter((place) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      place.name.toLowerCase().includes(query) ||
-      place.location.toLowerCase().includes(query)
-    );
+    const matchesSearch =
+      place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      place.location.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "All" || place.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
   });
 
   return (
     <div className={`${styles.container} ${styles[theme]}`}>
-      <div className={styles.headerRow}>
-        <h1 className={styles.heading}>All Places</h1>
-        <div className={styles.searchWrapper}>
-          <input
-            type="text"
-            className={styles.searchInput}
-            placeholder="Search Places"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              className={styles.clearButton}
-              onClick={() => setSearchQuery("")}
-              aria-label="Clear search"
-            >
-              ×
-            </button>
-          )}
-        </div>
+      <h1 className={styles.heading}>Explore Tourist Places</h1>
+
+      {/* Category Tabs */}
+      <div className={styles.categoryTabs}>
+        {categories.map(
+          (cat, index) =>
+            cat && (
+              <button
+                key={`${cat}-${index}`}
+                className={`${styles.tabButton} ${
+                  selectedCategory === cat ? styles.activeTab : ""
+                }`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {` ${cat} `}
+              </button>
+            )
+        )}
       </div>
 
+      {/* Search Bar */}
+      <div className={styles.searchWrapper}>
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="Search by name or location..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        {searchQuery && (
+          <button
+            className={styles.clearButton}
+            onClick={() => setSearchQuery("")}
+            aria-label="Clear search"
+          >
+            ×
+          </button>
+        )}
+      </div>
+
+      {/* Cards */}
       <div className={styles.cardGrid}>
         {filteredPlaces.map((place) => (
           <Link
@@ -74,6 +103,7 @@ export default function Places() {
             </div>
           </Link>
         ))}
+
         {filteredPlaces.length === 0 && (
           <p className={styles.noResults}>No places found.</p>
         )}

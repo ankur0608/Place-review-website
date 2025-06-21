@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const places = require("../data/placesData.js");
+const verifyToken = require("../middleware/verifyToken");
 
 router.get("/", (req, res) => {
   res.json(places);
@@ -17,7 +18,7 @@ router.get("/:id", (req, res) => {
 });
 
 // Add this POST endpoint for reviews
-router.post("/:id/reviews", (req, res) => {
+router.post("/:id/reviews", verifyToken, (req, res) => {
   const id = Number(req.params.id);
   const place = places.find((p) => p.id === id);
   if (!place) {
@@ -26,7 +27,15 @@ router.post("/:id/reviews", (req, res) => {
 
   const { name, rating, comment } = req.body;
   if (!place.reviews) place.reviews = [];
-  place.reviews.push({ name, rating, comment });
+
+  // You can optionally use logged-in user's email from token:
+  const userEmail = req.user.email;
+
+  place.reviews.push({
+    name: name || userEmail, // fallback to user's email
+    rating,
+    comment,
+  });
 
   res.status(201).json(place.reviews);
 });

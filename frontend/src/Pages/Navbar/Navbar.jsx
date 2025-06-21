@@ -1,13 +1,15 @@
 import styles from "./Navbar.module.css";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { CiDark } from "react-icons/ci";
 import { LuSun } from "react-icons/lu";
 import { useTheme } from "../../store/ThemeContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -16,6 +18,17 @@ export default function Navbar() {
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/login");
+  }
 
   return (
     <>
@@ -59,43 +72,63 @@ export default function Navbar() {
             </li>
           ))}
 
-          {/* Shown only in mobile */}
+          {/* Mobile-only auth buttons */}
           <li className={styles.mobileExtras}>
-            <Link
-              to="/signup"
-              className={styles.btn}
-              onClick={() => setMenuOpen(false)}
-            >
-              Sign Up
-            </Link>
-            <Link
-              to="/login"
-              className={styles.btn}
-              onClick={() => setMenuOpen(false)}
-            >
-              Login
-            </Link>
+            {isLoggedIn ? (
+              <button
+                className={styles.btn}
+                onClick={() => {
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/signup"
+                  className={styles.btn}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+                <Link
+                  to="/login"
+                  className={styles.btn}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </>
+            )}
           </li>
         </ul>
 
-        {/* Desktop only */}
+        {/* Desktop-only auth buttons */}
         <div className={styles.authButtons}>
-          <div>
-            <button
-              onClick={toggleTheme}
-              className={styles.themeButton}
-              aria-label="Toggle Theme"
-            >
-              {theme === "light" ? <CiDark size={26} /> : <LuSun size={26} />}
-            </button>
-          </div>
+          <button
+            onClick={toggleTheme}
+            className={styles.themeButton}
+            aria-label="Toggle Theme"
+          >
+            {theme === "light" ? <CiDark size={26} /> : <LuSun size={26} />}
+          </button>
 
-          <Link to="/signup" className={styles.btn}>
-            Sign Up
-          </Link>
-          <Link to="/login" className={styles.btn}>
-            Login
-          </Link>
+          {isLoggedIn ? (
+            <button className={styles.btn} onClick={handleLogout}>
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/signup" className={styles.btn}>
+                Sign Up
+              </Link>
+              <Link to="/login" className={styles.btn}>
+                Login
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     </>

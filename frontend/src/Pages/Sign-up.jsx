@@ -7,7 +7,10 @@ import Modal from "../Components/Modal";
 import { FaRegUser } from "react-icons/fa";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 export default function Signup() {
+  const insertUser = useMutation(api.users.insertUser);
   const { theme } = useTheme();
   const [showModal, setShowModal] = useState(false);
   const modalRef = useRef();
@@ -18,11 +21,28 @@ export default function Signup() {
   } = useForm();
   const navigator = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log("Form Submitted:", data);
-    setShowModal(true);
-    modalRef.current.open();
-  };
+  async function onSubmit(data) {
+    try {
+      // 1. Hash password using Node backend
+      const res = await fetch("http://localhost:5000/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const hashedUser = await res.json(); // { username, email, password (hashed) }
+
+      // 2. Store hashed user in Convex
+      await insertUser(hashedUser);
+
+      // 3. Show success modal
+      setShowModal(true);
+      modalRef.current.open();
+    } catch (err) {
+      console.error("Signup error:", err);
+      alert("Signup failed. Please try again.");
+    }
+  }
 
   const handleCloseModal = () => {
     setShowModal(false);
