@@ -13,7 +13,7 @@ export default function PlaceSlider() {
   useEffect(() => {
     async function fetchPlaces() {
       try {
-        const response = await fetch("http://localhost:5000/places");
+        const response = await fetch("https://place-review-website-real.onrender.com/places");
         if (!response.ok) throw new Error("Failed to fetch places.");
         const data = await response.json();
         setPlaces(data);

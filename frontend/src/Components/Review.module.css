@@ -32,9 +32,11 @@ textarea {
   border: 1px solid #ccc;
   font-size: 1rem;
   resize: vertical;
-  color: white;
+  /* color: white; */
 }
-
+.dark input,textarea{
+  color: #f1f1f1;
+}
 button {
   padding: 0.75rem;
   background-color: #3b82f6;

@@ -48,7 +48,7 @@ export default function PlaceDetails() {
   useEffect(() => {
     async function fetchPlace() {
       try {
-        const response = await fetch(`http://localhost:5000/places/${id}`);
+        const response = await fetch(`https://place-review-website-real.onrender.com/places/${id}`);
         if (!response.ok) throw new Error("Place not found");
         const data = await response.json();
         setPlace(data);

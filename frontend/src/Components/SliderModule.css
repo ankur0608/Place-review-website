@@ -10,7 +10,7 @@
 }
 
 .slider-container.dark-theme {
-  background-color: #121212;
+  background-color: #1e1e1e;
   color: white;
 }
 
@@ -67,7 +67,7 @@
 
 /* Theme-specific card overrides */
 .dark-theme .place-card {
-  background-color: #1a1a1a;
+  background-color: #23263a;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   color: white;
 }
@@ -81,12 +81,13 @@
 /* === Text Styles === */
 .place-card h3 {
   font-size: 18px;
+  color: #90caf9;
   margin: 10px 0 5px;
 }
 
 .place-location {
   font-size: 13px;
-  color: #888;
+  color: #b39ddb;
   margin-bottom: 5px;
 }
 

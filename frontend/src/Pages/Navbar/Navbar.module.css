@@ -1,6 +1,6 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 🔄 Now properly aligns sections */
   align-items: center;
   background-color: var(--navbar-bg);
   color: var(--text-color);
@@ -8,6 +8,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+  margin-bottom: 1.5rem;
 }
 
 .logo a {
@@ -18,14 +19,19 @@
   letter-spacing: 1px;
   transition: color 0.2s;
 }
+
 .logo a:hover {
   color: var(--text-color);
 }
+
 .links {
   display: flex;
-  font-size: 18px;
-  gap: 1.5rem;
+  font-size: 20px;
+  gap: 2rem;
   list-style: none;
+  flex: 1;
+  justify-content: center; /* ✅ centers nav links between logo & buttons */
+  margin: 0;
 }
 
 .link {
@@ -33,9 +39,11 @@
   color: var(--text-color);
   font-weight: 500;
 }
+
 .link:hover {
   color: var(--accent-color);
 }
+
 .active {
   color: var(--accent-color);
   border-bottom: 2.9px solid var(--accent-color);
@@ -54,7 +62,7 @@
   border: none;
   color: var(--text-color);
   cursor: pointer;
-  font-size: 1.3rem;
+  font-size: 1.7rem;
   margin-left: 1rem;
   margin-top: 10px;
   transition: color 0.18s;
@@ -77,32 +85,65 @@
 
 .menuToggle:hover {
   color: var(--accent-color);
-  background: none;
 }
+
 .authButtons {
   display: flex;
   gap: 1.5rem;
   align-items: center;
 }
 
-.mobileExtras {
-  display: none;
+.userLogo {
+  background-color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-left: 1rem; /* ✅ cleaner, responsive spacing */
 }
+
+.btn {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 5px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background-color 0.3s;
+}
+
+.userLogo:hover {
+  transform: scale(1.05);
+}
+
 .topRightButtons {
   display: none;
   align-items: center;
   gap: 1rem;
 }
+
+.mobileExtras {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .menuToggle {
     display: block;
   }
+
   .topRightButtons {
     display: flex;
   }
+
   .authButtons {
-    display: none; /* Hide desktop-only buttons on mobile */
+    display: none;
   }
+
   .links {
     position: absolute;
     top: 100%;
@@ -112,14 +153,15 @@
     background-color: var(--navbar-bg);
     display: none;
     padding: 1rem;
+    justify-content: flex-start;
+  }
+
+  .logo a {
+    font-size: 25px;
   }
 
   .open {
     display: flex;
-  }
-
-  .authButtons {
-    display: none;
   }
 
   .mobileExtras {

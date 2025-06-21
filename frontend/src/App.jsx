@@ -10,6 +10,7 @@ import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import { useTheme } from "./store/ThemeContext.jsx";
 import Footer from "./Pages/Footer.jsx";
 import Home from "./Pages/Home.jsx";
+import Profile from "./Pages/Profile.jsx";
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
 
@@ -52,6 +53,7 @@ const router = createBrowserRouter([
       },
 
       { path: "contact", element: <Contact /> },
+      { path: "Profile", element: <Profile /> },
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },

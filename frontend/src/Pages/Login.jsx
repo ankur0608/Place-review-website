@@ -37,13 +37,16 @@ export default function Login() {
       }
 
       // Step 2: Send to backend for password check
-      const res = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password: data.password, user }),
-      });
+      const res = await fetch(
+        "https://place-review-website-real.onrender.com/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ password: data.password, user }),
+        }
+      );
 
       const result = await res.json();
 
@@ -51,7 +54,10 @@ export default function Login() {
       if (result.success) {
         console.log("✅ Login successful");
 
-        localStorage.setItem("token", result.token); // store token
+        localStorage.setItem("token", result.token);  
+        localStorage.setItem("username", user.username);
+        localStorage.setItem("email", user.email);
+
         setShowSuccess(true);
         modalRef.current.open();
       } else {

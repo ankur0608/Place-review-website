@@ -4,7 +4,7 @@ import { CiDark } from "react-icons/ci";
 import { LuSun } from "react-icons/lu";
 import { useTheme } from "../../store/ThemeContext";
 import { useEffect, useState } from "react";
-
+import userLogo from "../../assets/user.png";
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,7 +14,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Places", path: "/places" },
-    { name: "Reviews", path: "/reviews" },
+    // { name: "Reviews", path: "/reviews" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
@@ -116,7 +116,10 @@ export default function Navbar() {
           </button>
 
           {isLoggedIn ? (
-            <button className={styles.btn} onClick={handleLogout}>
+            <button
+              className={`${styles.btn} ${styles.logoutBtn}`}
+              onClick={handleLogout}
+            >
               Logout
             </button>
           ) : (
@@ -130,6 +133,10 @@ export default function Navbar() {
             </>
           )}
         </div>
+
+        <Link to="Profile">
+          <img src={userLogo} alt="User" className={styles.userLogo} />
+        </Link>
       </nav>
     </>
   );
