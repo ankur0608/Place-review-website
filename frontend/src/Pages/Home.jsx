@@ -4,7 +4,8 @@ import styles from "./Home.module.css";
 import { Link } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext.jsx";
 import heroimg from "../assets/photo.webp";
-const PlaceSlider = lazy(() => import("../Components/PlacesSlider.jsx"));
+const PlacesSlider = lazy(() => import("../Components/PlacesSlider.jsx"));
+
 export default function Home() {
   const { theme } = useTheme();
   return (
@@ -34,7 +35,7 @@ export default function Home() {
         </div>
       </div>
       <Suspense fallback={<div>Loading Places...</div>}>
-        <PlaceSlider />
+        <PlacesSlider />
       </Suspense>
     </>
   );
