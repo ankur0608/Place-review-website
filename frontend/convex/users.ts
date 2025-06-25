@@ -29,3 +29,31 @@ export const getUserByEmail = query({
             .first();
     },
 });
+// Get user by ID (for edit profile or profile page)
+export const getUserById = query({
+    args: { userId: v.id("users") },
+    handler: async (ctx, args) => {
+        const user = await ctx.db.get(args.userId);
+        if (!user) throw new Error("User not found");
+        return user;
+    },
+});
+
+// Update user by ID
+export const updateUser = mutation({
+    args: {
+        userId: v.id("users"),
+        username: v.string(),
+        email: v.string(),
+        password: v.string(),
+        // imageUrl: v.optional(v.string()) // Add this if you're uploading profile images
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.userId, {
+            username: args.username,
+            email: args.email,
+            password: args.password,
+            // imageUrl: args.imageUrl
+        });
+    },
+});

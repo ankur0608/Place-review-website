@@ -1,19 +1,36 @@
 import { useForm } from "react-hook-form";
 import styles from "./Contact.module.css";
 import { useTheme } from "../store/ThemeContext";
+import { insertContact } from "../../convex/contact";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 const Contact = () => {
   const { theme } = useTheme();
-
+  const insertContact = useMutation(api.contact.insertContact);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Contact Form Data:", data);
-    // Optionally send to API
+  const onSubmit = async (data) => {
+    try {
+      // Optional: Save to your Node backend
+      await fetch("http://localhost:5000/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      // ✅ Save to Convex directly using form data
+      await insertContact(data);
+
+      alert("✅ Message sent successfully!");
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      alert("❌ Something went wrong. Try again later.");
+    }
   };
 
   return (

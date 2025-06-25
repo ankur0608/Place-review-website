@@ -1,40 +1,55 @@
 import { useEffect, useState } from "react";
 import styles from "./Profile.module.css";
-import userLogo from "../assets/user.png";
 import { useNavigate } from "react-router-dom";
-
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import userLogo from "../assets/user.png";
 export default function Profile() {
-  const [user, setUser] = useState({ username: "", email: "" });
+  const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
+  const userId = localStorage.getItem("id");
+
+  const userData = useQuery(api.users.getUserById, { userId });
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    const storedEmail = localStorage.getItem("email");
-
-    if (!storedUsername || !storedEmail) {
+    if (!userId) {
       navigate("/login");
     } else {
-      setUser({ username: storedUsername, email: storedEmail });
+      const storedImage = localStorage.getItem("image");
+      setImageUrl(storedImage);
     }
-  }, [navigate]);
+  }, [navigate, userId]);
 
   function handleEdit() {
-    navigate("/edit-profile");
+    navigate("/Editprofile");
   }
+  function handleBack() {
+    navigate("/");
+  }
+
+  if (!userData) return <p style={{ textAlign: "center" }}>Loading...</p>;
 
   return (
     <div className={styles.Profile}>
       <div className={styles.profileContainer}>
         <h2>User Profile</h2>
         <div className={styles.profileCard}>
-          <img src={userLogo} alt="User Avatar" className={styles.avatar} />
+          <img
+            src={localStorage.getItem("image") || userLogo}
+            alt="User Avatar"
+            className={styles.avatar}
+          />
+
           <div className={styles.info}>
             <p>
-              <strong>Username:</strong> {user.username}
+              <strong>Username:</strong> {userData.username}
             </p>
             <p>
-              <strong>Email:</strong> {user.email}
+              <strong>Email:</strong> {userData.email}
             </p>
+            <button className={styles.backButton} onClick={handleBack}>
+              Back to home
+            </button>
             <button onClick={handleEdit} className={styles.editButton}>
               Edit Profile
             </button>

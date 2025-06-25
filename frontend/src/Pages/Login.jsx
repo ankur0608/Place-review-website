@@ -54,9 +54,10 @@ export default function Login() {
       if (result.success) {
         console.log("✅ Login successful");
 
-        localStorage.setItem("token", result.token);  
+        localStorage.setItem("token", result.token);
         localStorage.setItem("username", user.username);
         localStorage.setItem("email", user.email);
+        localStorage.setItem("id", user._id);
 
         setShowSuccess(true);
         modalRef.current.open();

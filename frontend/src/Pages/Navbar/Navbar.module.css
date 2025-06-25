@@ -1,16 +1,17 @@
 .navbar {
   display: flex;
-  justify-content: space-between; /* 🔄 Now properly aligns sections */
+  justify-content: space-between;
   align-items: center;
   background-color: var(--navbar-bg);
   color: var(--text-color);
-  padding: 1.6rem 2rem;
+  padding: 1rem 2rem;
   position: sticky;
   top: 0;
   z-index: 1000;
   margin-bottom: 1.5rem;
 }
 
+/* Logo */
 .logo a {
   text-decoration: none;
   color: var(--accent-color);
@@ -19,116 +20,136 @@
   letter-spacing: 1px;
   transition: color 0.2s;
 }
-
 .logo a:hover {
   color: var(--text-color);
 }
 
+/* Navigation Links */
 .links {
   display: flex;
-  font-size: 20px;
   gap: 2rem;
   list-style: none;
   flex: 1;
-  justify-content: center; /* ✅ centers nav links between logo & buttons */
+  justify-content: center;
+  align-items: center;
   margin: 0;
+  transition: all 0.3s ease;
 }
-
 .link {
   text-decoration: none;
   color: var(--text-color);
+  font-size: 20px;
   font-weight: 500;
 }
-
 .link:hover {
   color: var(--accent-color);
 }
-
 .active {
   color: var(--accent-color);
-  border-bottom: 2.9px solid var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
 }
 
+/* Avatar / User icon */
+.avatar {
+  margin-left: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.avatar:hover {
+  transform: scale(1.05);
+}
+
+/* Buttons */
 .btn {
   background-color: var(--accent-color);
   color: white;
-  padding: 0.4rem 0.5rem;
+  padding: 0.6rem 0.8rem;
   border-radius: 5px;
-  text-decoration: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.btn:hover {
+  background-color: var(--text-color);
+  color: var(--navbar-bg);
 }
 
+/* Theme toggle button */
 .themeButton {
   background: none;
   border: none;
   color: var(--text-color);
   cursor: pointer;
   font-size: 1.7rem;
-  margin-left: 1rem;
-  margin-top: 10px;
-  transition: color 0.18s;
+  transition: color 0.2s;
 }
-
 .themeButton:hover {
   color: var(--accent-color);
-  background: none;
 }
 
+/* Hamburger Menu Button */
 .menuToggle {
   display: none;
-  background: none;
   font-size: 2rem;
   color: var(--text-color);
+  background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.18s;
+  transition: color 0.2s;
 }
-
 .menuToggle:hover {
   color: var(--accent-color);
 }
 
+/* Right-side Buttons for desktop */
 .authButtons {
   display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.userLogo {
-  background-color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  margin-left: 1rem; /* ✅ cleaner, responsive spacing */
-}
-
-.btn {
-  background-color: var(--accent-color);
-  color: white;
-  padding: 0.6rem 0.8rem;
-  border-radius: 5px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 700;
-  transition: background-color 0.3s;
-}
-
-.userLogo:hover {
-  transform: scale(1.05);
-}
-
-.topRightButtons {
-  display: none;
   align-items: center;
   gap: 1rem;
 }
 
+/* For mobile view */
+.topRightButtons,
 .mobileExtras {
   display: none;
+}
+.dropdownWrapper {
+  position: relative;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background-color: var(--navbar-bg);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdownItem {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: var(--text-color);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+}
+
+.dropdownItem:hover {
+  background-color: var(--accent-color);
+  color: white;
 }
 
 @media (max-width: 768px) {
@@ -138,6 +159,8 @@
 
   .topRightButtons {
     display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
   .authButtons {
@@ -148,16 +171,16 @@
     position: absolute;
     top: 100%;
     left: 0;
-    flex-direction: column;
     width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
     background-color: var(--navbar-bg);
     display: none;
-    padding: 1rem;
-    justify-content: flex-start;
   }
 
   .logo a {
-    font-size: 25px;
+    font-size: 1.6rem;
   }
 
   .open {
@@ -167,8 +190,7 @@
   .mobileExtras {
     display: flex;
     flex-direction: column;
-    width: 25%;
-    gap: 0.75rem;
+    gap: 1rem;
     margin-top: 1rem;
   }
 }

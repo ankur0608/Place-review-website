@@ -12,6 +12,14 @@ export default defineSchema({
     users: defineTable({
         username: v.string(),
         email: v.string(),
-        password: v.string(), // hashed password
+        password: v.string(),
     }).index("by_email", ["email"]), // add index for login
+
+    contact: defineTable({
+        name: v.string(),
+        email: v.string(),
+        message: v.string(),
+        createdAt: v.number(), // Use Date.now() when inserting
+    }),
+
 });
