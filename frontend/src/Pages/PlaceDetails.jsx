@@ -3,12 +3,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
-import ReviewForm from "../Components/Reviews.jsx";
+import ReviewForm from "../Components/Reviews.jsx"; // ✅
 import { api } from "../../convex/_generated/api";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
-
-import PlacesSlider from "../Components/PlacesSlider.jsx";
+import PlacesSlider from "../Components/PlacesSlider.jsx"; // ✅ check path case
 
 export default function PlaceDetails() {
   const { id } = useParams();
