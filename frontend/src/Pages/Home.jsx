@@ -4,6 +4,7 @@ import styles from "./Home.module.css";
 import { Link } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext.jsx";
 import heroimg from "../assets/photo.webp";
+
 import PlacesSlider from "../Components/PlacesSlider.jsx";
 
 export default function Home() {

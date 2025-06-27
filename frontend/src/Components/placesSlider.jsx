@@ -6,14 +6,16 @@ import "slick-carousel/slick/slick-theme.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import "./SliderModule.css";
 
-export default function PlaceSlider() {
+export default function PlacesSlider() {
   const [places, setPlaces] = useState([]);
   const { theme } = useTheme();
 
   useEffect(() => {
     async function fetchPlaces() {
       try {
-        const response = await fetch("https://place-review-website-real.onrender.com/places");
+        const response = await fetch(
+          "https://place-review-website-real.onrender.com/places"
+        );
         if (!response.ok) throw new Error("Failed to fetch places.");
         const data = await response.json();
         setPlaces(data);
