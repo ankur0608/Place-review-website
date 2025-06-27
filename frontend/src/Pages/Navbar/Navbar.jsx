@@ -4,7 +4,7 @@ import { CiDark } from "react-icons/ci";
 import { LuSun } from "react-icons/lu";
 import { useTheme } from "../../store/ThemeContext";
 import styles from "./Navbar.module.css";
-// import userLogo from "../../assets/user.png";
+import userLogo from "../../assets/user.png";
 import Dropdown from "../../Components/Dropdown.jsx";
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();

@@ -40,14 +40,11 @@
   font-size: 1.08rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.25s, box-shadow 0.2s;
+  transition:
+    background 0.25s,
+    box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(0, 119, 204, 0.08);
   text-decoration: none;
-}
-
-.button:hover {
-  background: linear-gradient(90deg, #005fa3 60%, #0077cc 100%);
-  box-shadow: 0 4px 16px rgba(0, 119, 204, 0.14);
 }
 
 .info {
@@ -107,6 +104,78 @@
   margin: 2px 0 0 0;
   font-size: 1.01rem;
   color: #333;
+}
+.detailsSection {
+  margin-bottom: 20px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  margin-bottom: 25px;
+}
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  margin-top: 26px;
+  height: 30px;
+  border: none;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 8px;
+}
+
+.saveButton:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: scale(1.02);
+}
+
+/* Heart icon image */
+.saveButton img {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.2s ease;
+}
+
+/* Animate when liked */
+.saveButton.liked img {
+  transform: scale(1.2);
+}
+
+/* Dark theme adjustments */
+.dark .saveButton {
+  color: #f1f1f1;
+}
+.sectionTitle{
+  /* margin-left: 80px; */
+  /* align-items: center; */
+  text-align: center;
+  margin-top: 70px;
+  margin-bottom: 8px;
+  font-size: 25px;
+}
+
+.dark .saveButton:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Optional: shrink heart icon on small screens */
+@media (max-width: 600px) {
+  .heartIcon {
+    font-size: 2rem;
+  }
+}
+
+.dark .sectionTitle {
+  color: #bbdefb;
 }
 
 /* Light theme (default styling) */
@@ -179,5 +248,8 @@
   }
   .reviewsSection {
     padding: 12px 4px 4px 4px;
+  }
+  .sectionTitle{
+    margin-top: 80px;
   }
 }

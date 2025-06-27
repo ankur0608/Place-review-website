@@ -162,7 +162,4 @@
   box-sizing: border-box;
 }
 
-.button:hover {
-  background-color: var(--button-hover-bg);
-  transform: translateY(-1px);
-}
+

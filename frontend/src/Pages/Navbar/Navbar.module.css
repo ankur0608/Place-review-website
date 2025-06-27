@@ -51,7 +51,7 @@
 
 /* Avatar / User icon */
 .avatar {
-  margin-left: 10px;
+  /* margin-left: 10px; */
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -185,6 +185,9 @@
 
   .open {
     display: flex;
+  }
+  .btn{
+    margin-top: -30px;
   }
 
   .mobileExtras {

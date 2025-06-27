@@ -21,5 +21,12 @@ export default defineSchema({
         message: v.string(),
         createdAt: v.number(), // Use Date.now() when inserting
     }),
+    saveplace: defineTable({
+        userId: v.string(),
+        placeId: v.string(),
+    })
+        .index("by_user", ["userId"])
+        .index("by_user_place", ["userId", "placeId"]),
+
 
 });

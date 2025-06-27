@@ -14,6 +14,7 @@ import Profile from "./Pages/Profile.jsx";
 import Editprofile from "./Components/Editprofile.jsx";
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
+const SavedPlace = lazy(() => import("./Components/SavedPlace.jsx"));
 const Layout = () => (
   <>
     <Navbar />
@@ -55,7 +56,7 @@ const router = createBrowserRouter([
       { path: "contact", element: <Contact /> },
       { path: "Profile", element: <Profile /> },
       { path: "Editprofile", element: <Editprofile /> },
-
+      { path: "SavedPlace", element: <SavedPlace /> },
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },
