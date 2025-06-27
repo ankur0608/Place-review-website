@@ -8,7 +8,7 @@ import { api } from "../../convex/_generated/api";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
 
-const PlaceSlider = lazy(() => import("../Components/PlacesSlider.jsx"));
+import PlacesSlider from "../Components/PlacesSlider.jsx";
 
 export default function PlaceDetails() {
   const { id } = useParams();
@@ -157,7 +157,7 @@ export default function PlaceDetails() {
 
       {/* Slider */}
       <Suspense fallback={<div>Loading Places...</div>}>
-        <PlaceSlider />
+        <PlacesSlider />
       </Suspense>
     </>
   );
