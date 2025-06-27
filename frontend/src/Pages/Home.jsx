@@ -1,10 +1,10 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import styles from "./Home.module.css";
 
 import { Link } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext.jsx";
 import heroimg from "../assets/photo.webp";
-const PlacesSlider = lazy(() => import("../Components/PlacesSlider.jsx"));
+import PlacesSlider from "../Components/PlacesSlider.jsx";
 
 export default function Home() {
   const { theme } = useTheme();
