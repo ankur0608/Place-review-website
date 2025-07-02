@@ -2,25 +2,30 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Places.module.css";
 import { useTheme } from "../store/ThemeContext";
+import Loding from "../Components/Loading.jsx";
 
 export default function Places() {
   const [places, setPlaces] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { theme } = useTheme();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchPlaces() {
       try {
-        const response = await fetch("https://place-review-website-real.onrender.com/places");
+        const response = await fetch(
+          "https://place-review-website-real.onrender.com/places"
+        );
         if (!response.ok) throw new Error("Failed to fetch places.");
         const data = await response.json();
         setPlaces(data);
       } catch (error) {
         console.error("Error fetching places:", error.message);
+      } finally {
+        setLoading(false);
       }
     }
-
     fetchPlaces();
   }, []);
 
@@ -46,20 +51,17 @@ export default function Places() {
 
       {/* Category Tabs */}
       <div className={styles.categoryTabs}>
-        {categories.map(
-          (cat, index) =>
-            cat && (
-              <button
-                key={`${cat}-${index}`}
-                className={`${styles.tabButton} ${
-                  selectedCategory === cat ? styles.activeTab : ""
-                }`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {` ${cat} `}
-              </button>
-            )
-        )}
+        {categories.map((cat, index) => (
+          <button
+            key={`${cat}-${index}`}
+            className={`${styles.tabButton} ${
+              selectedCategory === cat ? styles.activeTab : ""
+            }`}
+            onClick={() => setSelectedCategory(cat)}
+          >
+            {cat}
+          </button>
+        ))}
       </div>
 
       {/* Search Bar */}
@@ -82,29 +84,31 @@ export default function Places() {
         )}
       </div>
 
-      {/* Cards */}
+      {/* Cards OR Loading Spinner */}
       <div className={styles.cardGrid}>
-        {filteredPlaces.map((place) => (
-          <Link
-            key={place.id}
-            to={`/places/${place.id}`}
-            className={styles.cardLink}
-          >
-            <div className={styles.card}>
-              <img
-                src={place.image}
-                alt={place.name}
-                className={styles.image}
-              />
-              <div className={styles.cardContent}>
-                <h2 className={styles.name}>{place.name}</h2>
-                <p className={styles.location}>{place.location}</p>
+        {loading ? (
+          <Loding />
+        ) : filteredPlaces.length > 0 ? (
+          filteredPlaces.map((place) => (
+            <Link
+              key={place.id}
+              to={`/places/${place.id}`}
+              className={styles.cardLink}
+            >
+              <div className={styles.card}>
+                <img
+                  src={place.image}
+                  alt={place.name}
+                  className={styles.image}
+                />
+                <div className={styles.cardContent}>
+                  <h2 className={styles.name}>{place.name}</h2>
+                  <p className={styles.location}>{place.location}</p>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
-
-        {filteredPlaces.length === 0 && (
+            </Link>
+          ))
+        ) : (
           <p className={styles.noResults}>No places found.</p>
         )}
       </div>

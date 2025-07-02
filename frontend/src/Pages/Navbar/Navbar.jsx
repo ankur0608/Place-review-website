@@ -4,8 +4,15 @@ import { CiDark } from "react-icons/ci";
 import { LuSun } from "react-icons/lu";
 import { useTheme } from "../../store/ThemeContext";
 import styles from "./Navbar.module.css";
-import userLogo from "../../assets/user.png";
+import userLogo2 from "../../assets/user.png";
 import Dropdown from "../../Components/Dropdown.jsx";
+import {
+  FaHome,
+  FaMapMarkedAlt,
+  FaInfoCircle,
+  FaEnvelope,
+} from "react-icons/fa";
+
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,10 +20,10 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const navItems = [
-    { name: "Home", path: "/" },
-    { name: "Places", path: "/places" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: "Home", path: "/", icon: <FaHome /> },
+    { name: "Places", path: "/places", icon: <FaMapMarkedAlt /> },
+    { name: "About", path: "/about", icon: <FaInfoCircle /> },
+    { name: "Contact", path: "/contact", icon: <FaEnvelope /> },
   ];
 
   useEffect(() => {
@@ -26,11 +33,12 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("image");
     setIsLoggedIn(false);
     navigate("/login");
   };
 
-  const avatar = localStorage.getItem("image") || userLogo;
+  const avatar = localStorage.getItem("image") || userLogo2;
 
   return (
     <nav className={styles.navbar}>
@@ -43,6 +51,21 @@ export default function Navbar() {
       >
         ☰
       </button>
+      {/* Profile Avatar */}
+      <li className={styles.menuToggle}>
+        <div className={styles.menuToggle}>
+          <Dropdown />
+        </div>
+      </li>
+      <div className={styles.menuToggle}>
+        <button
+          onClick={toggleTheme}
+          className={styles.themeButton}
+          aria-label="Toggle Theme"
+        >
+          {theme === "light" ? <CiDark size={26} /> : <LuSun size={26} />}
+        </button>
+      </div>
 
       {/* Logo */}
       <div className={styles.logo}>
@@ -51,8 +74,17 @@ export default function Navbar() {
 
       {/* Nav Links */}
       <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
-        {navItems.map(({ name, path }) => (
-          <li key={name}>
+        {/* ❌ Close Button */}
+        <li className={styles.menuToggle}>
+          <button
+            className={styles.closeBtn}
+            onClick={() => setMenuOpen(false)}
+          >
+            ✕
+          </button>
+        </li>
+        {navItems.map(({ name, path, icon }) => (
+          <li key={name} className={styles.linkWrapper}>
             <NavLink
               to={path}
               end={path === "/"}
@@ -61,16 +93,12 @@ export default function Navbar() {
               }
               onClick={() => setMenuOpen(false)}
             >
-              {name}
+              <span className={styles.mobileIcon}>{icon}</span>
+              <span className={styles.linkText}>{name}</span>
             </NavLink>
           </li>
         ))}
-        {/* Profile Avatar */}
-        <li className={styles.menuToggle}>
-          <Link to="/profile">
-            <img src={avatar} alt="User Avatar" className={styles.avatar} />
-          </Link>
-        </li>
+
         {/* Auth Buttons (Mobile Only) */}
         <li className={styles.mobileExtras}>
           {isLoggedIn ? (

@@ -3,26 +3,45 @@ import styles from "./Profile.module.css";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { jwtDecode } from "jwt-decode";
+
 import userLogo from "../assets/user.png";
+
 export default function Profile() {
   const [imageUrl, setImageUrl] = useState(null);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-  const userId = localStorage.getItem("id");
 
-  const userData = useQuery(api.users.getUserById, { userId });
-
+  // Decode token on mount
   useEffect(() => {
-    if (!userId) {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
       navigate("/login");
-    } else {
-      const storedImage = localStorage.getItem("image");
-      setImageUrl(storedImage);
+      return;
     }
-  }, [navigate, userId]);
+
+    try {
+      const decoded = jwtDecode(token);
+      setUserId(decoded.id); // ✅ Get actual user ID
+    } catch (error) {
+      console.error("Invalid token:", error);
+      navigate("/login");
+    }
+
+    const storedImage = localStorage.getItem("image");
+    setImageUrl(storedImage);
+  }, [navigate]);
+
+  const userData = useQuery(
+    api.users.getUserById,
+    userId ? { userId } : "skip" // 🛡️ Skip query if no userId
+  );
 
   function handleEdit() {
     navigate("/Editprofile");
   }
+
   function handleBack() {
     navigate("/");
   }
@@ -35,11 +54,10 @@ export default function Profile() {
         <h2>User Profile</h2>
         <div className={styles.profileCard}>
           <img
-            src={localStorage.getItem("image") || userLogo}
+            src={imageUrl || userLogo}
             alt="User Avatar"
             className={styles.avatar}
           />
-
           <div className={styles.info}>
             <p>
               <strong>Username:</strong> {userData.username}

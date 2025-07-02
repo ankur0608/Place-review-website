@@ -53,5 +53,14 @@ html,
 
 .app-container {
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover {
+  box-shadow: #2c2c2c inset !important;
+  -webkit-text-fill-color: var(--text-color) !important;
+  transition: background-color 9999s ease-in-out 0s;
 }

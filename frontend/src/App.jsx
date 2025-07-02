@@ -11,6 +11,7 @@ import { useTheme } from "./store/ThemeContext.jsx";
 import Footer from "./Pages/Footer.jsx";
 import Home from "./Pages/Home.jsx";
 import Profile from "./Pages/Profile.jsx";
+import ChatBox from "./Components/ChatBox.jsx";
 import Editprofile from "./Components/Editprofile.jsx";
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
       { path: "Profile", element: <Profile /> },
       { path: "Editprofile", element: <Editprofile /> },
       { path: "SavedPlace", element: <SavedPlace /> },
+      { path: "ChatBox", element: <ChatBox /> },
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },

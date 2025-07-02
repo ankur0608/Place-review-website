@@ -9,26 +9,32 @@ import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import Loading from "../Components/Loading.jsx";
 export default function Signup() {
   const insertUser = useMutation(api.users.insertUser);
   const { theme } = useTheme();
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true); // ✅ Added
   const modalRef = useRef();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
   const navigator = useNavigate();
 
   async function onSubmit(data) {
+    setLoading(true);
     try {
       // 1. Hash password using Node backend
-      const res = await fetch("https://place-review-website-real.onrender.com/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "https://place-review-website-real.onrender.com/signup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       const hashedUser = await res.json(); // { username, email, password (hashed) }
 
@@ -41,6 +47,8 @@ export default function Signup() {
     } catch (err) {
       console.error("Signup error:", err);
       alert("Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -135,8 +143,12 @@ export default function Signup() {
               )}
             </div>
 
-            <button type="submit" className={styles.button}>
-              Sign Up
+            <button
+              type="submit"
+              className={styles.button}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Sign Up"}
             </button>
           </form>
 

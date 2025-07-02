@@ -28,5 +28,9 @@ export default defineSchema({
         .index("by_user", ["userId"])
         .index("by_user_place", ["userId", "placeId"]),
 
-
+    messages: defineTable({
+        sender: v.string(),
+        text: v.string(),
+        createdAt: v.number(),
+    }).index("by_time", ["createdAt"]),
 });

@@ -20,28 +20,32 @@
   --accent-color: #4e9eff;
   --accent-color-hover: #1a73e8;
 }
- /* Container layout */
+
+/* Container layout */
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  min-height: 80vh;
-  transition: background-color 0.3s, color 0.3s;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
+/* Card */
 .card {
   background-color: var(--card-bg);
   padding: 2.5rem;
   border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 600px;
+  max-width: 540px;
 }
 
 /* Headings */
 .heading {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 0.5rem;
   text-align: center;
   color: var(--text-color);
@@ -52,30 +56,34 @@
   margin-bottom: 2rem;
   font-size: 1rem;
   color: var(--text-muted);
+  line-height: 1.4;
 }
 
 /* Form */
 .formGroup {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   font-weight: 600;
   color: var(--text-color);
+  font-size: 0.95rem;
 }
 
 .inputField,
 .textarea {
   width: 100%;
-  padding: 0.75rem 0.5rem;
+  padding: 0.7rem 0.75rem;
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background-color: var(--input-bg);
   color: var(--text-color);
-  font-size: 0.9rem;
-  transition: border-color 0.3s, background-color 0.3s;
+  font-size: 0.95rem;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .inputField:focus,
@@ -92,32 +100,34 @@
 .error {
   color: #e74c3c;
   font-size: 0.875rem;
-  margin-top: 0.5rem;
+  margin-top: 0.35rem;
 }
 
-/* Submit button */
+/* Submit Button */
 .button {
-  width: 40%;
-  padding: 0.65rem;
-  font-size: 0.9rem;
-  font-weight: bold;
+  display: inline-block;
+margin-left: 10px;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
   border-radius: 8px;
   background-color: var(--accent-color);
   color: #fff;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
 }
 
 .button:hover {
   background-color: var(--accent-color-hover);
 }
 
-/* Responsive adjustments */
+/* Tablet Adjustments */
 @media (max-width: 768px) {
   .card {
     padding: 2rem;
-    border-radius: 0.75rem;
   }
 
   .heading {
@@ -130,17 +140,16 @@
 
   .inputField,
   .textarea {
+    width: 95%;
     font-size: 0.95rem;
-  }
-
-  .button {
-    width: 100%;
   }
 }
 
+/* Mobile Adjustments */
 @media (max-width: 480px) {
   .card {
     padding: 1.5rem;
+    border-radius: 0.75rem;
   }
 
   .heading {
@@ -157,12 +166,13 @@
 
   .inputField,
   .textarea {
-    font-size: 0.85rem;
-    padding: 0.6rem 0.5rem;
+    width: 93%;
+    font-size: 0.875rem;
+    padding: 0.65rem 0.7rem;
   }
 
   .button {
-    font-size: 0.85rem;
-    padding: 0.6rem;
+    font-size: 0.9rem;
+    padding: 0.7rem;
   }
 }

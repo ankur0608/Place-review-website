@@ -5,10 +5,11 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useTheme } from "../store/ThemeContext.jsx"; // ✅
 import "./SliderModule.css"; // ✅
-
+import Loading from "./Loading.jsx";
 export default function PlacesSlider() {
   const [places, setPlaces] = useState([]);
   const { theme } = useTheme();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchPlaces() {
@@ -21,6 +22,8 @@ export default function PlacesSlider() {
         setPlaces(data);
       } catch (error) {
         console.error("Error fetching places:", error.message);
+      } finally {
+        setLoading(false); // ✅ Done loading
       }
     }
 
@@ -41,7 +44,17 @@ export default function PlacesSlider() {
       { breakpoint: 480, settings: { slidesToShow: 1 } },
     ],
   };
-
+  // if (loading) {
+  //   return (
+  //     <div
+  //       className={`slider-container ${
+  //         theme === "dark" ? "dark-theme" : "light-theme"
+  //       }`}
+  //     >
+  //       <Loading />
+  //     </div>
+  //   );
+  // }
   return (
     <div
       className={`slider-container ${
@@ -54,26 +67,30 @@ export default function PlacesSlider() {
       </div>
 
       <Slider {...sliderSettings}>
-        {places.map((place) => {
-          return (
-            <Link
-              key={place.id}
-              to={`/places/${place.id}`}
-              className="cardLink"
-            >
-              <div key={place.id} className="place-card">
-                <img
-                  src={place.image}
-                  alt={place.name}
-                  className="place-image"
-                />
-                <h3 className={place.name}>{place.name}</h3>
-                <p className="place-location">{place.location}</p>
-                <p className="place-description">{place.description}</p>
-              </div>
-            </Link>
-          );
-        })}
+        {loading ? (
+          <Loading />
+        ) : (
+          places.map((place) => {
+            return (
+              <Link
+                key={place.id}
+                to={`/places/${place.id}`}
+                className="cardLink"
+              >
+                <div key={place.id} className="place-card">
+                  <img
+                    src={place.image}
+                    alt={place.name}
+                    className="place-image"
+                  />
+                  <h3 className={place.name}>{place.name}</h3>
+                  <p className="place-location">{place.location}</p>
+                  <p className="place-description">{place.description}</p>
+                </div>
+              </Link>
+            );
+          })
+        )}
       </Slider>
     </div>
   );
