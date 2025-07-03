@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useTheme } from "../store/ThemeContext.jsx"; // ✅
-import "./SliderModule.css"; // ✅
+import { useTheme } from "../store/ThemeContext.jsx";
+import "./SliderModule.css"; 
 import Loading from "./Loading.jsx";
 export default function PlacesSlider() {
   const [places, setPlaces] = useState([]);
