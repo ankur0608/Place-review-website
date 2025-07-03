@@ -3,7 +3,7 @@ import styles from "./Signup.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext";
 import { useRef, useState } from "react";
-import Modal from "../Components/Modal";
+// import Modal from "../Components/Modal";
 import { FaRegUser } from "react-icons/fa";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
@@ -13,7 +13,7 @@ import Loading from "../Components/Loading.jsx";
 export default function Signup() {
   const insertUser = useMutation(api.users.insertUser);
   const { theme } = useTheme();
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true); // ✅ Added
   const modalRef = useRef();
   const {
@@ -40,10 +40,10 @@ export default function Signup() {
 
       // 2. Store hashed user in Convex
       await insertUser(hashedUser);
-
+      navvigator("/login");
       // 3. Show success modal
-      setShowModal(true);
-      modalRef.current.open();
+      // setShowModal(true);
+      // modalRef.current.open();
     } catch (err) {
       console.error("Signup error:", err);
       alert("Signup failed. Please try again.");
@@ -52,20 +52,20 @@ export default function Signup() {
     }
   }
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    navigator("/login");
-  };
+  // const handleCloseModal = () => {
+  //   setShowModal(false);
+  //   navigator("/login");
+  // };
 
   return (
     <>
-      <Modal
+      {/* <Modal
         ref={modalRef}
         buttonCaption="Go to Login"
         onModalclose={handleCloseModal}
       >
         <h1>Signup successful!</h1>
-      </Modal>
+      </Modal> */}
 
       <div className={`${styles.container} ${styles[theme]}`}>
         <div className={styles.card}>

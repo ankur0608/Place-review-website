@@ -2,8 +2,12 @@ import { useForm } from "react-hook-form";
 import styles from "./ForgotPassword.module.css";
 import { useTheme } from "../store/ThemeContext";
 import { IoMailOutline } from "react-icons/io5";
+import axios from "axios";
+import { useState } from "react";
+
 const ForgotPassword = () => {
   const { theme } = useTheme();
+  const [message, setMessage] = useState("");
 
   const {
     register,
@@ -11,9 +15,25 @@ const ForgotPassword = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Password reset request for:", data.email);
-    // Add your API call here
+  const onSubmit = async (data) => {
+    try {
+      console.log("📧 Submitting email:", data.email);
+      const res = await axios.post(
+        "https://place-review-website-real.onrender.comforgot-password/request-password-reset",
+        { email: data.email }
+      );
+
+      if (res.status === 200) {
+        setMessage("✅ Reset link sent! Check your email.");
+      } else {
+        throw new Error("Unexpected response from server");
+      }
+    } catch (error) {
+      console.error("❌ Error sending reset link:", error);
+      setMessage(
+        error?.response?.data?.message || "❌ Failed to send reset link."
+      );
+    }
   };
 
   return (
@@ -49,10 +69,13 @@ const ForgotPassword = () => {
               <p className={styles.error}>{errors.email.message}</p>
             )}
           </div>
+
           <button type="submit" className={styles.button}>
             Send Reset Link
           </button>
         </form>
+
+        {message && <p className={styles.message}>{message}</p>}
       </div>
     </div>
   );

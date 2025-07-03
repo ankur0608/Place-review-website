@@ -17,7 +17,7 @@ export default function ChatBox() {
     setIsTyping(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/chat", {
+      const res = await fetch("https://place-review-website-real.onrender.comapi/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),

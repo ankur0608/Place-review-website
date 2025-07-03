@@ -9,11 +9,15 @@ export default defineSchema({
         rating: v.number(),
         placeName: v.optional(v.string()),
     }),
+    // In schema.ts
     users: defineTable({
         username: v.string(),
         email: v.string(),
         password: v.string(),
-    }).index("by_email", ["email"]), // add index for login
+        resetToken: v.optional(v.string()),
+        resetTokenExpiry: v.optional(v.number()),
+    }).index("by_email", ["email"]),
+
 
     contact: defineTable({
         name: v.string(),

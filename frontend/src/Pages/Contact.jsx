@@ -17,7 +17,7 @@ const Contact = () => {
   const onSubmit = async (data) => {
     try {
       // Optional: Save to your Node backend
-      await fetch("http://localhost:5000/contact", {
+      await fetch("https://place-review-website-real.onrender.comcontact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

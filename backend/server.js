@@ -1,19 +1,27 @@
+require("dotenv").config(); // 🔑 Load environment variables
+
 const express = require("express");
 const cors = require("cors");
-const placesRoute = require("./routes/placesRoute"); // 📦 Your protected + public place routes
-const authRoute = require("./routes/authRoute"); // 🔐 Signup, login
-const contactRoute = require("./routes/contact");
-const chatRoute = require("./routes/chatRoute");
+
+const placesRoute = require("./routes/placesRoute"); // 📍 Public/private places
+const authRoute = require("./routes/authRoute"); // 🔐 Signup/Login
+const contactRoute = require("./routes/contact"); // 📬 Contact form
+const chatRoute = require("./routes/chatRoute"); // 💬 Real-time chat
+const forgotPasswordRoute = require("./routes/forgotPasswordRoute"); // 🔑 Password reset
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors()); // Enable cross-origin requests
-app.use(express.json()); // Parse JSON in requests
+app.use(cors()); // ✅ Allow frontend access
+app.use(express.json()); // ✅ Enable JSON body parsing
 
-app.use("/places", placesRoute); // All /places/* routes
-app.use("/", authRoute); // /signup, /login
+// 🛣️ Register route handlers
+app.use("/places", placesRoute);
+app.use("/", authRoute);
 app.use("/contact", contactRoute);
 app.use("/api/chat", chatRoute);
+app.use("/forgot-password", forgotPasswordRoute);
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });

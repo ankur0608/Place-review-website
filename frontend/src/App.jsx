@@ -1,21 +1,26 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
+// Core routes (load eagerly)
 import Signup from "./Pages/Sign-up.jsx";
-import About from "./Pages/About.jsx";
-import Navbar from "./Pages/Navbar/Navbar.jsx";
-import Contact from "./Pages/Contact.jsx";
 import Login from "./Pages/Login.jsx";
 import ForgotPassword from "./Pages/ForgotPassword.jsx";
-import { useTheme } from "./store/ThemeContext.jsx";
-import Footer from "./Pages/Footer.jsx";
 import Home from "./Pages/Home.jsx";
-import Profile from "./Pages/Profile.jsx";
-import ChatBox from "./Components/ChatBox.jsx";
-import Editprofile from "./Components/Editprofile.jsx";
+import About from "./Pages/About.jsx";
+import Contact from "./Pages/Contact.jsx";
+import Navbar from "./Pages/Navbar/Navbar.jsx";
+import Footer from "./Pages/Footer.jsx";
+import { useTheme } from "./store/ThemeContext.jsx";
+
+// Lazy-loaded routes (heavier components)
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
 const SavedPlace = lazy(() => import("./Components/SavedPlace.jsx"));
+const Profile = lazy(() => import("./Pages/Profile.jsx"));
+const ChatBox = lazy(() => import("./Components/ChatBox.jsx"));
+const Editprofile = lazy(() => import("./Components/Editprofile.jsx"));
+const ResetPassword = lazy(() => import("./Pages/ResetPassword.jsx"));
+
 const Layout = () => (
   <>
     <Navbar />
@@ -31,12 +36,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-
+      { index: true, element: <Home /> },
       { path: "about", element: <About /> },
+      { path: "contact", element: <Contact /> },
+
       {
         path: "places",
         element: (
@@ -53,12 +56,46 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-
-      { path: "contact", element: <Contact /> },
-      { path: "Profile", element: <Profile /> },
-      { path: "Editprofile", element: <Editprofile /> },
-      { path: "SavedPlace", element: <SavedPlace /> },
-      { path: "ChatBox", element: <ChatBox /> },
+      {
+        path: "SavedPlace",
+        element: (
+          <Suspense fallback={<div>Loading Saved Places...</div>}>
+            <SavedPlace />
+          </Suspense>
+        ),
+      },
+      {
+        path: "Profile",
+        element: (
+          <Suspense fallback={<div>Loading Profile...</div>}>
+            <Profile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "Editprofile",
+        element: (
+          <Suspense fallback={<div>Loading Edit Profile...</div>}>
+            <Editprofile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "ChatBox",
+        element: (
+          <Suspense fallback={<div>Loading Chat...</div>}>
+            <ChatBox />
+          </Suspense>
+        ),
+      },
+      {
+        path: "reset-password",
+        element: (
+          <Suspense fallback={<div>Loading Reset Password...</div>}>
+            <ResetPassword />
+          </Suspense>
+        ),
+      },
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },
@@ -72,7 +109,9 @@ function App() {
 
   return (
     <div className={`app-container ${theme}`}>
-      <RouterProvider router={router} />
+      <Suspense fallback={<div>Loading App...</div>}>
+        <RouterProvider router={router} />
+      </Suspense>
     </div>
   );
 }

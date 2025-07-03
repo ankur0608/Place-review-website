@@ -3,7 +3,7 @@ import styles from "./Login.module.css";
 import { useTheme } from "../store/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
-import Modal from "../Components/Modal";
+// import Modal from "../Components/Modal";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
 import { useConvex } from "convex/react";
@@ -13,7 +13,7 @@ import { api } from "../../convex/_generated/api";
 export default function Login() {
   const { theme } = useTheme();
   const [showSuccess, setShowSuccess] = useState(false);
-  const modalRef = useRef();
+  // const modalRef = useRef();
 
   const {
     register,
@@ -70,20 +70,20 @@ export default function Login() {
     }
   };
 
-  function handleCloseModal() {
-    setShowSuccess(false);
-    navigator("/");
-  }
+  // function handleCloseModal() {
+  //   setShowSuccess(false);
+  //   navigator("/");
+  // }
 
   return (
     <>
-      <Modal
+      {/* <Modal
         ref={modalRef}
         buttonCaption="Okay"
         onModalclose={handleCloseModal}
       >
         <h2>Login successful!</h2>
-      </Modal>
+      </Modal> */}
 
       <div className={`${styles.container} ${styles[theme]}`}>
         <div className={styles.card}>

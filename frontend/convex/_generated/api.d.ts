@@ -13,10 +13,13 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as api_setResetToken from "../api/setResetToken.js";
+import type * as api_updatePassword from "../api/updatePassword.js";
 import type * as contact from "../contact.js";
 import type * as messages from "../messages.js";
 import type * as reviews from "../reviews.js";
 import type * as saveplace from "../saveplace.js";
+import type * as setResetToken from "../setResetToken.js";
 import type * as users from "../users.js";
 
 /**
@@ -28,10 +31,13 @@ import type * as users from "../users.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "api/setResetToken": typeof api_setResetToken;
+  "api/updatePassword": typeof api_updatePassword;
   contact: typeof contact;
   messages: typeof messages;
   reviews: typeof reviews;
   saveplace: typeof saveplace;
+  setResetToken: typeof setResetToken;
   users: typeof users;
 }>;
 export declare const api: FilterApi<
