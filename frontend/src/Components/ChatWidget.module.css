@@ -1,0 +1,39 @@
+.fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #4f8cff 0%, #38cfff 100%);
+  color: #fff;
+  font-size: 2rem;
+  border: none;
+  box-shadow: 0 4px 16px rgba(79, 140, 255, 0.18);
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.fab:hover {
+  background: linear-gradient(90deg, #2563eb 0%, #38cfff 100%);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.18);
+}
+
+.chatBoxWrapper {
+  position: fixed;
+  bottom: 100px;
+  right: 40px;
+  z-index: 1000;
+  width: 370px;
+  max-width: 95vw;
+  max-height: 75vh;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  border-radius: 22px;
+  overflow: hidden;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}

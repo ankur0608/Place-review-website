@@ -104,6 +104,8 @@ const router = createBrowserRouter([
   { path: "forgot-password", element: <ForgotPassword /> },
 ]);
 
+import ChatWidget from "./Components/ChatWidget";
+
 function App() {
   const { theme } = useTheme();
 
@@ -112,6 +114,7 @@ function App() {
       <Suspense fallback={<div>Loading App...</div>}>
         <RouterProvider router={router} />
       </Suspense>
+      <ChatWidget />
     </div>
   );
 }

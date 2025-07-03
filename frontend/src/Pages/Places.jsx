@@ -3,38 +3,30 @@ import { Link } from "react-router-dom";
 import styles from "./Places.module.css";
 import { useTheme } from "../store/ThemeContext";
 import Loding from "../Components/Loading.jsx";
+import { useQuery } from "@tanstack/react-query";
+
+function fetchPlaces() {
+  return fetch("https://place-review-website-real.onrender.com/places").then(
+    (res) => res.json()
+  );
+}
 
 export default function Places() {
-  const [places, setPlaces] = useState([]);
+  const { data: places, isLoading, error } = useQuery({
+    queryKey: ["places"],
+    queryFn: fetchPlaces,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { theme } = useTheme();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchPlaces() {
-      try {
-        const response = await fetch(
-          "https://place-review-website-real.onrender.com/places"
-        );
-        if (!response.ok) throw new Error("Failed to fetch places.");
-        const data = await response.json();
-        setPlaces(data);
-      } catch (error) {
-        console.error("Error fetching places:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPlaces();
-  }, []);
 
   const categories = [
     "All",
-    ...new Set(places.map((p) => p.category).filter(Boolean)),
+    ...new Set(places?.map((p) => p.category).filter(Boolean)),
   ];
 
-  const filteredPlaces = places.filter((place) => {
+  const filteredPlaces = places?.filter((place) => {
     const matchesSearch =
       place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       place.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -86,9 +78,9 @@ export default function Places() {
 
       {/* Cards OR Loading Spinner */}
       <div className={styles.cardGrid}>
-        {loading ? (
+        {isLoading ? (
           <Loding />
-        ) : filteredPlaces.length > 0 ? (
+        ) : filteredPlaces?.length > 0 ? (
           filteredPlaces.map((place) => (
             <Link
               key={place.id}

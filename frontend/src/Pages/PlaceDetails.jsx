@@ -1,6 +1,7 @@
 import { useEffect, useState, lazy, Suspense } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
+import { useQuery as TanstackUseQuery } from "@tanstack/react-query";
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import ReviewForm from "../Components/Reviews.jsx"; // ✅
@@ -8,6 +9,11 @@ import { api } from "../../convex/_generated/api";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
 import PlacesSlider from "../Components/Slider.jsx"; // ✅ check path case
+
+function fetchPlaceDetails(id) {
+  return fetch(`https://place-review-website-real.onrender.com/places/${id}`)
+    .then((res) => res.json());
+}
 
 export default function PlaceDetails() {
   const { id } = useParams();
@@ -32,23 +38,25 @@ export default function PlaceDetails() {
   }, [navigate]);
 
   // Fetch place data from backend
+  const { data: placeData, isLoading, error: fetchError } = TanstackUseQuery({
+    queryKey: ["place", id],
+    queryFn: () => fetchPlaceDetails(id),
+    staleTime: 1000 * 60 * 5,
+  });
+
   useEffect(() => {
-    async function fetchPlace() {
-      try {
-        const response = await fetch(
-          `https://place-review-website-real.onrender.com/places/${id}`
-        );
-        if (!response.ok) throw new Error("Place not found");
-        const data = await response.json();
-        setPlace(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    if (placeData) {
+      setPlace(placeData);
+      setLoading(false);
     }
-    fetchPlace();
-  }, [id]);
+  }, [placeData]);
+
+  useEffect(() => {
+    if (fetchError) {
+      setError(fetchError.message);
+      setLoading(false);
+    }
+  }, [fetchError]);
 
   // Convex queries and mutations
   const toggleSave = useMutation(api.saveplace.toggle);
