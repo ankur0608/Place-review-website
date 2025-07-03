@@ -24,7 +24,7 @@ const ResetPassword = () => {
     try {
       console.log("🔐 Submitting reset with token:", token);
       const res = await axios.post(
-        "https://place-review-website-real.onrender.comforgot-password/reset-password",
+        "https://place-review-website-real.onrender.com/forgot-password/reset-password",
         {
           token,
           newPassword: data.password,

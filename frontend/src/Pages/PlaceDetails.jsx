@@ -1,34 +1,34 @@
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { useQuery as TanstackUseQuery } from "@tanstack/react-query";
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
-import ReviewForm from "../Components/Reviews.jsx"; // ✅
+import ReviewForm from "../Components/Reviews.jsx";
 import { api } from "../../convex/_generated/api";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
-import PlacesSlider from "../Components/Slider.jsx"; // ✅ check path case
+const PlacesSlider = lazy(() => import("../Components/Slider.jsx"));
 
 function fetchPlaceDetails(id) {
-  return fetch(`https://place-review-website-real.onrender.com/places/${id}`)
-    .then((res) => res.json());
+  return fetch(
+    `https://place-review-website-real.onrender.com/places/${id}`
+  ).then((res) => res.json());
 }
 
 export default function PlaceDetails() {
   const { id } = useParams();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const messagesEndRef = useRef(null);
 
   const [place, setPlace] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get userId from localStorage
   const userId = localStorage.getItem("id");
-  console.log("✅ userId:", userId);
+  const userName = localStorage.getItem("username");
 
-  // Redirect if not logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -37,8 +37,11 @@ export default function PlaceDetails() {
     }
   }, [navigate]);
 
-  // Fetch place data from backend
-  const { data: placeData, isLoading, error: fetchError } = TanstackUseQuery({
+  const {
+    data: placeData,
+    isLoading,
+    error: fetchError,
+  } = TanstackUseQuery({
     queryKey: ["place", id],
     queryFn: () => fetchPlaceDetails(id),
     staleTime: 1000 * 60 * 5,
@@ -58,7 +61,6 @@ export default function PlaceDetails() {
     }
   }, [fetchError]);
 
-  // Convex queries and mutations
   const toggleSave = useMutation(api.saveplace.toggle);
   const savedPlaces = useQuery(
     api.saveplace.getSaved,
@@ -66,40 +68,70 @@ export default function PlaceDetails() {
   );
   const isSaved = savedPlaces?.some((p) => p.placeId === id);
 
-  // Handle save toggle
   async function handleSave() {
     if (!userId) {
       alert("User ID not found. Please log in again.");
       return;
     }
     try {
-      console.log("🖱️ Saving/un-saving place:", { userId, placeId: id });
       await toggleSave({ userId, placeId: id });
     } catch (err) {
       alert("Error saving place: " + err.message);
     }
   }
 
-  // Reviews
   const reviews = useQuery(
     api.reviews.list,
     place ? { placeId: String(id) } : "skip"
   );
   const addReview = useMutation(api.reviews.add);
+  const updateReview = useMutation(api.reviews.update);
+  const deleteReview = useMutation(api.reviews.remove);
 
-  const handleReviewSubmit = async (reviewData) => {
+  const userReview = reviews?.find((r) => r.userId === userId);
+  const [editing, setEditing] = useState(false);
+
+  const handleReviewSubmit = async ({ comment, rating }) => {
+    if (!comment.trim() || rating <= 0) {
+      alert("Please enter a valid comment and rating.");
+      return;
+    }
+
     try {
-      await addReview({
-        ...reviewData,
-        placeId: String(id),
-        placeName: place.name,
-      });
+      if (userReview && editing) {
+        await updateReview({
+          reviewId: userReview._id,
+          comment,
+          rating,
+        });
+        setEditing(false);
+      } else {
+        await addReview({
+          name: userName,
+          comment,
+          rating,
+          placeId: String(id),
+          placeName: place.name,
+          userId,
+        });
+      }
     } catch (err) {
       alert("Error submitting review: " + err.message);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  const handleDeleteReview = async () => {
+    if (!userReview) return;
+    if (!window.confirm("Are you sure you want to delete your review?")) return;
+    try {
+      await deleteReview({ reviewId: userReview._id });
+      setEditing(false);
+    } catch (err) {
+      alert("Error deleting review: " + err.message);
+    }
+  };
+
+  if (loading || isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!place) return <p>No place found.</p>;
 
@@ -110,13 +142,9 @@ export default function PlaceDetails() {
           theme === "dark" ? styles.dark : styles.light
         }`}
       >
-        {/* Title */}
         <h1 className={styles.title}>{place.name}</h1>
-
-        {/* Image */}
         <img src={place.image} alt={place.name} className={styles.image} />
 
-        {/* Info */}
         <div className={styles.detailsSection}>
           <p className={styles.info}>
             <strong className={styles.locationLabel}>Location:</strong>{" "}
@@ -125,7 +153,6 @@ export default function PlaceDetails() {
           <p className={styles.description}>{place.description}</p>
         </div>
 
-        {/* Actions */}
         <div className={styles.actions}>
           <div
             className={`${styles.saveButton} ${isSaved ? styles.liked : ""}`}
@@ -134,19 +161,42 @@ export default function PlaceDetails() {
             <img src={isSaved ? heartOutline : heartFilled} alt="heart icon" />
             <span>{isSaved ? "Saved" : "Save Place"}</span>
           </div>
-
           <Link to="/places">
             <button className={styles.button}>Go Back</button>
           </Link>
         </div>
 
-        {/* Review Form */}
         <div className={styles.reviewFormWrapper}>
-          <h3 className={styles.sectionTitle}>Give a Review</h3>
-          <ReviewForm onSubmit={handleReviewSubmit} />
+          <h3 className={styles.sectionTitle}>
+            {userReview ? "Your Review" : "Give a Review"}
+          </h3>
+
+          {!userReview || editing ? (
+            <ReviewForm
+              onSubmit={handleReviewSubmit}
+              initialComment={userReview?.comment || ""}
+              initialRating={userReview?.rating || 0}
+              isEditing={editing}
+              onCancel={() => setEditing(false)}
+            />
+          ) : (
+            <div className={styles.reviewItem}>
+              <p>
+                <strong>{userReview.name}</strong> rated it ⭐{" "}
+                {userReview.rating}/5
+              </p>
+              <p>{userReview.comment}</p>
+              <button onClick={() => setEditing(true)}>Edit Review</button>
+              <button
+                onClick={handleDeleteReview}
+                style={{ marginLeft: 8, color: "red" }}
+              >
+                Delete Review
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Reviews */}
         {reviews?.length > 0 && (
           <div className={styles.reviewsSection}>
             <h3>User Reviews</h3>
@@ -156,13 +206,23 @@ export default function PlaceDetails() {
                   <strong>{review.name}</strong> rated it ⭐ {review.rating}/5
                 </p>
                 <p>{review.comment}</p>
+                {review.userId === userId && !userReview && (
+                  <div>
+                    <button onClick={() => setEditing(true)}>Edit</button>
+                    <button
+                      onClick={handleDeleteReview}
+                      style={{ marginLeft: 8, color: "red" }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Slider */}
       <Suspense fallback={<div>Loading Places...</div>}>
         <PlacesSlider />
       </Suspense>

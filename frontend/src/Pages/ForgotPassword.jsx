@@ -19,7 +19,7 @@ const ForgotPassword = () => {
     try {
       console.log("📧 Submitting email:", data.email);
       const res = await axios.post(
-        "https://place-review-website-real.onrender.comforgot-password/request-password-reset",
+        "https://place-review-website-real.onrender.com/forgot-password/request-password-reset",
         { email: data.email }
       );
 
