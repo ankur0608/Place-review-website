@@ -12,6 +12,20 @@ const forgotPasswordRoute = require("./routes/forgotPasswordRoute"); // 🔑 Pas
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const cors = require("cors");
+
+const allowedOrigins = [
+  "http://localhost:5173", // dev
+  "https://place-review-website-real.vercel.app", // production
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+
 app.use(cors()); // ✅ Allow frontend access
 app.use(express.json()); // ✅ Enable JSON body parsing
 

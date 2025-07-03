@@ -40,7 +40,7 @@ export default function Signup() {
 
       // 2. Store hashed user in Convex
       await insertUser(hashedUser);
-      navvigator("/login");
+      navigator("/login");
       // 3. Show success modal
       // setShowModal(true);
       // modalRef.current.open();
