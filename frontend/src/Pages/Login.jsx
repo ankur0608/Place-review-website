@@ -60,7 +60,8 @@ export default function Login() {
         localStorage.setItem("id", user._id);
 
         setShowSuccess(true);
-        modalRef.current.open();
+        // modalRef.current.open();
+        navigator("/");
       } else {
         alert("Invalid password");
       }
