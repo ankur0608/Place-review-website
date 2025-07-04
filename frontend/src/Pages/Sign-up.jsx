@@ -6,7 +6,7 @@ import { FaRegUser } from "react-icons/fa";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
 import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 
 export default function Signup() {
   const insertUser = useMutation(api.users.insertUser);

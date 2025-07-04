@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import styles from "./Contact.module.css";
 import { useTheme } from "../store/ThemeContext";
-import { insertContact } from "../../convex/contact";
+import { insertContact } from "../../../convex/contact";
 import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 
 const Contact = () => {
   const { theme } = useTheme();

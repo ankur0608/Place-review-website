@@ -5,7 +5,7 @@ import { useQuery as TanstackUseQuery } from "@tanstack/react-query";
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import ReviewForm from "../Components/Reviews.jsx";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api.js";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
 const PlacesSlider = lazy(() => import("../Components/Slider.jsx"));

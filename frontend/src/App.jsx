@@ -1,10 +1,10 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
-// Core routes (load eagerly)
-import Signup from "./Pages/Sign-up.jsx";
-import Login from "./Pages/Login.jsx";
-import ForgotPassword from "./Pages/ForgotPassword.jsx";
+// Core routes (eager load)
+// import Signup from "./Pages/Sign-up.jsx";
+// import Login from "./Pages/Login.jsx";
+// import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import Home from "./Pages/Home.jsx";
 import About from "./Pages/About.jsx";
 import Contact from "./Pages/Contact.jsx";
@@ -12,15 +12,19 @@ import Navbar from "./Pages/Navbar/Navbar.jsx";
 import Footer from "./Pages/Footer.jsx";
 import { useTheme } from "./store/ThemeContext.jsx";
 
-// Lazy-loaded routes (heavier components)
+// Lazy-loaded routes (heavier)
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
 const SavedPlace = lazy(() => import("./Components/SavedPlace.jsx"));
 const Profile = lazy(() => import("./Pages/Profile.jsx"));
 const ChatBox = lazy(() => import("./Components/ChatBox.jsx"));
 const Editprofile = lazy(() => import("./Components/Editprofile.jsx"));
-const ResetPassword = lazy(() => import("./Pages/ResetPassword.jsx"));
+const Signup = lazy(() => import("./Pages/Sign-up.jsx"));
+const Login = lazy(() => import("./Pages/Login.jsx"));
 
+// const ResetPassword = lazy(() => import("./Pages/ResetPassword.jsx"));
+
+// Shared layout
 const Layout = () => (
   <>
     <Navbar />
@@ -31,6 +35,7 @@ const Layout = () => (
   </>
 );
 
+// Route definitions
 const router = createBrowserRouter([
   {
     path: "/",
@@ -88,24 +93,26 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
-        path: "reset-password",
-        element: (
-          <Suspense fallback={<div>Loading Reset Password...</div>}>
-            <ResetPassword />
-          </Suspense>
-        ),
-      },
+      // {
+      //   path: "reset-password",
+      //   element: (
+      //     <Suspense fallback={<div>Loading Reset Password...</div>}>
+      //       <ResetPassword />
+      //     </Suspense>
+      //   ),
+      // },
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },
   { path: "signup", element: <Signup /> },
   { path: "login", element: <Login /> },
-  { path: "forgot-password", element: <ForgotPassword /> },
+  // { path: "forgot-password", element: <ForgotPassword /> },
 ]);
 
+// Chat widget (optional)
 import ChatWidget from "./Components/ChatWidget";
 
+// Root App
 function App() {
   const { theme } = useTheme();
 

@@ -1,6 +1,7 @@
-import { useState } from "react";
-import ChatBox from "./ChatBox";
+import { useState, lazy, Suspense } from "react";
 import styles from "./ChatWidget.module.css";
+
+const ChatBox = lazy(() => import("./ChatBox"));
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -9,7 +10,9 @@ export default function ChatWidget() {
     <>
       {open && (
         <div className={styles.chatBoxWrapper}>
-          <ChatBox />
+          <Suspense fallback={<div>Loading chat...</div>}>
+            <ChatBox />
+          </Suspense>
         </div>
       )}
       <button

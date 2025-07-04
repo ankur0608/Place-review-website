@@ -7,7 +7,7 @@ import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
 import { useConvex } from "convex/react";
 
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 
 export default function Login() {
   const { theme } = useTheme();

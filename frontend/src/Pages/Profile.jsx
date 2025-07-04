@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./Profile.module.css";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { jwtDecode } from "jwt-decode";
 
 import userLogo from "../assets/user.png";

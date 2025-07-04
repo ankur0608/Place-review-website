@@ -52,6 +52,7 @@ export default function Review({
       </div>
       <form onSubmit={handleSubmit(onFormSubmit)} className={styles.form}>
         <textarea
+          className={styles.textarea}
           placeholder="Write your review..."
           {...register("comment", { required: "Comment is required" })}
         />

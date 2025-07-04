@@ -74,7 +74,7 @@
 
 .inputField,
 .textarea {
-  width: 100%;
+  width: 95%;
   padding: 0.7rem 0.75rem;
   border-radius: 8px;
   border: 1px solid var(--border-color);
@@ -106,7 +106,6 @@
 /* Submit Button */
 .button {
   display: inline-block;
-margin-left: 10px;
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;

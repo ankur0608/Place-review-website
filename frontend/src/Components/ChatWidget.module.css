@@ -37,3 +37,37 @@
   display: flex;
   flex-direction: column;
 }
+
+@media (max-width: 600px) {
+  .fab {
+    bottom: 16px;
+    right: 16px;
+    width: 46px;
+    height: 46px;
+    font-size: 1.5rem;
+  }
+  .chatBoxWrapper {
+    bottom: 70px;
+    right: 8px;
+    width: 94vw;
+    max-width: 98vw;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .fab {
+    bottom: 8px;
+    right: 8px;
+    width: 35px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+  .chatBoxWrapper {
+    bottom: 50px;
+    right: 0px;
+    width: 95vw;
+    max-width: 100vw;
+    border-radius: 6px;
+  }
+}

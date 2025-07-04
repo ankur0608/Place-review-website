@@ -4,64 +4,66 @@
   height: 70vh;
   max-height: 75vh;
   min-height: 400px;
-  max-width: 420px;
+  max-width: 440px;
   margin: 2rem auto;
-  border-radius: 22px;
-  overflow: hidden;
+  border-radius: 20px;
   background: #f8fafd;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1.5px 4px rgba(0, 0, 0, 0.06);
-  border: none;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
 .chatBox {
   flex: 1;
   overflow-y: auto;
-  padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
-  background: transparent;
+  gap: 0.8rem;
   scroll-behavior: smooth;
 }
 
 .userMsg {
   align-self: flex-end;
-  background: linear-gradient(90deg, #4f8cff 0%, #38cfff 100%);
-  color: #fff;
-  padding: 0.7rem 1.2rem;
+  background: linear-gradient(135deg, #4f8cff, #38cfff);
+  color: white;
+  padding: 0.75rem 1.2rem;
   border-radius: 18px 18px 4px 18px;
   max-width: 80%;
   font-size: 1rem;
   line-height: 1.5;
   word-break: break-word;
-  box-shadow: 0 2px 8px rgba(79, 140, 255, 0.08);
+  box-shadow: 0 3px 10px rgba(79, 140, 255, 0.2);
+  transition: all 0.2s ease;
 }
 
 .botMsg {
   align-self: flex-start;
-  background: #fff;
+  background: white;
   color: #222;
-  padding: 0.7rem 1.2rem;
+  padding: 0.75rem 1.2rem;
   border-radius: 18px 18px 18px 4px;
   max-width: 80%;
   font-size: 1rem;
   line-height: 1.5;
   word-break: break-word;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
 }
 
 .typingDots span {
-  font-weight: bold;
   font-size: 22px;
-  margin-right: 2px;
+  margin-right: 3px;
   animation: blink 1s infinite;
   color: #4f8cff;
 }
+
 .typingDots span:nth-child(2) { animation-delay: 0.2s; }
 .typingDots span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes blink {
-  0%, 100% { opacity: 0.2; }
+  0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 }
 
@@ -69,37 +71,37 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  padding: 0.7rem 1.2rem;
+  padding: 0.8rem 1.2rem;
   background: #f3f6fa;
   border-top: 1px solid #e3e8ee;
   border-bottom: 1px solid #e3e8ee;
-  justify-content: flex-start;
 }
 
 .predefinedBtn {
-  flex-shrink: 0;
   padding: 0.5rem 1.1rem;
-  border-radius: 20px;
+  border-radius: 18px;
   border: none;
   background: #eaf1fb;
   color: #2563eb;
-  font-size: 0.97rem;
+  font-size: 0.96rem;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   display: flex;
   align-items: center;
-  gap: 0.5em;
-  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.04);
+  gap: 0.4em;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.05);
 }
+
 .predefinedBtn:hover:not(:disabled) {
   background: #2563eb;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
 }
+
 .predefinedBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -113,32 +115,34 @@
 
 .inputBox input {
   flex: 1;
-  padding: 0.7rem 1rem;
-  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
   border: 1.5px solid #d1d5db;
   font-size: 1rem;
   outline: none;
-  background: #fff;
-  transition: border 0.2s;
+  background: white;
+  transition: border 0.2s ease;
 }
+
 .inputBox input:focus {
-  border: 1.5px solid #4f8cff;
+  border-color: #4f8cff;
 }
 
 .inputBox button {
   padding: 0.7rem 1.4rem;
-  background: linear-gradient(90deg, #4f8cff 0%, #38cfff 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #4f8cff, #38cfff);
+  color: white;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 4px rgba(79, 140, 255, 0.10);
+  box-shadow: 0 1px 5px rgba(79, 140, 255, 0.15);
+  transition: all 0.25s ease;
 }
+
 .inputBox button:hover {
-  background: linear-gradient(90deg, #2563eb 0%, #38cfff 100%);
+  background: linear-gradient(135deg, #2563eb, #38cfff);
 }
 
 .botMsgContent {
@@ -154,7 +158,7 @@
   font-weight: 600;
   font-size: 0.98em;
   color: #2563eb;
-  margin-bottom: 0.2em;
+  margin-bottom: 0.3em;
 }
 
 .botText {
@@ -162,4 +166,92 @@
   color: #222;
   line-height: 1.6;
   white-space: pre-line;
+}
+
+/* ---------------------- Responsive Styles ---------------------- */
+
+@media (max-width: 600px) {
+  .chatContainer {
+    max-width: 100vw;
+    min-height: 60vh;
+    margin: 0.5rem 0;
+    border-radius: 0;
+  }
+
+  .chatBox {
+    padding: 0.8rem 0.6rem;
+    gap: 0.5rem;
+  }
+
+  .userMsg,
+  .botMsg {
+    font-size: 0.95rem;
+    padding: 0.55rem 0.9rem;
+    max-width: 95%;
+  }
+
+  .inputBox {
+    padding: 0.8rem 0.6rem;
+    gap: 0.5rem;
+  }
+
+  .inputBox input {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .inputBox button {
+    font-size: 0.95rem;
+    padding: 0.6rem 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .chatContainer {
+    min-height: 50vh;
+  }
+
+  .userMsg,
+  .botMsg,
+  .predefinedBtn {
+    font-size: 0.85rem;
+  }
+
+  .inputBox input,
+  .inputBox button {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .chatContainer {
+    height: 50vh;
+  }
+
+  .chatBox {
+    padding: 0.5rem 0.3rem;
+    gap: 0.3rem;
+  }
+
+  .userMsg,
+  .botMsg {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .predefinedBtn {
+    padding: 0.3rem 0.6rem;
+  }
+
+  .inputBox {
+    padding: 0.5rem 0.4rem;
+  }
+
+  .inputBox input {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .inputBox button {
+    padding: 0.4rem 0.7rem;
+  }
 }

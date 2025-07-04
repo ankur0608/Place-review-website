@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { useEffect, useState } from "react";
 import styles from "./SavedPlace.module.css";
 import heartFilled from "../assets/heart2.png";
