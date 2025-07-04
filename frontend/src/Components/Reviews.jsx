@@ -20,6 +20,7 @@ export default function Review({
   } = useForm();
 
   const [rating, setRating] = useState(initialRating);
+  const [photo, setPhoto] = useState(null);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -29,14 +30,24 @@ export default function Review({
 
   function onFormSubmit(data) {
     if (rating === 0) return alert("Please select a rating.");
-    onSubmit({ comment: data.comment, rating });
+    onSubmit({ comment: data.comment, rating, photo });
     reset();
     setRating(0);
+    setPhoto(null);
   }
 
   function handleRatingChange(value) {
     setRating(value);
   }
+
+  // Convert image to base64
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return setPhoto(null);
+    const reader = new FileReader();
+    reader.onloadend = () => setPhoto(reader.result);
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div className={`${styles.review} ${styles[theme]}`}>
@@ -58,6 +69,20 @@ export default function Review({
         />
         {errors.comment && (
           <p className={styles.error}>{errors.comment.message}</p>
+        )}
+        {/* Add image upload */}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoChange}
+          style={{ margin: "8px 0" }}
+        />
+        {photo && (
+          <img
+            src={photo}
+            alt="Preview"
+            style={{ maxWidth: 80, marginTop: 8 }}
+          />
         )}
         <button type="submit">
           {isEditing ? "Update Review" : "Submit Review"}

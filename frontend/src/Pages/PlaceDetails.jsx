@@ -2,6 +2,7 @@ import { useEffect, useState, lazy, Suspense, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { useQuery as TanstackUseQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import ReviewForm from "../Components/Reviews.jsx";
@@ -91,7 +92,7 @@ export default function PlaceDetails() {
   const userReview = reviews?.find((r) => r.userId === userId);
   const [editing, setEditing] = useState(false);
 
-  const handleReviewSubmit = async ({ comment, rating }) => {
+  const handleReviewSubmit = async ({ comment, rating, photo }) => {
     if (!comment.trim() || rating <= 0) {
       alert("Please enter a valid comment and rating.");
       return;
@@ -103,6 +104,7 @@ export default function PlaceDetails() {
           reviewId: userReview._id,
           comment,
           rating,
+          photo, // <-- update photo if editing
         });
         setEditing(false);
       } else {
@@ -113,6 +115,7 @@ export default function PlaceDetails() {
           placeId: String(id),
           placeName: place.name,
           userId,
+          photo, // <-- send photo when adding
         });
       }
     } catch (err) {
@@ -204,8 +207,33 @@ export default function PlaceDetails() {
               <div key={review._id} className={styles.reviewItem}>
                 <p>
                   <strong>{review.name}</strong> rated it ⭐ {review.rating}/5
+                  {/* Show time ago */}
+                  <span
+                    style={{
+                      marginLeft: 8,
+                      color: "#888",
+                      fontSize: "0.95em",
+                    }}
+                  >
+                    {review.createdAt &&
+                      formatDistanceToNow(new Date(review.createdAt), {
+                        addSuffix: true,
+                      })}
+                  </span>
                 </p>
                 <p>{review.comment}</p>
+                {/* Show photo if exists */}
+                {review.photo && (
+                  <img
+                    src={review.photo}
+                    alt="Review"
+                    style={{
+                      maxWidth: 120,
+                      marginTop: 8,
+                      borderRadius: 8,
+                    }}
+                  />
+                )}
                 {review.userId === userId && !userReview && (
                   <div>
                     <button onClick={() => setEditing(true)}>Edit</button>

@@ -21,8 +21,12 @@ export default function Places() {
     queryFn: fetchPlaces,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const placesPerPage = 6;
+
   const { theme } = useTheme();
 
   const categories = [
@@ -30,6 +34,7 @@ export default function Places() {
     ...new Set(places?.map((p) => p.category).filter(Boolean)),
   ];
 
+  // Filtered data based on search and category
   const filteredPlaces = places?.filter((place) => {
     const matchesSearch =
       place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -40,6 +45,24 @@ export default function Places() {
 
     return matchesSearch && matchesCategory;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil((filteredPlaces?.length || 0) / placesPerPage);
+  const paginatedPlaces = filteredPlaces?.slice(
+    (currentPage - 1) * placesPerPage,
+    currentPage * placesPerPage
+  );
+
+  // Reset to page 1 when filter changes
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className={`${styles.container} ${styles[theme]}`}>
@@ -53,7 +76,7 @@ export default function Places() {
             className={`${styles.tabButton} ${
               selectedCategory === cat ? styles.activeTab : ""
             }`}
-            onClick={() => setSelectedCategory(cat)}
+            onClick={() => handleCategoryChange(cat)}
           >
             {cat}
           </button>
@@ -67,7 +90,7 @@ export default function Places() {
           className={styles.searchInput}
           placeholder="Search by name or location..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
         />
         {searchQuery && (
           <button
@@ -84,8 +107,8 @@ export default function Places() {
       <div className={styles.cardGrid}>
         {isLoading ? (
           <Loding />
-        ) : filteredPlaces?.length > 0 ? (
-          filteredPlaces.map((place) => (
+        ) : paginatedPlaces?.length > 0 ? (
+          paginatedPlaces.map((place) => (
             <Link
               key={place.id}
               to={`/places/${place.id}`}
@@ -108,6 +131,41 @@ export default function Places() {
           <p className={styles.noResults}>No places found.</p>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {filteredPlaces?.length > placesPerPage && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={styles.pageButton}
+          >
+            Prev
+          </button>
+
+          {[...Array(totalPages)].map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentPage(idx + 1)}
+              className={`${styles.pageButton} ${
+                currentPage === idx + 1 ? styles.activePage : ""
+              }`}
+            >
+              {idx + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className={styles.pageButton}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

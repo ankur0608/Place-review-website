@@ -9,7 +9,9 @@ export default defineSchema({
     comment: v.string(),
     rating: v.number(),
     placeName: v.optional(v.string()),
-    userId: v.string(), // <-- Add this line!
+    userId: v.string(),
+    photo: v.optional(v.string()),      // <-- Add this line (photo URL or base64)
+    createdAt: v.optional(v.number()),  // <-- Add this line (timestamp)
   }).index("by_user_place", ["userId", "placeId"]),
 
   // Users Table

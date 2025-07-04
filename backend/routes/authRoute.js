@@ -1,39 +1,52 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-require("dotenv").config();
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const router = express.Router();
 
-// Signup → hash password
+// ✅ Signup → hash password and return safely
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const hashed = await bcrypt.hash(password, 10);
-    res.status(200).json({ username, email, password: hashed });
+
+    res.status(200).json({
+      username,
+      email,
+      password: hashed, // hashed password sent to frontend (Convex stores it)
+    });
   } catch (error) {
+    console.error("Signup error:", error);
     res.status(500).json({ message: "Server error during signup" });
   }
 });
 
-// Login → verify password
-// Login → verify password and return token
+// ✅ Login → verify password and return JWT token
 router.post("/login", async (req, res) => {
   try {
     const { password, user } = req.body;
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
+    if (!user || !password || !user.password) {
+      return res.status(400).json({ message: "Missing login credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res
         .status(401)
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" } // valid for 1 day
+      { expiresIn: "1d" }
     );
 
     res.status(200).json({
@@ -47,6 +60,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ message: "Server error during login" });
   }
 });
