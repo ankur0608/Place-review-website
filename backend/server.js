@@ -11,8 +11,17 @@ const chatRoute = require("./routes/chatRoute");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS middleware
-app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
+// ✅ CORS middleware updated to allow both dev and prod
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://place-review-website-real.vercel.app",
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 // Routes
