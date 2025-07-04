@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Places.module.css";
 import { useTheme } from "../store/ThemeContext";
@@ -12,7 +12,11 @@ function fetchPlaces() {
 }
 
 export default function Places() {
-  const { data: places, isLoading, error } = useQuery({
+  const {
+    data: places,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["places"],
     queryFn: fetchPlaces,
     staleTime: 1000 * 60 * 5, // 5 minutes

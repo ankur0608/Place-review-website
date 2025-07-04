@@ -17,6 +17,7 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [avatar, setAvatar] = useState(userLogo2);
   const navigate = useNavigate();
 
   const navItems = [
@@ -29,16 +30,17 @@ export default function Navbar() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
+    const storedImage = localStorage.getItem("image");
+    if (storedImage) setAvatar(storedImage);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("image");
     setIsLoggedIn(false);
+    setAvatar(userLogo2);
     navigate("/login");
   };
-
-  const avatar = localStorage.getItem("image") || userLogo2;
 
   return (
     <nav className={styles.navbar}>
@@ -51,12 +53,15 @@ export default function Navbar() {
       >
         ☰
       </button>
-      {/* Profile Avatar */}
-      <li className={styles.menuToggle}>
+
+      {/* Profile Avatar (mobile top-right) */}
+      {isLoggedIn && (
         <div className={styles.menuToggle}>
           <Dropdown />
         </div>
-      </li>
+      )}
+
+      {/* Theme Toggle (mobile top-right) */}
       <div className={styles.menuToggle}>
         <button
           onClick={toggleTheme}
@@ -74,7 +79,6 @@ export default function Navbar() {
 
       {/* Nav Links */}
       <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
-        {/* ❌ Close Button */}
         <li className={styles.menuToggle}>
           <button
             className={styles.closeBtn}
@@ -99,7 +103,7 @@ export default function Navbar() {
           </li>
         ))}
 
-        {/* Auth Buttons (Mobile Only) */}
+        {/* Mobile Auth Buttons */}
         <li className={styles.mobileExtras}>
           {isLoggedIn ? (
             <button
@@ -132,7 +136,7 @@ export default function Navbar() {
         </li>
       </ul>
 
-      {/* Desktop Auth + Theme Buttons */}
+      {/* Desktop Auth and Theme */}
       <div className={styles.authButtons}>
         <button
           onClick={toggleTheme}
@@ -143,12 +147,15 @@ export default function Navbar() {
         </button>
 
         {isLoggedIn ? (
-          <button
-            className={`${styles.btn} ${styles.logoutBtn}`}
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <>
+            <button
+              className={`${styles.btn} ${styles.logoutBtn}`}
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+            <Dropdown />
+          </>
         ) : (
           <>
             <Link to="/signup" className={styles.btn}>
@@ -159,10 +166,6 @@ export default function Navbar() {
             </Link>
           </>
         )}
-        {/* <button to="/Dropdown">
-          <img src={avatar} alt="User Avatar" className={styles.avatar} />
-        </button> */}
-        <Dropdown />
       </div>
     </nav>
   );

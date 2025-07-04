@@ -1,17 +1,14 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
-// Core routes (eager load)
-// import Signup from "./Pages/Sign-up.jsx";
-// import Login from "./Pages/Login.jsx";
-// import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import Home from "./Pages/Home.jsx";
 import About from "./Pages/About.jsx";
 import Contact from "./Pages/Contact.jsx";
 import Navbar from "./Pages/Navbar/Navbar.jsx";
 import Footer from "./Pages/Footer.jsx";
+import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import { useTheme } from "./store/ThemeContext.jsx";
-
+import ScrollTop from "./Components/ScrollTop.jsx";
 // Lazy-loaded routes (heavier)
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
@@ -28,6 +25,7 @@ const Login = lazy(() => import("./Pages/Login.jsx"));
 const Layout = () => (
   <>
     <Navbar />
+    <ScrollTop />
     <main>
       <Outlet />
       <Footer />
@@ -106,7 +104,7 @@ const router = createBrowserRouter([
   },
   { path: "signup", element: <Signup /> },
   { path: "login", element: <Login /> },
-  // { path: "forgot-password", element: <ForgotPassword /> },
+  { path: "forgot-password", element: <ForgotPassword /> },
 ]);
 
 // Chat widget (optional)
