@@ -1,6 +1,5 @@
-// routes/contact.js
+import express from "express";
 
-const express = require("express");
 const router = express.Router();
 
 router.post("/", (req, res) => {
@@ -15,8 +14,9 @@ router.post("/", (req, res) => {
   console.log("📧 Email:", email);
   console.log("💬 Message:", message);
 
-  // You can store it in DB or send an email here
+  // Optionally: Save to DB or send email
+
   res.status(200).json({ message: "Message received. Thank you!" });
 });
 
-module.exports = router;
+export default router;

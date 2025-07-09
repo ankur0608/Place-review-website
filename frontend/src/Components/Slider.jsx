@@ -66,7 +66,7 @@ export default function PlacesSlider() {
                 />
                 <h3 className="place-name">{place.name}</h3>
                 <p className="place-location">{place.location}</p>
-                <p className="place-description">{place.description}</p>
+                {/* <p className="place-description">{place.description}</p> */}
               </div>
             </Link>
           ))

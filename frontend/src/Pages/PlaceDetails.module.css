@@ -1,5 +1,4 @@
-/* PlaceDetails.module.css */
-
+/* ========== Base Container ========== */
 .container {
   max-width: 800px;
   margin: 24px auto;
@@ -11,6 +10,7 @@
   color: #222;
 }
 
+/* ========== Title & Image ========== */
 .title {
   font-size: 2.7rem;
   margin-bottom: 18px;
@@ -22,29 +22,36 @@
 
 .image {
   display: block;
-  max-width: 100%;
-  height: 340px;
+  width: 100%;
+  max-height: 300px;
   object-fit: cover;
   margin: 0 auto 28px auto;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(60, 60, 100, 0.1);
 }
 
-.button {
-  margin-top: 28px;
-  padding: 12px 28px;
-  background: linear-gradient(90deg, #0077cc 60%, #005fa3 100%);
-  color: #fff;
-  border: none;
+/* ========== Back Button ========== */
+.topBar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.backButton {
+  background-color: transparent;
+  border: 1px solid var(--border-color, #ccc);
+  color: var(--text-color, #333);
+  padding: 6px 12px;
   border-radius: 8px;
-  font-size: 1.08rem;
-  font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.25s,
-    box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 119, 204, 0.08);
-  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+
+/* ========== Info Section ========== */
+.detailsSection {
+  margin-bottom: 20px;
 }
 
 .info {
@@ -64,9 +71,67 @@
   margin-bottom: 18px;
 }
 
+/* ========== Save Button ========== */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 24px 0 25px;
+}
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  height: 30px;
+  border: none;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 8px;
+}
+
+.saveButton:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: scale(1.02);
+}
+
+.saveButton img {
+  width: 28px;
+  height: 28px;
+  transition: transform 0.2s ease;
+}
+
+.saveButton.liked img {
+  transform: scale(1.2);
+}
+
+/* ========== Main Button ========== */
+.button {
+  margin-top: 28px;
+  padding: 12px 28px;
+  background: linear-gradient(90deg, #0077cc 60%, #005fa3 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.25s,
+    box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 119, 204, 0.08);
+  text-decoration: none;
+}
+
+/* ========== Reviews Section ========== */
 .reviewsSection {
   margin-top: 36px;
-  padding: 24px 18px 10px 18px;
+  padding: 24px 18px 10px;
   border-top: 2px solid #e3e3e3;
   background: #f4f7fa;
   border-radius: 0 0 12px 12px;
@@ -100,97 +165,31 @@
   font-weight: 600;
 }
 
-.reviewItem p {
-  margin: 2px 0 0 0;
-  font-size: 1.01rem;
-  color: #333;
-}
-.detailsSection {
-  margin-bottom: 20px;
+.comment {
+  margin: 10px 0;
+  font-size: 1.05rem;
+  color: #555;
+  line-height: 1.6;
 }
 
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 24px;
-  margin-bottom: 25px;
-}
-.saveButton {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: none;
-  margin-top: 26px;
-  height: 30px;
-  border: none;
-  padding: 8px 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  border-radius: 8px;
+.deleteButton {
+  margin-left: 15px;
 }
 
-.saveButton:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-  transform: scale(1.02);
-}
-
-/* Heart icon image */
-.saveButton img {
-  width: 28px;
-  height: 28px;
-  transition: transform 0.2s ease;
-}
-
-/* Animate when liked */
-.saveButton.liked img {
-  transform: scale(1.2);
-}
-
-/* Dark theme adjustments */
-.dark .saveButton {
-  color: #f1f1f1;
-}
-.sectionTitle{
-  /* margin-left: 80px; */
-  /* align-items: center; */
+/* ========== Section Title ========== */
+.sectionTitle {
   text-align: center;
   margin-top: 70px;
   margin-bottom: 8px;
   font-size: 25px;
 }
 
-.dark .saveButton:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-/* Optional: shrink heart icon on small screens */
-@media (max-width: 600px) {
-  .heartIcon {
-    font-size: 2rem;
-  }
-}
-
-.dark .sectionTitle {
-  color: #bbdefb;
-}
-
-/* Light theme (default styling) */
-.light {
-  background-color: #f8f9fb;
-  color: #222;
-}
-
-/* Dark theme styles */
+/* ========== Dark Mode Overrides ========== */
 .dark {
   background-color: #1e1e1e;
   color: #f1f1f1;
 }
 
-/* Adjust text in dark mode */
 .dark .title {
   color: #bbdefb;
 }
@@ -226,6 +225,14 @@
   color: #ddd;
 }
 
+.dark .saveButton {
+  color: #f1f1f1;
+}
+
+.dark .saveButton:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
 .dark .button {
   background: linear-gradient(90deg, #64b5f6 60%, #1976d2 100%);
   box-shadow: 0 2px 8px rgba(100, 181, 246, 0.12);
@@ -236,20 +243,29 @@
   box-shadow: 0 4px 16px rgba(100, 181, 246, 0.2);
 }
 
+/* ========== Responsive (Mobile) ========== */
 @media (max-width: 600px) {
   .container {
     padding: 10px 2px;
   }
+
   .title {
     font-size: 1.5rem;
   }
+
   .image {
     height: 180px;
   }
+
   .reviewsSection {
-    padding: 12px 4px 4px 4px;
+    padding: 12px 4px 4px;
   }
-  .sectionTitle{
+
+  .sectionTitle {
     margin-top: 80px;
+  }
+
+  .heartIcon {
+    font-size: 2rem;
   }
 }

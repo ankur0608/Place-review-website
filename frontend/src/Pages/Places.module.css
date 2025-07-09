@@ -261,7 +261,7 @@
 
 .pageButton {
   padding: 0.5rem 1rem;
-  background-color: #eee;
+  background-color: #b6b6b6;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -269,9 +269,9 @@
   transition: background-color 0.2s ease;
 }
 
-.pageButton:hover {
-  background-color: #ccc;
-}
+/* .pageButton:hover {
+  background-color: #007bff;
+} */
 
 .activePage {
   background-color: #007bff;

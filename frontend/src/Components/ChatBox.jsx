@@ -1,13 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import styles from "./ChatBox.module.css";
 import { useTheme } from "../store/ThemeContext";
+import { useConvex } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 const initialPredefinedQuestions = [
-  { icon: "⭐", text: "What are the top-rated places nearby?" },
-  { icon: "✍️", text: "How do I submit a review?" },
-  { icon: "📝", text: "Can I edit my review after posting?" },
-  { icon: "📞", text: "Is there a way to contact support?" },
-  { icon: "📊", text: "How are place ratings calculated?" },
+  { icon: "📍", text: "What are the best-rated places near me?" },
+  { icon: "⏰", text: "Can I book a visit for a specific date and time?" },
+  { icon: "🗺️", text: "How do I find places by location or state?" },
+  // { icon: "🔐", text: "I can't log in — what should I do?" },
+  // { icon: "💬", text: "How do I leave a review for a place?" },
+  // { icon: "📝", text: "Can I edit or delete my review later?" },
+  // { icon: "📊", text: "How are place ratings calculated?" },
+  // { icon: "📞", text: "How do I contact support?" },
+  // { icon: "🔄", text: "Can I update my booking details later?" },
 ];
 
 export default function ChatBox() {
@@ -17,22 +23,24 @@ export default function ChatBox() {
   const [predefinedQuestions, setPredefinedQuestions] = useState(
     initialPredefinedQuestions
   );
-  const { theme } = useTheme();
-  const chatEndRef = useRef(null);
+  const [modelUsed, setModelUsed] = useState("");
 
+  const { theme } = useTheme();
+  const themeClass = theme === "dark" ? styles.dark : styles.light;
+
+  const chatEndRef = useRef(null);
+  const convex = useConvex();
+
+  // Auto scroll to bottom
   useEffect(() => {
-    // Scroll to bottom when messages change
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
   const sendMessage = async (customInput) => {
-    const messageToSend = customInput !== undefined ? customInput : input;
-    // if (!messageToSend.trim()) return;
+    const messageToSend = customInput ?? input;
+    if (!messageToSend.trim()) return;
 
-    const newUserMsg = { sender: "user", text: messageToSend };
-    setMessages((prev) => [...prev, newUserMsg]);
+    setMessages((prev) => [...prev, { sender: "user", text: messageToSend }]);
     setInput("");
     setIsTyping(true);
 
@@ -47,9 +55,20 @@ export default function ChatBox() {
       );
 
       const data = await res.json();
-      const botMsg = { sender: "bot", text: data.reply };
-      setMessages((prev) => [...prev, botMsg]);
-    } catch (err) {
+      const botReply = data.reply || "No response";
+
+      setModelUsed(data.model || "Unknown Model");
+      setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
+
+      await convex.mutation(api.messages.add, {
+        sender: "user",
+        text: messageToSend,
+      });
+      await convex.mutation(api.messages.add, {
+        sender: "bot",
+        text: botReply,
+      });
+    } catch {
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Error: Failed to get reply." },
@@ -59,15 +78,14 @@ export default function ChatBox() {
     }
   };
 
-  const themeClass = theme === "dark" ? styles.dark : styles.light;
-  const handlePredefinedClick = (questionText) => {
-    sendMessage(questionText);
-    setPredefinedQuestions([]); // Remove all predefined questions
+  const handlePredefinedClick = (text) => {
+    sendMessage(text);
+    setPredefinedQuestions([]);
   };
 
   return (
     <div className={`${styles.chatContainer} ${themeClass}`}>
-      {/* Message List */}
+      {/* Chat Messages */}
       <div className={styles.chatBox}>
         {messages.map((msg, i) => (
           <div
@@ -86,6 +104,7 @@ export default function ChatBox() {
             )}
           </div>
         ))}
+
         {isTyping && (
           <div className={styles.botMsg}>
             <span className={styles.typingDots}>
@@ -95,31 +114,44 @@ export default function ChatBox() {
             </span>
           </div>
         )}
+
         <div ref={chatEndRef} />
       </div>
 
-      {/* Suggested Questions just above input */}
-      <div className={styles.predefinedBox}>
-        {predefinedQuestions.map((q, i) => (
-          <button
-            key={i}
-            className={styles.predefinedBtn}
-            onClick={() => handlePredefinedClick(q.text)}
-          >
-            {q.icon} {q.text}
-          </button>
-        ))}
-      </div>
+      {/* Predefined Questions */}
+      {predefinedQuestions.length > 0 && (
+        <div className={styles.predefinedBox}>
+          {predefinedQuestions.map((q, i) => (
+            <button
+              key={i}
+              className={styles.predefinedBtn}
+              onClick={() => handlePredefinedClick(q.text)}
+            >
+              {q.icon} {q.text}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {/* Input Box (sticky at bottom) */}
+      {/* Model Info
+      {modelUsed && (
+        <div className={styles.modelInfo}>
+          🤖 Powered by: <strong>{modelUsed}</strong>
+        </div>
+      )} */}
+
+      {/* Input Field */}
       <div className={styles.inputBox}>
         <input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          onKeyDown={(e) => {
-            if (e.key === "Enter") sendMessage();
+          onChange={(e) => {
+            setInput(e.target.value);
+            if (predefinedQuestions.length > 0) {
+              setPredefinedQuestions([]);
+            }
           }}
+          placeholder="Type a message..."
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <button onClick={() => sendMessage()}>Send</button>
       </div>

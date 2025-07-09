@@ -1,17 +1,17 @@
-require("dotenv").config(); // Load env vars
+import dotenv from "dotenv";
+dotenv.config();
 
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 
-const placesRoute = require("./routes/placesRoute");
-const authRoute = require("./routes/authRoute");
-const contactRoute = require("./routes/contact");
-const chatRoute = require("./routes/chatRoute");
+import placesRoute from "./routes/placesRoute.js";
+import authRoute from "./routes/authRoute.js";
+import contactRoute from "./routes/contact.js";
+import chatRoute from "./routes/chatRoute.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ CORS middleware updated to allow both dev and prod
 app.use(
   cors({
     origin: [
@@ -24,12 +24,14 @@ app.use(
 
 app.use(express.json());
 
-// Routes
 app.use("/places", placesRoute);
-app.use("/", authRoute);
+app.use("/api/auth", authRoute);
 app.use("/contact", contactRoute);
 app.use("/api/chat", chatRoute);
-
+console.log(
+  "🤖 Using Hugging Face model:",
+  process.env.HUGGINGFACE_MODEL || "gpt2"
+);
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });

@@ -4,13 +4,13 @@ import { v } from "convex/values";
 
 // ✅ PUBLIC: reviews:list
 export const list = query({
-    args: { placeId: v.string() },
-    handler: async (ctx, args) => {
-        return await ctx.db
-            .query("reviews")
-            .filter((q) => q.eq(q.field("placeId"), args.placeId))
-            .collect();
-    },
+  args: { placeId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("reviews")
+      .filter((q) => q.eq(q.field("placeId"), args.placeId))
+      .collect();
+  },
 });
 
 // ✅ PUBLIC: reviews:add
@@ -25,15 +25,7 @@ export const add = mutation({
     photo: v.optional(v.string()), // <-- Accept photo (URL or base64)
   },
   handler: async (ctx, args) => {
-    // Optionally, check for existing review by this user for this place
-    // const existing = await ctx.db
-    //   .query("reviews")
-    //   .filter(q => q.and(
-    //     q.eq(q.field("userId"), args.userId),
-    //     q.eq(q.field("placeId"), args.placeId)
-    //   ))
-    //   .first();
-    // if (existing) throw new Error("You have already reviewed this place.");
+
 
     await ctx.db.insert("reviews", {
       name: args.name,

@@ -56,7 +56,7 @@ export default function AvatarDropdown() {
             👤 Profile
           </Link>
           <Link to="/SavedPlace" className={styles.dropdownItem}>
-            📌 SavedPlace
+            📌 Saved Place
           </Link>
           <button onClick={handleLogout} className={styles.dropdownItem}>
             🚪 Logout

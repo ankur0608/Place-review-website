@@ -167,6 +167,9 @@
   line-height: 1.6;
   white-space: pre-line;
 }
+.modelInfo{
+  color: red;
+}
 
 /* ---------------------- Responsive Styles ---------------------- */
 
