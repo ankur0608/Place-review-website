@@ -19,7 +19,7 @@ export default function Places() {
   } = useQuery({
     queryKey: ["places"],
     queryFn: fetchPlaces,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +34,6 @@ export default function Places() {
     ...new Set(places?.map((p) => p.category).filter(Boolean)),
   ];
 
-  // Filtered data based on search and category
   const filteredPlaces = places?.filter((place) => {
     const matchesSearch =
       place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -46,14 +45,12 @@ export default function Places() {
     return matchesSearch && matchesCategory;
   });
 
-  // Pagination logic
   const totalPages = Math.ceil((filteredPlaces?.length || 0) / placesPerPage);
   const paginatedPlaces = filteredPlaces?.slice(
     (currentPage - 1) * placesPerPage,
     currentPage * placesPerPage
   );
 
-  // Reset to page 1 when filter changes
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
     setCurrentPage(1);
@@ -65,11 +62,10 @@ export default function Places() {
   };
 
   return (
-    <div className={`${styles.container} ${styles[theme]}`}>
+    <main className={`${styles.container} ${styles[theme]}`}>
       <h1 className={styles.heading}>Explore Tourist Places</h1>
 
-      {/* Category Tabs */}
-      <div className={styles.categoryTabs}>
+      <section aria-label="Category Filters" className={styles.categoryTabs}>
         {categories.map((cat, index) => (
           <button
             key={`${cat}-${index}`}
@@ -77,20 +73,21 @@ export default function Places() {
               selectedCategory === cat ? styles.activeTab : ""
             }`}
             onClick={() => handleCategoryChange(cat)}
+            aria-pressed={selectedCategory === cat}
           >
             {cat}
           </button>
         ))}
-      </div>
+      </section>
 
-      {/* Search Bar */}
-      <div className={styles.searchWrapper}>
+      <section aria-label="Search Bar" className={styles.searchWrapper}>
         <input
-          type="text"
+          type="search"
           className={styles.searchInput}
           placeholder="Search by name or location..."
           value={searchQuery}
           onChange={handleSearchChange}
+          aria-label="Search places"
         />
         {searchQuery && (
           <button
@@ -101,10 +98,9 @@ export default function Places() {
             ×
           </button>
         )}
-      </div>
+      </section>
 
-      {/* Cards OR Loading Spinner */}
-      <div className={styles.cardGrid}>
+      <section className={styles.cardGrid} aria-label="Places List">
         {isLoading ? (
           <Loding />
         ) : paginatedPlaces?.length > 0 ? (
@@ -113,32 +109,34 @@ export default function Places() {
               key={place.id}
               to={`/places/${place.id}`}
               className={styles.cardLink}
+              aria-label={`View details for ${place.name}`}
             >
-              <div className={styles.card}>
+              <article className={styles.card}>
                 <img
                   src={place.image}
                   alt={place.name}
                   className={styles.image}
+                  loading="lazy"
                 />
                 <div className={styles.cardContent}>
                   <h2 className={styles.name}>{place.name}</h2>
                   <p className={styles.location}>{place.location}</p>
                 </div>
-              </div>
+              </article>
             </Link>
           ))
         ) : (
           <p className={styles.noResults}>No places found.</p>
         )}
-      </div>
+      </section>
 
-      {/* Pagination Controls */}
       {filteredPlaces?.length > placesPerPage && (
-        <div className={styles.pagination}>
+        <nav className={styles.pagination} aria-label="Pagination">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
             className={styles.pageButton}
+            aria-label="Previous page"
           >
             Prev
           </button>
@@ -150,6 +148,7 @@ export default function Places() {
               className={`${styles.pageButton} ${
                 currentPage === idx + 1 ? styles.activePage : ""
               }`}
+              aria-current={currentPage === idx + 1 ? "page" : undefined}
             >
               {idx + 1}
             </button>
@@ -161,11 +160,12 @@ export default function Places() {
             }
             disabled={currentPage === totalPages}
             className={styles.pageButton}
+            aria-label="Next page"
           >
             Next
           </button>
-        </div>
+        </nav>
       )}
-    </div>
+    </main>
   );
 }

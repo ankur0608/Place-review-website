@@ -36,7 +36,7 @@ export default function Login() {
 
       // Step 2: Send to backend for password check
       const res = await fetch(
-        "https://place-review-website-real.onrender.com/login",
+        "https://place-review-website-real.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {

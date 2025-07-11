@@ -41,8 +41,11 @@ export default defineSchema({
 
   // Chat Messages Table
   messages: defineTable({
+    chatId: v.optional(v.string()), // useful for grouping messages per chat/user/session
     sender: v.string(),
     text: v.string(),
     createdAt: v.number(),
   }).index("by_time", ["createdAt"]),
+
+
 });

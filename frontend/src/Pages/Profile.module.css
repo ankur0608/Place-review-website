@@ -1,96 +1,125 @@
 .Profile {
-  height: 100vh;
-}
-.profileContainer {
-  max-width: 500px;
-  margin: 2rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 2rem;
+  min-height: 100vh;
+  /* background-color: var(--bg); */
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.profileContainer {
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  border-radius: 1rem;
   background-color: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  color: var(--text-color);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.profileContainer h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--text);
 }
 
 .profileCard {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.info {
+  text-align: center;
+  color: var(--text);
 }
 
 .info p {
   margin: 0.5rem 0;
-  font-size: 1.1rem;
-}
-.editButton {
-  margin-left: 10px;
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-.backButton {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
+  font-size: 1rem;
 }
 
-@media (max-width: 700px) {
+.info strong {
+  color: var(--accent);
+}
+
+/* Buttons */
+.editButton,
+.backButton {
+  margin-top: 1rem;
+  margin-left: 15px;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.editButton {
+  background-color: var(--accent);
+  color: white;
+}
+
+.editButton:hover {
+  background-color: var(--accent-hover);
+}
+
+.backButton {
+  background-color: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+}
+
+.backButton:hover {
+  background-color: var(--accent);
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
   .profileContainer {
-    max-width: 95vw;
-    padding: 1rem;
+    padding: 1.2rem;
   }
-  .profileCard {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  .avatar {
-    width: 80px;
-    height: 80px;
-  }
+
   .info p {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
+
   .editButton,
   .backButton {
     width: 100%;
-    margin-left: 0;
-    margin-top: 0.5rem;
-    padding: 0.5rem 0;
+    margin-top: 0.8rem;
   }
 }
 
-@media (max-width: 400px) {
-  .profileContainer {
-    padding: 0.5rem;
-  }
-  .avatar {
-    width: 60px;
-    height: 60px;
-  }
-  .info p {
-    font-size: 0.9rem;
-  }
-  .editButton,
-  .backButton {
-    padding: 0.4rem 0;
-  }
+/* Light Theme */
+:root {
+  --bg: #f9f9f9;
+  --card-bg: #ffffff;
+  --text: #222;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+}
+
+/* Dark Theme */
+.dark {
+  --bg: #121212;
+  --card-bg: #1e1e1e;
+  --text: #f0f0f0;
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
 }

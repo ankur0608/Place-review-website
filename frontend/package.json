@@ -25,7 +25,8 @@
     "react-simple-star-rating": "^5.1.7",
     "react-slick": "^0.30.3",
     "react-slideshow-image": "^4.3.2",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "vite-plugin-compression": "^0.5.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

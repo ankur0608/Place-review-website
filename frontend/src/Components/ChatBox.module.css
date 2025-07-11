@@ -1,11 +1,11 @@
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 70vh;
+  height: 68vh;
   max-height: 75vh;
   min-height: 400px;
   max-width: 440px;
-  margin: 2rem auto;
+  /* margin: 2rem auto; */
   border-radius: 20px;
   background: #f8fafd;
   box-shadow:
@@ -17,7 +17,7 @@
 .chatBox {
   flex: 1;
   overflow-y: auto;
-  padding: 1.2rem;
+  padding-top: 7rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -28,7 +28,7 @@
   align-self: flex-end;
   background: linear-gradient(135deg, #4f8cff, #38cfff);
   color: white;
-  padding: 0.75rem 1.2rem;
+  padding: 0.5rem 1rem;
   border-radius: 18px 18px 4px 18px;
   max-width: 80%;
   font-size: 1rem;
@@ -42,7 +42,7 @@
   align-self: flex-start;
   background: white;
   color: #222;
-  padding: 0.75rem 1.2rem;
+  padding: 0.5rem 1rem;
   border-radius: 18px 18px 18px 4px;
   max-width: 80%;
   font-size: 1rem;
@@ -59,12 +59,21 @@
   color: #4f8cff;
 }
 
-.typingDots span:nth-child(2) { animation-delay: 0.2s; }
-.typingDots span:nth-child(3) { animation-delay: 0.4s; }
+.typingDots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typingDots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes blink {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .predefinedBox {
@@ -78,12 +87,12 @@
 }
 
 .predefinedBtn {
-  padding: 0.5rem 1.1rem;
+  padding: 0.2rem 0.7rem;
   border-radius: 18px;
   border: none;
   background: #eaf1fb;
   color: #2563eb;
-  font-size: 0.96rem;
+  font-size: 0.9rem;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
@@ -129,7 +138,7 @@
 }
 
 .inputBox button {
-  padding: 0.7rem 1.4rem;
+  padding: 0.7rem 1rem;
   background: linear-gradient(135deg, #4f8cff, #38cfff);
   color: white;
   border: none;
@@ -167,8 +176,75 @@
   line-height: 1.6;
   white-space: pre-line;
 }
-.modelInfo{
+.modelInfo {
   color: red;
+}
+
+.botMsgContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.botHeader {
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  color: #2563eb;
+}
+
+.quickReplies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.timeStamp {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 4px;
+  text-align: right;
+}
+.endChatBtn {
+  background: #f87171;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(248, 113, 113, 0.3);
+}
+
+.endChatBtn:hover {
+  background: #dc2626;
+}
+.typingDots {
+  display: flex;
+  gap: 4px;
+  font-size: 1.5rem;
+  color: #4f8cff;
+  padding: 0 0.5rem;
+}
+
+.typingDots span {
+  animation: blink 1s infinite;
+}
+
+.typingDots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typingDots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* ---------------------- Responsive Styles ---------------------- */

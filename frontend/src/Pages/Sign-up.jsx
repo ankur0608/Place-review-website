@@ -23,7 +23,7 @@ export default function Signup() {
     try {
       // Step 1: Hash password via Node backend
       const res = await fetch(
-        "https://place-review-website-real.onrender.com/signup",
+        "https://place-review-website-real.onrender.com/api/auth/signup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

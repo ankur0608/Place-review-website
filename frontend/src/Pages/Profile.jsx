@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { jwtDecode } from "jwt-decode";
+import { useTheme } from "../store/ThemeContext";
 import userLogo from "../assets/user.png";
 
 export default function Profile() {
   const [imageUrl, setImageUrl] = useState(null);
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-
+  const { theme } = useTheme();
   // Decode token on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -48,7 +49,7 @@ export default function Profile() {
   if (!userData) return <p style={{ textAlign: "center" }}>Loading...</p>;
 
   return (
-    <div className={styles.Profile}>
+    <div className={`${styles.Profile} ${theme === "dark" ? "dark" : ""}`}>
       <div className={styles.profileContainer}>
         <h2>User Profile</h2>
         <div className={styles.profileCard}>

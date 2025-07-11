@@ -1,160 +1,180 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./ChatBox.module.css";
-import { useTheme } from "../store/ThemeContext";
-import { useConvex } from "convex/react";
+import { staticQA } from "./chatData.js";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
-const initialPredefinedQuestions = [
-  { icon: "📍", text: "What are the best-rated places near me?" },
-  { icon: "⏰", text: "Can I book a visit for a specific date and time?" },
-  { icon: "🗺️", text: "How do I find places by location or state?" },
-  // { icon: "🔐", text: "I can't log in — what should I do?" },
-  // { icon: "💬", text: "How do I leave a review for a place?" },
-  // { icon: "📝", text: "Can I edit or delete my review later?" },
-  // { icon: "📊", text: "How are place ratings calculated?" },
-  // { icon: "📞", text: "How do I contact support?" },
-  // { icon: "🔄", text: "Can I update my booking details later?" },
-];
+const chatId = "support_chat_1";
 
-export default function ChatBox() {
+const ChatBox = () => {
+  const addMessage = useMutation(api.messages.add);
+  const fetchedMessages = useQuery(api.messages.getMessagesByChatId, {
+    chatId,
+  });
+  const deleteMessages = useMutation(api.messages.deleteMessagesByChatId);
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [predefinedQuestions, setPredefinedQuestions] = useState(
-    initialPredefinedQuestions
-  );
-  const [modelUsed, setModelUsed] = useState("");
+  const containerRef = useRef(null);
 
-  const { theme } = useTheme();
-  const themeClass = theme === "dark" ? styles.dark : styles.light;
+  const quickReplies = Object.keys(staticQA).filter((key) => {
+    const l = key.toLowerCase();
+    return !["date", "time", "hello", "what is your name", "thank you"].some(
+      (k) => l.includes(k)
+    );
+  });
 
-  const chatEndRef = useRef(null);
-  const convex = useConvex();
+  const [availableButtons, setAvailableButtons] = useState(quickReplies);
+  const [showQuickReplies, setShowQuickReplies] = useState(true);
 
-  // Auto scroll to bottom
+  const getTime = () =>
+    new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const hasInitializedRef = useRef(false);
+
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (hasInitializedRef.current) return;
+
+    if (fetchedMessages?.length > 0) {
+      setMessages(fetchedMessages);
+    } else {
+      const welcome = {
+        sender: "bot",
+        text: "👋 Hi there! I'm your assistant. Ask me something or tap a quick question below.",
+        time: getTime(),
+      };
+      setMessages([welcome]);
+      addMessage({ sender: "bot", text: welcome.text, chatId });
+    }
+
+    hasInitializedRef.current = true;
+  }, [fetchedMessages]);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, [messages, isTyping]);
 
-  const sendMessage = async (customInput) => {
-    const messageToSend = customInput ?? input;
-    if (!messageToSend.trim()) return;
+  const handleSend = async (text) => {
+    const question = (text || input).trim().toLowerCase();
+    if (!question) return;
 
-    setMessages((prev) => [...prev, { sender: "user", text: messageToSend }]);
+    const isQuickReply = !!text;
+    const userMsg = {
+      sender: "user",
+      text: text || input,
+      time: getTime(),
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
 
-    try {
-      const res = await fetch(
-        "https://place-review-website-real.onrender.com/api/chat",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: messageToSend }),
-        }
-      );
+    await addMessage({ sender: "user", text: userMsg.text, chatId });
 
-      const data = await res.json();
-      const botReply = data.reply || "No response";
+    setTimeout(async () => {
+      const answerRaw = staticQA[question];
+      const answer =
+        typeof answerRaw === "function"
+          ? answerRaw()
+          : answerRaw || "❌ I don't have an answer for that yet.";
 
-      setModelUsed(data.model || "Unknown Model");
-      setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
-
-      await convex.mutation(api.messages.add, {
-        sender: "user",
-        text: messageToSend,
-      });
-      await convex.mutation(api.messages.add, {
+      const botMsg = {
         sender: "bot",
-        text: botReply,
-      });
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: "Error: Failed to get reply." },
-      ]);
-    } finally {
+        text: answer,
+        time: getTime(),
+      };
+
+      setMessages((prev) => [...prev, botMsg]);
+      await addMessage({ sender: "bot", text: botMsg.text, chatId });
+
       setIsTyping(false);
-    }
+
+      if (isQuickReply) {
+        setAvailableButtons((prev) => prev.filter((btn) => btn !== question));
+        if (availableButtons.length <= 1) setShowQuickReplies(false);
+      }
+    }, 1000); // ⏱ 1 second delay
   };
 
-  const handlePredefinedClick = (text) => {
-    sendMessage(text);
-    setPredefinedQuestions([]);
+  const handleClearChat = async () => {
+    await deleteMessages({ chatId });
+    const welcome = {
+      sender: "bot",
+      text: "👋 Hi there! I'm your assistant. Ask me something or tap a quick question below.",
+      time: getTime(),
+    };
+    setMessages([welcome]);
+    await addMessage({ sender: "bot", text: welcome.text, chatId });
+    setAvailableButtons(quickReplies);
+    setShowQuickReplies(true);
+    setIsTyping(false);
   };
 
   return (
-    <div className={`${styles.chatContainer} ${themeClass}`}>
-      {/* Chat Messages */}
-      <div className={styles.chatBox}>
-        {messages.map((msg, i) => (
+    <div className={styles.chatContainer}>
+      <div className={styles.chatBox} ref={containerRef}>
+        {messages.map((msg, idx) => (
           <div
-            key={i}
+            key={idx}
             className={msg.sender === "user" ? styles.userMsg : styles.botMsg}
           >
-            {msg.sender === "bot" ? (
-              <div className={styles.botMsgContent}>
-                <div className={styles.botHeader}>
-                  🤖 <span>PlaceBot</span>
-                </div>
-                <div className={styles.botText}>{msg.text}</div>
-              </div>
-            ) : (
-              msg.text
-            )}
+            <div>{msg.text}</div>
+            <div className={styles.timeStamp}>{msg.time}</div>
           </div>
         ))}
 
         {isTyping && (
           <div className={styles.botMsg}>
-            <span className={styles.typingDots}>
+            <div className={styles.typingDots}>
               <span>.</span>
               <span>.</span>
               <span>.</span>
-            </span>
+            </div>
           </div>
         )}
 
-        <div ref={chatEndRef} />
+        {showQuickReplies && availableButtons.length > 0 && (
+          <div className={styles.botMsg}>
+            <div className={styles.botHeader}>Quick Questions:</div>
+            <div className={styles.quickReplies}>
+              {availableButtons.map((q, i) => (
+                <button
+                  key={i}
+                  className={styles.predefinedBtn}
+                  onClick={() => handleSend(q)}
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Predefined Questions */}
-      {predefinedQuestions.length > 0 && (
-        <div className={styles.predefinedBox}>
-          {predefinedQuestions.map((q, i) => (
-            <button
-              key={i}
-              className={styles.predefinedBtn}
-              onClick={() => handlePredefinedClick(q.text)}
-            >
-              {q.icon} {q.text}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Model Info
-      {modelUsed && (
-        <div className={styles.modelInfo}>
-          🤖 Powered by: <strong>{modelUsed}</strong>
-        </div>
-      )} */}
-
-      {/* Input Field */}
       <div className={styles.inputBox}>
         <input
+          type="text"
           value={input}
-          onChange={(e) => {
-            setInput(e.target.value);
-            if (predefinedQuestions.length > 0) {
-              setPredefinedQuestions([]);
-            }
-          }}
-          placeholder="Type a message..."
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Type your message..."
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
-        <button onClick={() => sendMessage()}>Send</button>
+        <button onClick={() => handleSend()}>Send</button>
+      </div>
+
+      <div style={{ textAlign: "center" }}>
+        <button onClick={handleClearChat} className={styles.endChatBtn}>
+          End Chat
+        </button>
       </div>
     </div>
   );
-}
+};
+
+export default ChatBox;

@@ -183,6 +183,15 @@
   display: inline;
 }
 
+@media (max-width: 774px) {
+  .navbar {
+    padding: 0.5rem 0.4rem;
+  }
+  .logo a {
+    font-size: 1.6rem;
+  }
+
+}
 @media (max-width: 768px) {
   .navbar {
     padding: 0.5rem 0.4rem;

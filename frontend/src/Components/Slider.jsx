@@ -3,18 +3,24 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useTheme } from "../store/ThemeContext.jsx";
-import "./SliderModule.css"; 
+import "./SliderModule.css";
 import Loading from "./Loading.jsx";
 import { useQuery } from "@tanstack/react-query";
 
 function fetchPlaces() {
-  return fetch("https://place-review-website-real.onrender.com/places").then(res => res.json());
+  return fetch("https://place-review-website-real.onrender.com/places").then(
+    (res) => res.json()
+  );
 }
 
 export default function PlacesSlider() {
   const { theme } = useTheme();
 
-  const { data: places, isLoading, error } = useQuery({
+  const {
+    data: places,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["places"],
     queryFn: fetchPlaces,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -50,7 +56,9 @@ export default function PlacesSlider() {
         {isLoading ? (
           <Loading />
         ) : error ? (
-          <div style={{ padding: "2rem", color: "red" }}>Failed to load places.</div>
+          <div style={{ padding: "2rem", color: "red" }}>
+            Failed to load places.
+          </div>
         ) : (
           places?.map((place) => (
             <Link
@@ -63,6 +71,7 @@ export default function PlacesSlider() {
                   src={place.image}
                   alt={place.name}
                   className="place-image"
+                  loading="lazy"
                 />
                 <h3 className="place-name">{place.name}</h3>
                 <p className="place-location">{place.location}</p>

@@ -1,10 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import viteCompression from "vite-plugin-compression"; // ✅ Import it
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    viteCompression({ algorithm: "brotliCompress" }), // or "gzip"
+  ],
   build: {
-    chunkSizeWarningLimit: 800, // default is 500
+    chunkSizeWarningLimit: 800, // Optional
   },
 });
