@@ -2,8 +2,8 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { ConvexHttpClient } from "convex/server"; // Use Convex from Node server
-import { api } from "../convex/_generated/api"; // Adjust path as needed
+import { ConvexHttpClient } from "convex/server"; 
+import { api } from "../../convex/_generated/api";
 
 dotenv.config();
 
