@@ -5,6 +5,7 @@ import { useTheme } from "../store/ThemeContext";
 import { FaRegUser } from "react-icons/fa";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 export default function Signup() {
   const { theme } = useTheme();
@@ -16,7 +17,6 @@ export default function Signup() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // Signup.jsx (in onSubmit)
   async function onSubmit(data) {
     try {
       const res = await fetch(
@@ -35,17 +35,17 @@ export default function Signup() {
       const result = await res.json();
 
       if (res.status === 409) {
-        alert("User already exists. Please log in instead.");
+        toast.error("User already exists. Please log in instead.");
         return;
       }
 
       if (!res.ok) throw new Error(result.message || "Signup failed");
 
-      alert("Signup successful!");
+      toast.success("Signup successful!");
       navigate("/login");
     } catch (err) {
       console.error("Signup error:", err);
-      alert(err.message || "Signup failed. Please try again.");
+      toast.error(err.message || "Signup failed. Please try again.");
     }
   }
 

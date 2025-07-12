@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import styles from "./Profile.module.css";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 import { jwtDecode } from "jwt-decode";
 import { useTheme } from "../store/ThemeContext";
 import userLogo from "../assets/user.png";
 
 export default function Profile() {
   const [imageUrl, setImageUrl] = useState(null);
-  const [userId, setUserId] = useState(null);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const { theme } = useTheme();
-  // Decode token on mount
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -23,20 +22,21 @@ export default function Profile() {
 
     try {
       const decoded = jwtDecode(token);
-      setUserId(decoded.id); // ✅ Get actual user ID
+      // You can use decoded.id if needed for future requests
     } catch (error) {
       console.error("Invalid token:", error);
       navigate("/login");
     }
 
+    // 🟢 Get user data from localStorage
+    const storedUsername = localStorage.getItem("username");
+    const storedEmail = localStorage.getItem("email");
     const storedImage = localStorage.getItem("image");
-    setImageUrl(storedImage);
-  }, [navigate]);
 
-  const userData = useQuery(
-    api.users.getUserById,
-    userId ? { userId } : "skip" // 🛡️ Skip query if no userId
-  );
+    if (storedUsername) setUsername(storedUsername);
+    if (storedEmail) setEmail(storedEmail);
+    if (storedImage) setImageUrl(storedImage);
+  }, [navigate]);
 
   function handleEdit() {
     navigate("/Editprofile");
@@ -45,8 +45,6 @@ export default function Profile() {
   function handleBack() {
     navigate("/");
   }
-
-  if (!userData) return <p style={{ textAlign: "center" }}>Loading...</p>;
 
   return (
     <div className={`${styles.Profile} ${theme === "dark" ? "dark" : ""}`}>
@@ -60,10 +58,10 @@ export default function Profile() {
           />
           <div className={styles.info}>
             <p>
-              <strong>Username:</strong> {userData.username}
+              <strong>Username:</strong> {username}
             </p>
             <p>
-              <strong>Email:</strong> {userData.email}
+              <strong>Email:</strong> {email}
             </p>
             <button className={styles.backButton} onClick={handleBack}>
               Back to home

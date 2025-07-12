@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const { theme } = useTheme();
@@ -25,8 +26,8 @@ export default function Login() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: data.email, // ✅ send email as string
-            password: data.password, // ✅ send password
+            email: data.email,
+            password: data.password,
           }),
         }
       );
@@ -34,21 +35,20 @@ export default function Login() {
       const result = await res.json();
 
       if (result.success) {
-        console.log("✅ Login successful");
-
         localStorage.setItem("token", result.token);
         localStorage.setItem("username", result.user.username);
         localStorage.setItem("email", result.user.email);
         localStorage.setItem("id", result.user.id);
 
         setShowSuccess(true);
+        toast.success("Login successful!");
         navigate("/");
       } else {
-        alert(result.message || "Invalid credentials");
+        toast.error(result.message || "Invalid credentials");
       }
     } catch (err) {
       console.error("🔴 Login error:", err);
-      alert("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -117,6 +117,7 @@ export default function Login() {
           <button type="submit" className={styles.button}>
             Login
           </button>
+
           <div className={styles.sigupcontainer}>
             <Link to="/signup" className={styles.siguplink}>
               Don't have an account? Sign up

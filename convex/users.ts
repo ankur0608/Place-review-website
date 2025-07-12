@@ -59,3 +59,19 @@ export const getUserByEmail = query({
         }
     },
 });
+
+export const getUserById = query({
+    args: {
+        userId: v.id("users"),
+    },
+    handler: async (ctx, { userId }) => {
+        try {
+            const user = await ctx.db.get(userId);
+            return user || null;
+        }
+        catch (err) {
+            console.error("❌ Convex getUserById failed:", err);
+            throw err;
+        }
+    }
+});
