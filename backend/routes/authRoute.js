@@ -2,8 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { ConvexHttpClient } from "convex/server"; 
-import { api } from "../../convex/_generated/api";
+import { ConvexHttpClient } from "convex/browser"; // ✅ Works in backend
 
 dotenv.config();
 
@@ -14,7 +13,9 @@ const convex = new ConvexHttpClient(process.env.CONVEX_URL, {
   deploymentToken: process.env.CONVEX_DEPLOY_KEY,
 });
 
-// ✅ Signup → hash password and store via Convex mutation
+// ✅ Signup: hash password, insert user
+// backend/authRoute.js
+
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -23,34 +24,36 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Hash the password
-    const hashed = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert into Convex
-    await convex.mutation(api.users.insertUser, {
+    const insertedUserId = await convex.mutation("users:insertUser", {
       username,
       email,
-      password: hashed,
+      password: hashedPassword,
     });
 
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
-    console.error("Signup error:", error.message);
-    res.status(500).json({ message: "Server error during signup" });
+    console.error("🔴 Signup error:", error.message);
+
+    if (error.message === "User already exists") {
+      return res.status(409).json({ message: "User already exists" }); // ⚠️ Proper status code
+    }
+
+    res.status(500).json({ message: error.message || "Signup failed" });
   }
 });
 
-// ✅ Login → fetch user from Convex and validate password
+// ✅ Login: get user and verify password
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    // Get user from Convex
-    const user = await convex.query(api.users.getUserByEmail, { email });
+    const user = await convex.query("users:getUserByEmail", { email });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -60,13 +63,11 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Use Google login instead" });
     }
 
-    // Compare hashed passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Sign JWT token
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
@@ -83,9 +84,9 @@ router.post("/login", async (req, res) => {
         email: user.email,
       },
     });
-  } catch (error) {
-    console.error("Login error:", error.message);
-    res.status(500).json({ message: "Server error during login" });
+  } catch (err) {
+    console.error("🔴 Login error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

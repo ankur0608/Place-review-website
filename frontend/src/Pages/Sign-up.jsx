@@ -5,13 +5,10 @@ import { useTheme } from "../store/ThemeContext";
 import { FaRegUser } from "react-icons/fa";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
-import { useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 
 export default function Signup() {
-  const insertUser = useMutation(api.users.insertUser);
   const { theme } = useTheme();
-  const navigator = useNavigate();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -19,38 +16,33 @@ export default function Signup() {
     formState: { errors, isSubmitting },
   } = useForm();
 
+  // Signup.jsx (in onSubmit)
   async function onSubmit(data) {
     try {
-      // Step 1: Hash password via Node backend
       const res = await fetch(
         "https://place-review-website-real.onrender.com/api/auth/signup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: data.name,
+            username: data.username,
             email: data.email,
             password: data.password,
           }),
         }
       );
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Signup failed");
+      const result = await res.json();
+
+      if (res.status === 409) {
+        alert("User already exists. Please log in instead.");
+        return;
       }
 
-      const hashedUser = await res.json(); // { username, email, password }
-      console.log("Hashed user from backend:", hashedUser);
+      if (!res.ok) throw new Error(result.message || "Signup failed");
 
-      // Step 2: Store hashed user in Convex
-      await insertUser({
-        username: hashedUser.username,
-        email: hashedUser.email,
-        password: hashedUser.password,
-      });
-
-      navigator("/login");
+      alert("Signup successful!");
+      navigate("/login");
     } catch (err) {
       console.error("Signup error:", err);
       alert(err.message || "Signup failed. Please try again.");
@@ -63,30 +55,30 @@ export default function Signup() {
         <h2 className={styles.heading}>Sign Up</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          {/* Name */}
+          {/* Username */}
           <div className={styles.formGroup}>
-            <label htmlFor="name" className={styles.label}>
-              Name
+            <label htmlFor="username" className={styles.label}>
+              Username
             </label>
             <div className={styles.inputWrapper}>
               <FaRegUser className={styles.inputIcon} />
               <input
-                id="name"
-                placeholder="Enter your name"
-                {...register("name", {
-                  required: "Name is required",
+                id="username"
+                placeholder="Enter your username"
+                {...register("username", {
+                  required: "Username is required",
                   pattern: {
                     value: /^[A-Za-z\s]+$/,
-                    message: "Name should contain alphabets only",
+                    message: "Username should contain alphabets only",
                   },
                   validate: (value) =>
-                    !/\d/.test(value) || "Name should not contain numbers",
+                    !/\d/.test(value) || "Username should not contain numbers",
                 })}
                 className={styles.inputField}
               />
             </div>
-            {errors.name && (
-              <p className={styles.error}>{errors.name.message}</p>
+            {errors.username && (
+              <p className={styles.error}>{errors.username.message}</p>
             )}
           </div>
 
