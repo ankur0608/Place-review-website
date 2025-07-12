@@ -1,8 +1,11 @@
+// backend/routes/authRoute.js
+
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { ConvexHttpClient } from "convex/browser"; // ✅ Works in backend
+import { ConvexHttpClient } from "convex/server";
+import { api } from "../../convex/_generated/api"; // <-- Typed Convex API
 
 dotenv.config();
 
@@ -13,47 +16,50 @@ const convex = new ConvexHttpClient(process.env.CONVEX_URL, {
   deploymentToken: process.env.CONVEX_DEPLOY_KEY,
 });
 
-// ✅ Signup: hash password, insert user
-// backend/authRoute.js
-
+// ✅ Signup: hash password and insert user in Convex
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    console.log("📥 Signup request:", req.body);
 
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, 10);
+    console.log("🔐 Password hashed");
 
-    const insertedUserId = await convex.mutation("users:insertUser", {
+    // Insert user
+    await convex.mutation(api.users.insertUser, {
       username,
       email,
-      password: hashedPassword,
+      password: hashed,
     });
 
+    console.log("✅ User inserted successfully");
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
-    console.error("🔴 Signup error:", error.message);
+    console.error("🔴 Signup error:", error);
 
     if (error.message === "User already exists") {
-      return res.status(409).json({ message: "User already exists" }); // ⚠️ Proper status code
+      return res.status(409).json({ message: "User already exists" });
     }
 
-    res.status(500).json({ message: error.message || "Signup failed" });
+    res.status(500).json({ message: "Server error during signup" });
   }
 });
 
-// ✅ Login: get user and verify password
+// ✅ Login: fetch user and validate password
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
   try {
-    const user = await convex.query("users:getUserByEmail", { email });
+    const { email, password } = req.body;
+    console.log("📥 Login attempt for:", email);
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const user = await convex.query(api.users.getUserByEmail, { email });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
