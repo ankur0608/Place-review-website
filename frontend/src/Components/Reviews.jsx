@@ -30,7 +30,7 @@ export default function Review({
 
   function onFormSubmit(data) {
     if (rating === 0) return alert("Please select a rating.");
-    onSubmit({ comment: data.comment, rating, photo });
+    onSubmit({ comment: data.comment, rating, photo: photo ?? undefined });
     reset();
     setRating(0);
     setPhoto(null);

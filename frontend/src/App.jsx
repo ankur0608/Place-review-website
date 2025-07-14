@@ -18,7 +18,10 @@ const ChatBox = lazy(() => import("./Components/ChatBox.jsx"));
 const Editprofile = lazy(() => import("./Components/Editprofile.jsx"));
 const Signup = lazy(() => import("./Pages/Sign-up.jsx"));
 const Login = lazy(() => import("./Pages/Login.jsx"));
-
+const Blog = lazy(() => import("./Pages/Blog.jsx"));
+import BlogDetails from "./Pages/BlogDetails.jsx";
+// Chat widget (optional)
+import ChatWidget from "./Components/ChatWidget";
 // const ResetPassword = lazy(() => import("./Pages/ResetPassword.jsx"));
 
 // Shared layout
@@ -99,6 +102,23 @@ const router = createBrowserRouter([
       //     </Suspense>
       //   ),
       // },
+
+      {
+        path: "blog",
+        element: (
+          <Suspense fallback={<div>Loading Blog...</div>}>
+            <Blog />
+          </Suspense>
+        ),
+      },
+      {
+        path: "blog/:slug",
+        element: (
+          <Suspense fallback={<div>Loading Blogs...</div>}>
+            <BlogDetails />
+          </Suspense>
+        ),
+      },
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },
@@ -106,9 +126,6 @@ const router = createBrowserRouter([
   { path: "login", element: <Login /> },
   { path: "forgot-password", element: <ForgotPassword /> },
 ]);
-
-// Chat widget (optional)
-import ChatWidget from "./Components/ChatWidget";
 
 // Root App
 function App() {

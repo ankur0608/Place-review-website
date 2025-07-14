@@ -1,0 +1,87 @@
+.blogDetail {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #111;
+}
+
+.date {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  margin-bottom: 2rem;
+  border-radius: 10px;
+}
+
+.content {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #333;
+  white-space: pre-line;
+}
+
+.loading,
+.notFound {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.5rem;
+  color: #999;
+}
+.dark .blogDetail {
+  background-color: #222;
+  color: #ddd;
+}
+.dark .title {
+  color: #fff;
+}
+.dark .content {
+  color: #ddd;
+}
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  color: #111;
+  border: 1px solid #111;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.backButton:hover {
+  background-color: #111;
+  color: #fff;
+}
+
+.backButton::before {
+  content: "←";
+  font-size: 1.1rem;
+}
+
+.dark .backButton {
+  color: #fff;
+  border-color: #fff;
+}
+
+.dark .backButton:hover {
+  background-color: #fff;
+  color: #000;
+}

@@ -22,7 +22,7 @@ export const add = mutation({
     placeId: v.string(),
     placeName: v.optional(v.string()),
     userId: v.string(),
-    photo: v.optional(v.string()), // <-- Accept photo (URL or base64)
+    photo: v.optional(v.string()),// <-- Accept photo (URL or base64)
   },
   handler: async (ctx, args) => {
 

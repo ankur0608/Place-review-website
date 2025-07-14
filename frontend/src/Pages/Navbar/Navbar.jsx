@@ -25,6 +25,7 @@ export default function Navbar() {
     { name: "Places", path: "/places", icon: <FaMapMarkedAlt /> },
     { name: "About", path: "/about", icon: <FaInfoCircle /> },
     { name: "Contact", path: "/contact", icon: <FaEnvelope /> },
+    { name: "Blog", path: "/blog", icone: <FaInfoCircle /> },
   ];
 
   useEffect(() => {
