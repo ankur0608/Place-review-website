@@ -9,8 +9,9 @@ export default function BlogList() {
   const [blogs, setBlogs] = useState([]);
   const { theme } = useTheme();
   useEffect(() => {
+    axios;
     axios
-      .get("http://localhost:1337/api/places?populate=*")
+      .get("https://cms-waau.onrender.com/api/places?populate=*")
       .then((res) => setBlogs(res.data.data))
       .catch((err) => console.error("Error fetching blogs:", err));
   }, []);
@@ -22,9 +23,7 @@ export default function BlogList() {
       <h1 className={styles.heading}>Latest Blog Posts</h1>
       <div className={styles.grid}>
         {blogs.map(({ id, title, Content, slug, Image }) => {
-          const imageUrl = `http://localhost:1337${
-            Image?.formats?.small?.url || Image?.url
-          }`;
+          const imageUrl = `https://cms-waau.onrender.com${Image?.formats?.small?.url || Image?.url}`;
 
           return (
             <div key={id} className={styles.card}>

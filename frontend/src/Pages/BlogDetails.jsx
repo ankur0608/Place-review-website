@@ -6,7 +6,7 @@ import { useTheme } from "../store/ThemeContext.jsx";
 import LoadingSpinner from "../Components/Loading.jsx";
 import { AiFillHeart } from "react-icons/ai";
 import { useMutation, useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api.js"; 
+import { api } from "../../convex/_generated/api.js";
 
 export default function BlogDetails() {
   const { slug } = useParams();
@@ -23,7 +23,7 @@ export default function BlogDetails() {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:1337/api/places?filters[slug][$eq]=${slug}&populate=*`
+        `https://cms-waau.onrender.com/api/places?filters[slug][$eq]=${slug}&populate=*`
       )
       .then((res) => {
         setBlog(res.data.data[0]);
@@ -42,7 +42,7 @@ export default function BlogDetails() {
   if (!blog) return <div className={styles.notFound}>Blog not found</div>;
 
   const { title, Content, Image, publishedAt } = blog;
-  const imageUrl = `http://localhost:1337${Image?.formats?.small?.url || Image?.url}`;
+  const imageUrl = `https://cms-waau.onrender.com${Image?.formats?.small?.url || Image?.url}`;
 
   return (
     <div
