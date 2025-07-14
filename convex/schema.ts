@@ -47,5 +47,9 @@ export default defineSchema({
     createdAt: v.number(),
   }).index("by_time", ["createdAt"]),
 
-
+  blogLikes: defineTable({
+    slug: v.string(),
+    likes: v.number(),
+  })
+    .index("by_slug", ["slug"])
 });
