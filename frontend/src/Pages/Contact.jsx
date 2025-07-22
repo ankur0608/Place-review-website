@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useTheme } from "../store/ThemeContext";
 import styles from "./Contact.module.css";
+import toast from "react-hot-toast";
 
 const Contact = () => {
   const { theme } = useTheme();
@@ -23,12 +24,12 @@ const Contact = () => {
 
   const onSubmit = async (data) => {
     if (!token) {
-      alert("❌ Please log in to send a message.");
+      toast.error("❌ Please log in to send a message.");
       return;
     }
 
     try {
-      await fetch(
+      const res = await fetch(
         "https://place-review-website-real.onrender.com/api/contact",
         {
           method: "POST",
@@ -42,11 +43,11 @@ const Contact = () => {
 
       if (!res.ok) throw new Error("Failed to send message");
 
-      alert("✅ Message sent successfully!");
+      toast.success("✅ Message sent successfully!");
       reset();
     } catch (error) {
       console.error("Error submitting contact form:", error);
-      alert("❌ Something went wrong. Try again later.");
+      toast.error("❌ Something went wrong. Try again later.");
     }
   };
 

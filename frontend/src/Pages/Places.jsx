@@ -6,7 +6,7 @@ import Loding from "../Components/Loading.jsx";
 import { useQuery } from "@tanstack/react-query";
 
 function fetchPlaces() {
-  return fetch("https://place-review-website-real.onrender.com/places").then(
+  return fetch("https://place-review-website-real.onrender.com/api/places").then(
     (res) => res.json()
   );
 }
