@@ -4,7 +4,7 @@ import {supabase} from "../supabaseClient.js";
 const router = express.Router();
 
 // POST /contact
-router.post("/contact", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {

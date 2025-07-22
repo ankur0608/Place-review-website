@@ -34,7 +34,7 @@ app.use(express.json());
 // ✅ Route middleware
 // app.use("/places", placesRoute);
 app.use("/api/auth", authRoute);
-app.use("/contact", contactRoute);
+app.use("/api/contact", contactRoute);
 app.use("/api/saveplace", saveplaceRoute);
 // ✅ Catch-all route (optional)
 app.get("/", (req, res) => {

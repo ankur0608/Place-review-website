@@ -28,8 +28,8 @@ const Contact = () => {
     }
 
     try {
-      const res = await fetch(
-        "https://place-review-website-real.onrender.com/contact",
+      await fetch(
+        "https://place-review-website-real.onrender.com/api/contact",
         {
           method: "POST",
           headers: {
