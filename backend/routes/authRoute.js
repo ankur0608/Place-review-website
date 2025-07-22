@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { supabase } from "../supabaseClient.js"; // make sure path is correct
+import {supabase} from "../supabaseClient.js";
 
 dotenv.config();
 
@@ -18,20 +18,20 @@ router.post("/signup", async (req, res) => {
     }
 
     // Check if user already exists
-    const { data: existingUser } = await supabase
+    const { data: existingUser, error: fetchError } = await supabase
       .from("users")
       .select("*")
       .eq("email", email)
-      .single();
+      .maybeSingle(); // Use maybeSingle() to avoid throwing if no match
+
+    if (fetchError) throw fetchError;
 
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert user
     const { error: insertError } = await supabase.from("users").insert([
       {
         username,
@@ -44,7 +44,7 @@ router.post("/signup", async (req, res) => {
 
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
-    console.error("🔴 Signup error:", error.message);
+    console.error("🔴 Signup error:", error.message || error);
     res.status(500).json({ message: "Signup failed" });
   }
 });
@@ -53,19 +53,18 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("📥 Login attempt for:", email);
 
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const { data: user, error } = await supabase
+    const { data: user, error: userError } = await supabase
       .from("users")
       .select("*")
       .eq("email", email)
-      .single();
+      .maybeSingle();
 
-    if (error || !user) {
+    if (userError || !user) {
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -74,6 +73,7 @@ router.post("/login", async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -95,7 +95,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("🔴 Login error:", error);
+    console.error("🔴 Login error:", error.message || error);
     res.status(500).json({ message: "Server error during login" });
   }
 });

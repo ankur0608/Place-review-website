@@ -7,7 +7,7 @@ import express from "express";
 import cors from "cors";
 
 // Import route handlers (make sure these files have `.js` extensions)
-import placesRoute from "./routes/placesRoute.js";
+// import placesRoute from "./routes/placesRoute.js";
 import authRoute from "./routes/authRoute.js";
 import contactRoute from "./routes/contact.js";
 import saveplaceRoute from "./routes/saveplace.js";
@@ -32,7 +32,7 @@ app.use(
 app.use(express.json());
 
 // ✅ Route middleware
-app.use("/places", placesRoute);
+// app.use("/places", placesRoute);
 app.use("/api/auth", authRoute);
 app.use("/contact", contactRoute);
 app.use("/api/saveplace", saveplaceRoute);
