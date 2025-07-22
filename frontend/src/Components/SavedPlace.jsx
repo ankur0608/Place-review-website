@@ -1,80 +1,78 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styles from "./SavedPlace.module.css";
-import heartFilled from "../assets/heart2.png";
 import { useTheme } from "../store/ThemeContext.jsx";
+import styles from "./SavedPlaces.module.css";
 import Loading from "./Loading.jsx";
 
-export default function SavedPlace() {
+export default function SavedPlaces() {
   const userId = localStorage.getItem("id");
   const { theme } = useTheme();
-  const navigate = useNavigate();
+
   const [savedPlaces, setSavedPlaces] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch saved places for this user
+  const fetchSavedPlaces = async () => {
+    if (!userId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/savedplaces/user/${userId}`);
+      if (!res.ok) throw new Error("Failed to fetch saved places");
+
+      const data = await res.json();
+      setSavedPlaces(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    fetchSavedPlaces();
+  }, [userId]);
+
+  // Toggle save / remove saved place
+  const handleToggleSave = async (placeId) => {
     if (!userId) {
-      setLoading(false);
+      alert("Please log in to manage saved places.");
       return;
     }
 
-    async function fetchSaved() {
-      setLoading(true);
-      try {
-        // Replace this with your actual API to get saved places by userId
-        const res = await fetch(
-          `https://place-review-website-real.onrender.com/api/savedplaces/user/${userId}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch saved places");
-
-        const data = await res.json();
-        setSavedPlaces(data); // data should be array of saved places with place_id
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchSaved();
-  }, [userId]);
-
-  const handleToggleSave = async (placeId) => {
-    if (!userId) return alert("Please log in");
-
     try {
-      // Replace with your actual toggle save API
-      const res = await fetch(
-        `https://place-review-website-real.onrender.com/api/savedplaces/toggle`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId, placeId }),
-        }
-      );
+      const res = await fetch("/api/savedplaces/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, placeId }),
+      });
 
-      if (!res.ok) throw new Error("Toggle save failed");
+      if (!res.ok) throw new Error("Failed to toggle saved place");
 
-      // Refetch saved places after toggle
-      const refreshedRes = await fetch(
-        `https://place-review-website-real.onrender.com/api/savedplaces/user/${userId}`
-      );
-      const refreshedData = await refreshedRes.json();
-      setSavedPlaces(refreshedData);
+      // Refresh saved places after toggle
+      fetchSavedPlaces();
     } catch (err) {
       alert(err.message);
     }
   };
 
-  if (!userId) return <p>Please log in to see saved places.</p>;
+  if (!userId) {
+    return <p>Please log in to see your saved places.</p>;
+  }
+
   if (loading) return <Loading />;
-  if (savedPlaces.length === 0) return <p>No saved places yet.</p>;
+
+  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
+
+  if (savedPlaces.length === 0)
+    return <p>You don't have any saved places yet.</p>;
 
   return (
     <div className={`${styles.container} ${styles[theme]}`}>
-      <h2 className={styles.heading}>📍 Saved Places</h2>
+      <h2 className={styles.heading}>📍 Your Saved Places</h2>
+
       <div className={styles.grid}>
         {savedPlaces.map(({ place_id }) => (
           <SavedPlaceCard
@@ -90,29 +88,35 @@ export default function SavedPlace() {
 
 function SavedPlaceCard({ placeId, onToggleSave }) {
   const [place, setPlace] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  // Fetch place details by placeId
   useEffect(() => {
-    async function fetchPlace() {
+    const fetchPlace = async () => {
       setLoading(true);
+      setError(null);
+
       try {
-        // Corrected API url with /api
         const res = await fetch(
           `https://place-review-website-real.onrender.com/api/places/${placeId}`
         );
         if (!res.ok) throw new Error("Failed to fetch place details");
+
         const data = await res.json();
         setPlace(data);
       } catch (err) {
-        console.error(err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
-    }
+    };
+
     fetchPlace();
   }, [placeId]);
 
   if (loading) return <div>Loading place...</div>;
+  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
   if (!place) return null;
 
   return (
@@ -127,7 +131,7 @@ function SavedPlaceCard({ placeId, onToggleSave }) {
         <h3>{place.name}</h3>
         <p>{place.location}</p>
         <button onClick={onToggleSave} className={styles.removeButton}>
-          Remove from saved
+          Remove from Saved
         </button>
       </div>
     </div>

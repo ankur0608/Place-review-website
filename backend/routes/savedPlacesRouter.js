@@ -1,139 +1,72 @@
-import { useEffect, useState } from "react";
-import { useTheme } from "../store/ThemeContext.jsx";
-import styles from "./SavedPlaces.module.css";
-import Loading from "./Loading.jsx";
+import express from "express";
+import { supabase } from "../supabaseClient.js";
 
-export default function SavedPlaces() {
-  const userId = localStorage.getItem("id");
-  const { theme } = useTheme();
+const router = express.Router();
 
-  const [savedPlaces, setSavedPlaces] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+// Toggle save / unsave
+router.post("/toggle", async (req, res) => {
+  const { userId, placeId } = req.body;
 
-  // Fetch saved places for this user
-  const fetchSavedPlaces = async () => {
-    if (!userId) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/savedplaces/user/${userId}`);
-      if (!res.ok) throw new Error("Failed to fetch saved places");
-
-      const data = await res.json();
-      setSavedPlaces(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSavedPlaces();
-  }, [userId]);
-
-  // Toggle save / remove saved place
-  const handleToggleSave = async (placeId) => {
-    if (!userId) {
-      alert("Please log in to manage saved places.");
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/savedplaces/toggle", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, placeId }),
-      });
-
-      if (!res.ok) throw new Error("Failed to toggle saved place");
-
-      // Refresh saved places after toggle
-      fetchSavedPlaces();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  if (!userId) {
-    return <p>Please log in to see your saved places.</p>;
+  if (!userId || !placeId) {
+    return res.status(400).json({ message: "Missing userId or placeId" });
   }
 
-  if (loading) return <Loading />;
+  try {
+    // Check if place is already saved
+    const { data: existing, error: fetchError } = await supabase
+      .from("savedplaces")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("place_id", placeId)
+      .single();
 
-  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
+    if (fetchError && fetchError.code !== "PGRST116") {
+      throw fetchError;
+    }
 
-  if (savedPlaces.length === 0)
-    return <p>You don't have any saved places yet.</p>;
+    if (existing) {
+      // If exists, remove it (unsave)
+      const { error: deleteError } = await supabase
+        .from("savedplaces")
+        .delete()
+        .eq("id", existing.id);
 
-  return (
-    <div className={`${styles.container} ${styles[theme]}`}>
-      <h2 className={styles.heading}>📍 Your Saved Places</h2>
+      if (deleteError) throw deleteError;
 
-      <div className={styles.grid}>
-        {savedPlaces.map(({ place_id }) => (
-          <SavedPlaceCard
-            key={place_id}
-            placeId={place_id}
-            onToggleSave={() => handleToggleSave(place_id)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
+      return res.status(200).json({ saved: false });
+    } else {
+      // If not exists, insert new (save)
+      const { error: insertError } = await supabase
+        .from("savedplaces")
+        .insert([{ user_id: userId, place_id: placeId }]);
 
-function SavedPlaceCard({ placeId, onToggleSave }) {
-  const [place, setPlace] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+      if (insertError) throw insertError;
 
-  // Fetch place details by placeId
-  useEffect(() => {
-    const fetchPlace = async () => {
-      setLoading(true);
-      setError(null);
+      return res.status(201).json({ saved: true });
+    }
+  } catch (error) {
+    console.error("Toggle save error:", error);
+    res.status(500).json({ message: "Toggle failed", error: error.message });
+  }
+});
 
-      try {
-        const res = await fetch(
-          `https://place-review-website-real.onrender.com/api/places/${placeId}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch place details");
+// Get saved places for a user
+router.get("/user/:userId", async (req, res) => {
+  const { userId } = req.params;
 
-        const data = await res.json();
-        setPlace(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  try {
+    const { data, error } = await supabase
+      .from("savedplaces")
+      .select("*")
+      .eq("user_id", userId);
 
-    fetchPlace();
-  }, [placeId]);
+    if (error) throw error;
 
-  if (loading) return <div>Loading place...</div>;
-  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
-  if (!place) return null;
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Get saved places error:", error);
+    res.status(500).json({ message: "Fetch failed", error: error.message });
+  }
+});
 
-  return (
-    <div className={styles.card}>
-      <img
-        src={place.image_url || "/placeholder.jpg"}
-        alt={place.name}
-        className={styles.image}
-        loading="lazy"
-      />
-      <div className={styles.textContent}>
-        <h3>{place.name}</h3>
-        <p>{place.location}</p>
-        <button onClick={onToggleSave} className={styles.removeButton}>
-          Remove from Saved
-        </button>
-      </div>
-    </div>
-  );
-}
+export default router;
