@@ -1,3 +1,4 @@
+// routes/places.js
 import express from "express";
 import { supabase } from "../supabaseClient.js";
 
@@ -8,15 +9,30 @@ router.get("/", async (req, res) => {
   try {
     const { data, error } = await supabase.from("places").select("*");
 
-    if (error) {
-      console.error("Supabase fetch error:", error.message);
-      return res.status(500).json({ message: "Failed to fetch places." });
-    }
+    if (error) throw error;
 
     res.status(200).json(data);
   } catch (err) {
-    console.error("Server error:", err.message);
-    res.status(500).json({ message: "Server error." });
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ✅ GET place by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data, error } = await supabase
+      .from("places")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

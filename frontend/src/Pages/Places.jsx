@@ -6,9 +6,9 @@ import Loding from "../Components/Loading.jsx";
 import { useQuery } from "@tanstack/react-query";
 
 function fetchPlaces() {
-  return fetch("https://place-review-website-real.onrender.com/api/places").then(
-    (res) => res.json()
-  );
+  return fetch(
+    "https://place-review-website-real.onrender.com/api/places"
+  ).then((res) => res.json());
 }
 
 export default function Places() {
@@ -25,7 +25,7 @@ export default function Places() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const placesPerPage = 6;
+  const placesPerPage = 8;
 
   const { theme } = useTheme();
 
@@ -35,9 +35,12 @@ export default function Places() {
   ];
 
   const filteredPlaces = places?.filter((place) => {
+    const name = place.name || "";
+    const location = place.location || "";
+
     const matchesSearch =
-      place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      place.location.toLowerCase().includes(searchQuery.toLowerCase());
+      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      location.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesCategory =
       selectedCategory === "All" || place.category === selectedCategory;
@@ -113,11 +116,12 @@ export default function Places() {
             >
               <article className={styles.card}>
                 <img
-                  src={place.image}
+                  src={place.image_url || "/placeholder.jpg"}
                   alt={place.name}
                   className={styles.image}
                   loading="lazy"
                 />
+
                 <div className={styles.cardContent}>
                   <h2 className={styles.name}>{place.name}</h2>
                   <p className={styles.location}>{place.location}</p>

@@ -8,9 +8,9 @@ import Loading from "./Loading.jsx";
 import { useQuery } from "@tanstack/react-query";
 
 function fetchPlaces() {
-  return fetch("https://place-review-website-real.onrender.com/places").then(
-    (res) => res.json()
-  );
+  return fetch(
+    "https://place-review-website-real.onrender.com/api/places"
+  ).then((res) => res.json());
 }
 
 export default function PlacesSlider() {
@@ -68,7 +68,7 @@ export default function PlacesSlider() {
             >
               <div className="place-card">
                 <img
-                  src={place.image}
+                  src={place.image_url || "/placeholder.jpg"}
                   alt={place.name}
                   className="place-image"
                   loading="lazy"
