@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "../store/ThemeContext.jsx";
-import styles from "./SavedPlaces.module.css";
+import styles from "./SavedPlace.module.css";
 import Loading from "./Loading.jsx";
 
 export default function SavedPlaces() {
