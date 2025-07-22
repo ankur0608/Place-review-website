@@ -10,7 +10,7 @@ import cors from "cors";
 // import placesRoute from "./routes/placesRoute.js";
 import authRoute from "./routes/authRoute.js";
 import contactRoute from "./routes/contact.js";
-import saveplaceRoute from "./routes/saveplace.js";
+import saveplaceRoute from "./routes/savedPlacesRouter.js";
 import placesRoute from "./routes/placesRoute.js";
 // Initialize Express app
 const app = express();

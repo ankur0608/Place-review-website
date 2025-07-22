@@ -1,21 +1,22 @@
-// PlaceDetails.jsx
 import { useEffect, useState, lazy, Suspense } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import ReviewForm from "../Components/Reviews.jsx";
-import supabase from "/lib/supabaseClient"; 
+import supabase from "/lib/supabaseClient";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
 import Loading from "../Components/Loading.jsx";
+
 const PlacesSlider = lazy(() => import("../Components/Slider.jsx"));
 
-// --- API Fetch ---
 const fetchPlaceDetails = async (id) => {
-  const res = await fetch(`https://place-review-website-real.onrender.com/api/places/${id}`);
+  const res = await fetch(
+    `https://place-review-website-real.onrender.com/api/places/${id}`
+  );
   if (!res.ok) throw new Error("Failed to fetch place");
   return res.json();
 };
@@ -36,58 +37,92 @@ export default function PlaceDetails() {
     }
   }, [navigate]);
 
+  // Fetch place details
   const {
     data: place,
-    isLoading,
-    error,
+    isLoading: placeLoading,
+    error: placeError,
   } = useQuery({
     queryKey: ["place", id],
     queryFn: () => fetchPlaceDetails(id),
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: reviews = [], refetch: refetchReviews } = useQuery({
+  // Fetch reviews for place
+  const {
+    data: reviews = [],
+    refetch: refetchReviews,
+    isLoading: reviewsLoading,
+    error: reviewsError,
+  } = useQuery({
     queryKey: ["reviews", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
-        .eq("placeId", id)
+        .eq("place_id", id)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
   });
 
-  const { data: saved = [], refetch: refetchSaved } = useQuery({
+  // Fetch saved places for user
+  const {
+    data: saved = [],
+    refetch: refetchSaved,
+    isLoading: savedLoading,
+    error: savedError,
+  } = useQuery({
     queryKey: ["savedPlaces", userId],
     queryFn: async () => {
       if (!userId) return [];
       const { data, error } = await supabase
-        .from("saved_places")
+        .from("savedplaces")
         .select("*")
-        .eq("userId", userId);
+        .eq("user_id", userId);
       if (error) throw error;
       return data;
     },
+    enabled: !!userId,
   });
 
-  const isSaved = saved?.some((p) => p.placeId === id);
-  const userReview = reviews?.find((r) => r.userId === userId);
+  // Determine if this place is saved by user
+  const isSaved = saved?.some((p) => p.place_id === id);
+
+  // User's review on this place, if any
+  const userReview = reviews?.find((r) => r.user_id === userId);
+
   const [editing, setEditing] = useState(false);
 
+  // Toggle Save / Unsave place
   const handleSave = async () => {
+    if (!userId) {
+      alert("You must be logged in to save a place.");
+      return;
+    }
+
     try {
       if (isSaved) {
-        await supabase
-          .from("saved_places")
+        // Remove saved place
+        const { error } = await supabase
+          .from("savedplaces")
           .delete()
-          .eq("userId", userId)
-          .eq("placeId", id);
+          .eq("user_id", userId)
+          .eq("place_id", id);
+
+        if (error) throw error;
       } else {
-        await supabase.from("saved_places").insert([{ userId, placeId: id }]);
+        // Save place
+        const { error } = await supabase
+          .from("savedplaces")
+          .insert([{ user_id: userId, place_id: id }]);
+
+        if (error) throw error;
       }
-      refetchSaved();
+
+      // Refetch saved places to update UI
+      await refetchSaved();
     } catch (err) {
       alert("Error toggling save: " + err.message);
     }
@@ -109,12 +144,12 @@ export default function PlaceDetails() {
       } else {
         await supabase.from("reviews").insert([
           {
-            name: userName,
             comment,
             rating,
             photo,
-            placeId: id,
-            userId,
+            place_id: id,
+            user_id: userId,
+            name: userName,
           },
         ]);
       }
@@ -137,13 +172,17 @@ export default function PlaceDetails() {
     }
   };
 
-  if (isLoading) return <Loading />;
-  if (error) return <p>Error: {error.message}</p>;
+  if (placeLoading) return <Loading />;
+  if (placeError) return <p>Error: {placeError.message}</p>;
   if (!place) return <p>No place found.</p>;
 
   return (
     <>
-      <div className={`${styles.container} ${theme === "dark" ? styles.dark : styles.light}`}>
+      <div
+        className={`${styles.container} ${
+          theme === "dark" ? styles.dark : styles.light
+        }`}
+      >
         <div className={styles.topBar}>
           <Link to="/places">
             <button className={styles.backButton}>← Go Back</button>
@@ -151,7 +190,12 @@ export default function PlaceDetails() {
         </div>
 
         <h1 className={styles.title}>{place.name}</h1>
-        <img src={place.image} alt={place.name} className={styles.image} />
+        <img
+          src={place.image_url || "/placeholder.jpg"}
+          alt={place.name}
+          className={styles.image}
+          loading="lazy"
+        />
 
         <div className={styles.detailsSection}>
           <p className={styles.info}>
@@ -162,12 +206,21 @@ export default function PlaceDetails() {
 
         <div className={styles.actions}>
           <div
-            className={`${styles.saveButton} ${isSaved ? styles.liked : ""}`}
-            onClick={handleSave}
+            className={`${styles.saveButton} ${isSaved ? styles.liked : ""} ${
+              savedLoading ? styles.disabled : ""
+            }`}
+            onClick={savedLoading ? undefined : handleSave}
+            title={isSaved ? "Unsave Place" : "Save Place"}
+            style={{ cursor: savedLoading ? "not-allowed" : "pointer" }}
           >
             <img src={isSaved ? heartOutline : heartFilled} alt="heart icon" />
             <span>{isSaved ? "Saved" : "Save Place"}</span>
           </div>
+          {savedError && (
+            <p style={{ color: "red", marginTop: "8px" }}>
+              Error loading saved places: {savedError.message}
+            </p>
+          )}
         </div>
 
         <div className={styles.reviewFormWrapper}>
@@ -186,16 +239,23 @@ export default function PlaceDetails() {
           ) : (
             <div className={styles.reviewItem}>
               <p>
-                <strong>{userReview.name}</strong> rated it ⭐ {userReview.rating}/5
+                <strong>{userReview.name}</strong> rated it ⭐{" "}
+                {userReview.rating}/5
               </p>
               <p className={styles.comment}>{userReview.comment}</p>
               <button onClick={() => setEditing(true)}>Edit Review</button>
-              <button onClick={handleDeleteReview} className={styles.deleteButton}>
+              <button
+                onClick={handleDeleteReview}
+                className={styles.deleteButton}
+              >
                 Delete Review
               </button>
             </div>
           )}
         </div>
+
+        {reviewsLoading && <Loading />}
+        {reviewsError && <p>Error loading reviews: {reviewsError.message}</p>}
 
         {reviews?.length > 0 && (
           <div className={styles.reviewsSection}>
@@ -203,7 +263,7 @@ export default function PlaceDetails() {
             {reviews.map((review) => (
               <div key={review.id} className={styles.reviewItem}>
                 <p>
-                  <strong>{review.name}</strong> rated it ⭐ {review.rating}/5
+                  <strong>{review.name}</strong> rated it ⭐ {review.rating}/5{" "}
                   <span className={styles.timeAgo}>
                     {review.created_at &&
                       formatDistanceToNow(new Date(review.created_at), {
@@ -217,6 +277,7 @@ export default function PlaceDetails() {
                     src={review.photo}
                     alt="Review"
                     className={styles.reviewPhoto}
+                    loading="lazy"
                   />
                 )}
               </div>
