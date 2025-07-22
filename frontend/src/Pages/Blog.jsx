@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./BlogList.module.css";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext";
 
 export default function BlogList() {
@@ -15,6 +15,11 @@ export default function BlogList() {
       .then((res) => setBlogs(res.data.data))
       .catch((err) => console.error("Error fetching blogs:", err));
   }, []);
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    redirect("/login");
+  }
 
   return (
     <div

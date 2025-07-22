@@ -6,6 +6,7 @@ import { useTheme } from "../../store/ThemeContext";
 import styles from "./Navbar.module.css";
 import userLogo2 from "../../assets/user.png";
 import Dropdown from "../../Components/Dropdown.jsx";
+import { FaBlog } from "react-icons/fa";
 import {
   FaHome,
   FaMapMarkedAlt,
@@ -25,7 +26,7 @@ export default function Navbar() {
     { name: "Places", path: "/places", icon: <FaMapMarkedAlt /> },
     { name: "About", path: "/about", icon: <FaInfoCircle /> },
     { name: "Contact", path: "/contact", icon: <FaEnvelope /> },
-    { name: "Blog", path: "/blog", icone: <FaInfoCircle /> },
+    { name: "Blog", path: "/blog", icon: <FaBlog /> },
   ];
 
   useEffect(() => {

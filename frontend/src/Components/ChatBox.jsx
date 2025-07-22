@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./ChatBox.module.css";
 import { staticQA } from "./chatData.js";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+// import { useMutation, useQuery } from "convex/react";
+// import { api } from "../../../convex/_generated/api";
 
 const chatId = "support_chat_1";
 

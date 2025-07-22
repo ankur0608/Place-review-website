@@ -10,7 +10,7 @@ import cors from "cors";
 import placesRoute from "./routes/placesRoute.js";
 import authRoute from "./routes/authRoute.js";
 import contactRoute from "./routes/contact.js";
-
+import saveplaceRoute from "./routes/saveplace.js";
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,7 +35,7 @@ app.use(express.json());
 app.use("/places", placesRoute);
 app.use("/api/auth", authRoute);
 app.use("/contact", contactRoute);
-
+app.use("/api/saveplace", saveplaceRoute);
 // ✅ Catch-all route (optional)
 app.get("/", (req, res) => {
   res.send("🌍 Welcome to the Place Review API!");

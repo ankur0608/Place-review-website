@@ -76,8 +76,8 @@ export default function Editprofile() {
   }
 
   // Show loader while data is fetching
-  if (!userData)
-    return <p style={{ textAlign: "center" }}>Loading profile...</p>;
+  // if (!userData)
+  //   return <p style={{ textAlign: "center" }}>Loading profile...</p>;
 
   return (
     <div className={`${styles.container} ${styles[theme]}`}>

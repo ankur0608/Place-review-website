@@ -1,13 +1,12 @@
+"use client";
+
 import { useForm } from "react-hook-form";
-import styles from "./Contact.module.css";
-import { useTheme } from "../store/ThemeContext";
-import { useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 import { useEffect, useState } from "react";
+import { useTheme } from "../store/ThemeContext";
+import styles from "./Contact.module.css";
 
 const Contact = () => {
   const { theme } = useTheme();
-  const insertContact = useMutation(api.contact.insertContact);
   const {
     register,
     handleSubmit,
@@ -18,7 +17,8 @@ const Contact = () => {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
   }, []);
 
   const onSubmit = async (data) => {
@@ -28,18 +28,22 @@ const Contact = () => {
     }
 
     try {
-      // Save to backend (optional)
-      await fetch("https://place-review-website-real.onrender.com/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        "https://place-review-website-real.onrender.com/contact",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
-      // Save to Convex
-      await insertContact(data);
+      if (!res.ok) throw new Error("Failed to send message");
 
       alert("✅ Message sent successfully!");
-      reset(); // clear form
+      reset();
     } catch (error) {
       console.error("Error submitting contact form:", error);
       alert("❌ Something went wrong. Try again later.");

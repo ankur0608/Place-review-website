@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/ankur0608/Place-review-website-Real#readme",
   "dependencies": {
-    "convex": "^1.25.2",
     "nodemailer": "^7.0.4"
   },
   "devDependencies": {

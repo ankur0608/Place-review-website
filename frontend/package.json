@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
+    "@supabase/supabase-js": "^2.52.0",
     "@tanstack/react-query": "^5.81.5",
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",

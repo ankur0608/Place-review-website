@@ -1,22 +1,36 @@
 import express from "express";
+import { supabase } from "../supabaseClient.js";
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
+// POST /contact
+router.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
-    return res.status(400).json({ error: "All fields are required." });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
-  console.log("📩 New contact message received:");
-  console.log("👤 Name:", name);
-  console.log("📧 Email:", email);
-  console.log("💬 Message:", message);
+  try {
+    const { error } = await supabase.from("contact").insert([
+      {
+        name,
+        email,
+        message,
+        // created_at will be auto-generated
+      },
+    ]);
 
-  // Optionally: Save to DB or send email
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return res.status(500).json({ error: "Failed to save contact message" });
+    }
 
-  res.status(200).json({ message: "Message received. Thank you!" });
+    res.status(201).json({ message: "Contact message submitted successfully" });
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 export default router;

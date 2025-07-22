@@ -2,18 +2,13 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { ConvexHttpClient } from "convex/browser";
+import { supabase } from "../supabaseClient.js"; // make sure path is correct
 
 dotenv.config();
 
 const router = express.Router();
 
-// ✅ Convex client
-const convex = new ConvexHttpClient(process.env.CONVEX_URL, {
-  deploymentToken: process.env.CONVEX_DEPLOY_KEY,
-});
-
-// ✅ Signup route with duplicate check
+// ✅ Signup route
 router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -23,18 +18,29 @@ router.post("/signup", async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = await convex.query("users:getUserByEmail", { email });
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
+
     if (existingUser) {
       return res.status(409).json({ message: "User already exists" });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await convex.mutation("users:insertUser", {
-      username,
-      email,
-      password: hashedPassword,
-    });
+    // Insert user
+    const { error: insertError } = await supabase.from("users").insert([
+      {
+        username,
+        email,
+        password: hashedPassword,
+      },
+    ]);
+
+    if (insertError) throw insertError;
 
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
@@ -53,10 +59,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await convex.query("users:getUserByEmail", { email });
-    console.log("🔍 Fetched user:", user);
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
 
-    if (!user) {
+    if (error || !user) {
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -70,7 +79,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user.id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -80,7 +89,7 @@ router.post("/login", async (req, res) => {
       message: "Login successful",
       token,
       user: {
-        id: user._id,
+        id: user.id,
         username: user.username,
         email: user.email,
       },

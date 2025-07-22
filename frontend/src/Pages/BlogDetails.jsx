@@ -5,8 +5,8 @@ import styles from "./BlogDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import LoadingSpinner from "../Components/Loading.jsx";
 import { AiFillHeart } from "react-icons/ai";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api.js";
+// import { useMutation, useQuery } from "convex/react";
+// import { api } from "../../convex/_generated/api.js";
 
 export default function BlogDetails() {
   const { slug } = useParams();
