@@ -12,6 +12,7 @@ import authRoute from "./routes/authRoute.js";
 import contactRoute from "./routes/contact.js";
 import saveplaceRoute from "./routes/savedPlacesRoute.js";
 import placesRoute from "./routes/placesRoute.js";
+import reviewsRoute from "./routes/reviewsRoute.js";
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -38,6 +39,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/contact", contactRoute);
 app.use("/api/savedplaces", saveplaceRoute);
 app.use("/api/places", placesRoute);
+app.use("/api/reviews", reviewsRoute);
 
 // ✅ Catch-all route (optional)
 app.get("/", (req, res) => {

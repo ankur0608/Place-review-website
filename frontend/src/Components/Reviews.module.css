@@ -1,0 +1,112 @@
+.reviewForm {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+.light {
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+.dark {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+.heading {
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.textarea {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  resize: vertical;
+  min-height: 100px;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  color: inherit;
+}
+
+.customFileInput {
+  display: inline-block;
+  padding: 0.75rem 1.25rem;
+  background-color: #4f46e5;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  width: fit-content;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.customFileInput:hover {
+  background-color: #4338ca;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.previewWrapper {
+  position: relative;
+  margin-top: 0.5rem;
+  width: 100%;
+  max-height: 250px;
+}
+
+.previewImage {
+  width: 30%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+.removeButton {
+  position: absolute;
+  top: 8px;
+  left: 145px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.submitButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #10b981;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submitButton:hover {
+  background-color: #059669;
+}

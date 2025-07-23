@@ -25,7 +25,7 @@ export default function Places() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const placesPerPage = 8;
+  const placesPerPage = 6;
 
   const { theme } = useTheme();
 

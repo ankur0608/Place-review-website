@@ -1,7 +1,8 @@
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
+import { Rating } from "react-simple-star-rating";
 
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
@@ -10,6 +11,7 @@ import supabase from "/lib/supabaseClient";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
 import Loading from "../Components/Loading.jsx";
+import { HiDotsVertical } from "react-icons/hi"; // Three-dot icon
 
 const PlacesSlider = lazy(() => import("../Components/Slider.jsx"));
 
@@ -26,9 +28,31 @@ export default function PlaceDetails() {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [activeMenu, setActiveMenu] = useState(null);
+  const dropdownRef = useRef(null);
+
+  const toggleMenu = (reviewId) => {
+    setActiveMenu((prev) => (prev === reviewId ? null : reviewId));
+  };
+
+  const handleDelete = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete your review?")) return;
+    try {
+      await supabase.from("reviews").delete().eq("id", reviewId);
+      refetchReviews();
+    } catch (err) {
+      alert("Error deleting review: " + err.message);
+    }
+  };
+
+  const handleEdit = (review) => {
+    setEditing(true);
+    // This sets ReviewForm with prefilled values
+  };
 
   const userId = localStorage.getItem("id");
   const userName = localStorage.getItem("username");
+  const { id: placeId } = useParams();
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -172,6 +196,19 @@ export default function PlaceDetails() {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setActiveMenu(null); // Close the dropdown
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   if (placeLoading) return <Loading />;
   if (placeError) return <p>Error: {placeError.message}</p>;
   if (!place) return <p>No place found.</p>;
@@ -187,6 +224,17 @@ export default function PlaceDetails() {
           <Link to="/places">
             <button className={styles.backButton}>← Go Back</button>
           </Link>
+
+          <div
+            className={`${styles.saveButton} ${isSaved ? styles.liked : ""} ${
+              savedLoading ? styles.disabled : ""
+            }`}
+            onClick={savedLoading ? undefined : handleSave}
+            title={isSaved ? "Unsave Place" : "Save Place"}
+            style={{ cursor: savedLoading ? "not-allowed" : "pointer" }}
+          >
+            <img src={isSaved ? heartOutline : heartFilled} alt="heart icon" />
+          </div>
         </div>
 
         <h1 className={styles.title}>{place.name}</h1>
@@ -204,82 +252,80 @@ export default function PlaceDetails() {
           <p className={styles.description}>{place.description}</p>
         </div>
 
-        <div className={styles.actions}>
-          <div
-            className={`${styles.saveButton} ${isSaved ? styles.liked : ""} ${
-              savedLoading ? styles.disabled : ""
-            }`}
-            onClick={savedLoading ? undefined : handleSave}
-            title={isSaved ? "Unsave Place" : "Save Place"}
-            style={{ cursor: savedLoading ? "not-allowed" : "pointer" }}
-          >
-            <img src={isSaved ? heartOutline : heartFilled} alt="heart icon" />
-            <span>{isSaved ? "Saved" : "Save Place"}</span>
-          </div>
-          {savedError && (
-            <p style={{ color: "red", marginTop: "8px" }}>
-              Error loading saved places: {savedError.message}
-            </p>
-          )}
-        </div>
-
         <div className={styles.reviewFormWrapper}>
-          <h3 className={styles.sectionTitle}>
-            {userReview ? "Your Review" : "Give a Review"}
-          </h3>
-
-          {!userReview || editing ? (
-            <ReviewForm
-              onSubmit={handleReviewSubmit}
-              initialComment={userReview?.comment || ""}
-              initialRating={userReview?.rating || 0}
-              isEditing={editing}
-              onCancel={() => setEditing(false)}
-            />
-          ) : (
-            <div className={styles.reviewItem}>
-              <p>
-                <strong>{userReview.name}</strong> rated it ⭐{" "}
-                {userReview.rating}/5
-              </p>
-              <p className={styles.comment}>{userReview.comment}</p>
-              <button onClick={() => setEditing(true)}>Edit Review</button>
-              <button
-                onClick={handleDeleteReview}
-                className={styles.deleteButton}
-              >
-                Delete Review
-              </button>
-            </div>
-          )}
+          <ReviewForm
+            onSubmit={handleReviewSubmit}
+            initialComment={userReview?.comment || ""}
+            initialRating={userReview?.rating || 0}
+            isEditing={editing}
+            placeId={placeId}
+            onCancel={() => setEditing(false)}
+          />
         </div>
 
         {reviewsLoading && <Loading />}
         {reviewsError && <p>Error loading reviews: {reviewsError.message}</p>}
 
-        {reviews?.length > 0 && (
+        {reviews.length > 0 && (
           <div className={styles.reviewsSection}>
-            <h3>User Reviews</h3>
+            <h3 className={styles.sectionTitle}>Reviews</h3>
             {reviews.map((review) => (
               <div key={review.id} className={styles.reviewItem}>
-                <p>
-                  <strong>{review.name}</strong> rated it ⭐ {review.rating}/5{" "}
-                  <span className={styles.timeAgo}>
-                    {review.created_at &&
-                      formatDistanceToNow(new Date(review.created_at), {
+                <div className={styles.reviewTop}>
+                  <div>
+                    <strong>{review.name}</strong>{" "}
+                    <span className={styles.timeAgo}>
+                      •{" "}
+                      {formatDistanceToNow(new Date(review.created_at), {
                         addSuffix: true,
                       })}
-                  </span>
-                </p>
-                <p>{review.comment}</p>
-                {review.photo && (
-                  <img
-                    src={review.photo}
-                    alt="Review"
-                    className={styles.reviewPhoto}
-                    loading="lazy"
-                  />
-                )}
+                    </span>
+                  </div>
+
+                  {review.user_id === userId && (
+                    <div className={styles.menuWrapper}>
+                      <button
+                        className={styles.menuButton}
+                        onClick={() => toggleMenu(review.id)}
+                      >
+                        <HiDotsVertical />
+                      </button>
+                      {activeMenu === review.id && (
+                        <div className={styles.menuDropdown} ref={dropdownRef}>
+                          <button onClick={() => handleEdit(review)}>
+                            Edit
+                          </button>
+                          <button onClick={() => handleDelete(review.id)}>
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.reviewContent}>
+                  <div className={styles.reviewLeft}>
+                    <Rating
+                      readonly
+                      initialValue={review.rating}
+                      size={18}
+                      allowFraction
+                    />
+                    <p className={styles.comment}>{review.comment}</p>
+                  </div>
+
+                  <div className={styles.reviewImageWrapper}>
+                    {review.photo && (
+                      <img
+                        src={review.photo}
+                        alt="Review"
+                        className={styles.reviewPhoto}
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

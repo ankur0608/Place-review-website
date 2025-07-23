@@ -48,7 +48,6 @@
   transition: all 0.3s ease;
 }
 
-
 /* ========== Info Section ========== */
 .detailsSection {
   margin-bottom: 20px;
@@ -72,15 +71,8 @@
 }
 
 /* ========== Save Button ========== */
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin: 24px 0 25px;
-}
-
 .saveButton {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -121,67 +113,109 @@
   font-size: 1.08rem;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.25s,
-    box-shadow 0.2s;
+  transition: background 0.25s, box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(0, 119, 204, 0.08);
   text-decoration: none;
 }
 
 /* ========== Reviews Section ========== */
 .reviewsSection {
-  margin-top: 36px;
-  padding: 24px 18px 10px;
-  border-top: 2px solid #e3e3e3;
-  background: #f4f7fa;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 2px 8px rgba(60, 60, 100, 0.04);
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.reviewsSection h3 {
-  margin-bottom: 18px;
-  color: #1a237e;
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+.sectionTitle {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
 }
 
 .reviewItem {
+  display: flex;
+  flex-direction: column;
   background: #fff;
-  padding: 14px 16px;
-  margin-bottom: 14px;
   border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(60, 60, 100, 0.06);
-  border-left: 4px solid #0077cc;
-  transition: box-shadow 0.2s;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-.reviewItem:last-child {
-  margin-bottom: 0;
+.reviewTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.reviewItem strong {
-  color: #0077cc;
-  font-weight: 600;
+.reviewTop strong {
+  font-size: 1.1rem;
+  color: #007bff;
+}
+
+.timeAgo {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #007bff;
+  font-size: 1.2rem;
+}
+
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.menuDropdown button {
+  background: none;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuDropdown button:hover {
+  background-color: #f0f0f0;
+}
+
+.reviewContent {
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  margin-top: 10px;
+}
+
+.reviewLeft {
+  flex: 1; /* Allow the review text to take available space */
 }
 
 .comment {
-  margin: 10px 0;
-  font-size: 1.05rem;
-  color: #555;
-  line-height: 1.6;
+  margin-top: 5px;
+  font-size: 1rem;
+  color: #444;
 }
 
-.deleteButton {
-  margin-left: 15px;
-}
-
-/* ========== Section Title ========== */
-.sectionTitle {
-  text-align: center;
-  margin-top: 70px;
-  margin-bottom: 8px;
-  font-size: 25px;
+.reviewPhoto {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 4px;
+  margin-right: 80px;
+  margin-top: -30px;
 }
 
 /* ========== Dark Mode Overrides ========== */
