@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import styles from "./SavedPlace.module.css";
 
 const SavedPlaces = () => {
   const [savedPlaces, setSavedPlaces] = useState([]);
@@ -19,7 +20,6 @@ const SavedPlaces = () => {
         }
 
         setSavedPlaces(res.data);
-        toast.success("Saved places loaded!");
       } catch (err) {
         toast.error("Failed to fetch saved places");
         console.error(err);
@@ -34,34 +34,39 @@ const SavedPlaces = () => {
   }, [userId]);
 
   return (
-    <div>
-      <h2>Saved Places</h2>
+    <div className={styles.container}>
+      <h2 className={styles.title}>Your Saved Places</h2>
+
       {savedPlaces.length === 0 ? (
-        <p>No saved places yet.</p>
+        <p className={styles.noPlaces}>You haven't saved any places yet.</p>
       ) : (
-        <div className="grid">
+        <div className={styles.grid}>
           {savedPlaces.map((saved) => {
             const place = saved.places;
 
             return (
-              <div key={saved.id} className="card">
+              <div key={saved.id} className={styles.card}>
                 <h3>{place?.name || "Unnamed Place"}</h3>
-                {place?.image && (
+
+                {place?.image_url && (
                   <img
                     src={
-                      place.image_url?.startsWith("http")
+                      place.image_url.startsWith("http")
                         ? place.image_url
                         : `https://your-supabase-project.supabase.co/storage/v1/object/public/your-bucket/${place.image_url}`
                     }
-                    alt={place.name}
-                    style={{
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "cover",
-                    }}
+                    alt={place?.name}
+                    className={styles.image}
                   />
                 )}
-                <p>{place?.description || "No description available."}</p>
+
+                <p className={styles.description}>
+                  {place?.description || "No description available."}
+                </p>
+                <div className={styles.meta}>
+                  {place?.state && <span>📍 {place.state}</span>}
+                  {place?.category && <span>🏷 {place.category}</span>}
+                </div>
               </div>
             );
           })}

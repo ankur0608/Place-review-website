@@ -1,153 +1,56 @@
 .container {
-  height: auto;
-  width: 80%;
   padding: 2rem;
-  background-color: var(--container-bg, #fff);
-  color: var(--text-color, #333);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.heading {
+.title {
   font-size: 2rem;
-  margin-bottom: 1.5rem;
-  /* text-align: center; */
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.noPlaces {
+  text-align: center;
+  color: gray;
+  margin-top: 2rem;
 }
 
 .grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
-/* 💳 Card Layout */
 .card {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 1.5rem;
-  background-color: var(--card-bg, #f9f9f9);
+  border: 1px solid #ddd;
   border-radius: 12px;
   padding: 1rem;
-  width: 750px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.3s ease;
+  background-color: #fff;
+  transition: box-shadow 0.2s ease-in-out;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .image {
-  width: 180px;
-  height: 120px;
+  width: 100%;
+  height: 180px;
   object-fit: cover;
   border-radius: 8px;
-  flex-shrink: 0;
-}
-
-.textContent {
-  flex: 1;
-}
-
-/* Header Row (name + heart) */
-.headerRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.name {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.heartIcon {
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.heartIcon:hover {
-  transform: scale(1.2);
-}
-
-.location {
-  color: skyblue;
-  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
 }
 
 .description {
-  font-size: 0.95rem;
   color: #444;
+  margin-top: 0.5rem;
 }
 
-.dark .description {
-  color: white;
-}
-
-/* 🌙 Dark Mode Variables */
-.dark {
-  --container-bg: #1e1e1e;
-  --text-color: #f0f0f0;
-  --card-bg: #2a2a2a;
-}
-
-.light {
-  --container-bg: #e7e7e7;
-  --text-color: #333333;
-  --card-bg: #f9f9f9;
-}
-
-/* 📱 Responsive Styling */
-@media (max-width: 768px) {
-  .card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    width: 100%;
-  }
-
-  .image {
-    width: 100%;
-    height: 200px;
-  }
-
-  .textContent {
-    width: 100%;
-  }
-
-  .headerRow {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .heartIcon {
-    width: 28px;
-    height: 28px;
-    margin-left: 250px;
-    margin-right: -8px;
-    margin-top: -24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .heading {
-    font-size: 1.5rem;
-  }
-
-  .name {
-    font-size: 1.1rem;
-  }
-
-  .description,
-  .location {
-    font-size: 0.9rem;
-  }
-
-  .card {
-    padding: 0.75rem;
-  }
+.meta {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  display: flex;
+  gap: 1rem;
 }
