@@ -49,9 +49,9 @@ const SavedPlaces = () => {
                 {place?.image && (
                   <img
                     src={
-                      place.image.startsWith("http")
-                        ? place.image
-                        : `https://your-supabase-url/storage/v1/object/public/${place.image}`
+                      place.image_url?.startsWith("http")
+                        ? place.image_url
+                        : `https://your-supabase-project.supabase.co/storage/v1/object/public/your-bucket/${place.image_url}`
                     }
                     alt={place.name}
                     style={{

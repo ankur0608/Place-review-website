@@ -57,7 +57,19 @@ router.get("/user/:userId", async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("savedplaces")
-      .select("*")
+      .select(`
+        id,
+        created_at,
+        place_id,
+        places:place_id (
+          id,
+          name,
+          state,
+          category,
+          description,
+          image_url
+        )
+      `)
       .eq("user_id", userId);
 
     if (error) throw error;
@@ -68,5 +80,6 @@ router.get("/user/:userId", async (req, res) => {
     res.status(500).json({ message: "Fetch failed", error: error.message });
   }
 });
+
 
 export default router;
