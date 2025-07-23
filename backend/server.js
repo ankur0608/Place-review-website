@@ -10,7 +10,7 @@ import cors from "cors";
 // import placesRoute from "./routes/placesRoute.js";
 import authRoute from "./routes/authRoute.js";
 import contactRoute from "./routes/contact.js";
-import saveplaceRoute from "./routes/savedPlacesRouter.js";
+import saveplaceRoute from "./routes/savedPlacesRoute.js";
 import placesRoute from "./routes/placesRoute.js";
 // Initialize Express app
 const app = express();
@@ -36,7 +36,7 @@ app.use(express.json());
 // app.use("/places", placesRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/contact", contactRoute);
-app.use("/api/saveplace", saveplaceRoute);
+app.use("/api/savedplaces", saveplaceRoute);
 app.use("/api/places", placesRoute);
 
 // ✅ Catch-all route (optional)

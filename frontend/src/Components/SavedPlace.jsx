@@ -1,139 +1,74 @@
-import { useEffect, useState } from "react";
-import { useTheme } from "../store/ThemeContext.jsx";
-import styles from "./SavedPlace.module.css";
-import Loading from "./Loading.jsx";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-export default function SavedPlaces() {
-  const userId = localStorage.getItem("id");
-  const { theme } = useTheme();
-
+const SavedPlaces = () => {
   const [savedPlaces, setSavedPlaces] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // Fetch saved places for this user
-  const fetchSavedPlaces = async () => {
-    if (!userId) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/savedplaces/user/${userId}`);
-      if (!res.ok) throw new Error("Failed to fetch saved places");
-
-      const data = await res.json();
-      setSavedPlaces(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const userId = localStorage.getItem("id");
 
   useEffect(() => {
-    fetchSavedPlaces();
-  }, [userId]);
-
-  // Toggle save / remove saved place
-  const handleToggleSave = async (placeId) => {
-    if (!userId) {
-      alert("Please log in to manage saved places.");
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/savedplaces/toggle", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, placeId }),
-      });
-
-      if (!res.ok) throw new Error("Failed to toggle saved place");
-
-      // Refresh saved places after toggle
-      fetchSavedPlaces();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  if (!userId) {
-    return <p>Please log in to see your saved places.</p>;
-  }
-
-  if (loading) return <Loading />;
-
-  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
-
-  if (savedPlaces.length === 0)
-    return <p>You don't have any saved places yet.</p>;
-
-  return (
-    <div className={`${styles.container} ${styles[theme]}`}>
-      <h2 className={styles.heading}>📍 Your Saved Places</h2>
-
-      <div className={styles.grid}>
-        {savedPlaces.map(({ place_id }) => (
-          <SavedPlaceCard
-            key={place_id}
-            placeId={place_id}
-            onToggleSave={() => handleToggleSave(place_id)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function SavedPlaceCard({ placeId, onToggleSave }) {
-  const [place, setPlace] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // Fetch place details by placeId
-  useEffect(() => {
-    const fetchPlace = async () => {
-      setLoading(true);
-      setError(null);
-
+    const fetchSavedPlaces = async () => {
       try {
-        const res = await fetch(
-          `https://place-review-website-real.onrender.com/api/places/${placeId}`
+        const res = await axios.get(
+          `https://place-review-website-real.onrender.com/api/savedplaces/user/${userId}`
         );
-        if (!res.ok) throw new Error("Failed to fetch place details");
 
-        const data = await res.json();
-        setPlace(data);
+        if (!Array.isArray(res.data)) {
+          toast.error("Invalid data format");
+          return;
+        }
+
+        setSavedPlaces(res.data);
+        toast.success("Saved places loaded!");
       } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        toast.error("Failed to fetch saved places");
+        console.error(err);
       }
     };
 
-    fetchPlace();
-  }, [placeId]);
-
-  if (loading) return <div>Loading place...</div>;
-  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
-  if (!place) return null;
+    if (userId) {
+      fetchSavedPlaces();
+    } else {
+      toast.error("User not logged in");
+    }
+  }, [userId]);
 
   return (
-    <div className={styles.card}>
-      <img
-        src={place.image_url || "/placeholder.jpg"}
-        alt={place.name}
-        className={styles.image}
-        loading="lazy"
-      />
-      <div className={styles.textContent}>
-        <h3>{place.name}</h3>
-        <p>{place.location}</p>
-        <button onClick={onToggleSave} className={styles.removeButton}>
-          Remove from Saved
-        </button>
-      </div>
+    <div>
+      <h2>Saved Places</h2>
+      {savedPlaces.length === 0 ? (
+        <p>No saved places yet.</p>
+      ) : (
+        <div className="grid">
+          {savedPlaces.map((saved) => {
+            const place = saved.places;
+
+            return (
+              <div key={saved.id} className="card">
+                <h3>{place?.name || "Unnamed Place"}</h3>
+                {place?.image && (
+                  <img
+                    src={
+                      place.image.startsWith("http")
+                        ? place.image
+                        : `https://your-supabase-url/storage/v1/object/public/${place.image}`
+                    }
+                    alt={place.name}
+                    style={{
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
+                <p>{place?.description || "No description available."}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default SavedPlaces;
