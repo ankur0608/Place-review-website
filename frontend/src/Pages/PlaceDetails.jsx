@@ -6,12 +6,12 @@ import { Rating } from "react-simple-star-rating";
 
 import styles from "./PlaceDetails.module.css";
 import { useTheme } from "../store/ThemeContext.jsx";
-import ReviewForm from "../Components/Reviews.jsx";
+import ReviewForm from "../Components/ReviewForm";
 import supabase from "/lib/supabaseClient";
 import heartFilled from "../../src/assets/heart.png";
 import heartOutline from "../../src/assets/heart2.png";
 import Loading from "../Components/Loading.jsx";
-import { HiDotsVertical } from "react-icons/hi"; // Three-dot icon
+import { HiDotsVertical } from "react-icons/hi";
 
 const PlacesSlider = lazy(() => import("../Components/Slider.jsx"));
 
@@ -30,6 +30,16 @@ export default function PlaceDetails() {
   const queryClient = useQueryClient();
   const [activeMenu, setActiveMenu] = useState(null);
   const dropdownRef = useRef(null);
+  const [editing, setEditing] = useState(false);
+
+  const userId = localStorage.getItem("id");
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      alert("You must be logged in to view this page.");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const toggleMenu = (reviewId) => {
     setActiveMenu((prev) => (prev === reviewId ? null : reviewId));
@@ -45,23 +55,11 @@ export default function PlaceDetails() {
     }
   };
 
-  const handleEdit = (review) => {
-    setEditing(true);
-    // This sets ReviewForm with prefilled values
-  };
+  // const handleEdit = (review) => {
+  //   setEditing(true);
+  //   // Editing logic is passed via ReviewForm
+  // };
 
-  const userId = localStorage.getItem("id");
-  const userName = localStorage.getItem("username");
-  const { id: placeId } = useParams();
-
-  useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      alert("You must be logged in to view this page.");
-      navigate("/login");
-    }
-  }, [navigate]);
-
-  // Fetch place details
   const {
     data: place,
     isLoading: placeLoading,
@@ -72,7 +70,6 @@ export default function PlaceDetails() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Fetch reviews for place
   const {
     data: reviews = [],
     refetch: refetchReviews,
@@ -91,7 +88,6 @@ export default function PlaceDetails() {
     },
   });
 
-  // Fetch saved places for user
   const {
     data: saved = [],
     refetch: refetchSaved,
@@ -111,15 +107,9 @@ export default function PlaceDetails() {
     enabled: !!userId,
   });
 
-  // Determine if this place is saved by user
   const isSaved = saved?.some((p) => p.place_id === id);
-
-  // User's review on this place, if any
   const userReview = reviews?.find((r) => r.user_id === userId);
 
-  const [editing, setEditing] = useState(false);
-
-  // Toggle Save / Unsave place
   const handleSave = async () => {
     if (!userId) {
       alert("You must be logged in to save a place.");
@@ -128,78 +118,28 @@ export default function PlaceDetails() {
 
     try {
       if (isSaved) {
-        // Remove saved place
         const { error } = await supabase
           .from("savedplaces")
           .delete()
           .eq("user_id", userId)
           .eq("place_id", id);
-
         if (error) throw error;
       } else {
-        // Save place
         const { error } = await supabase
           .from("savedplaces")
           .insert([{ user_id: userId, place_id: id }]);
-
         if (error) throw error;
       }
-
-      // Refetch saved places to update UI
       await refetchSaved();
     } catch (err) {
       alert("Error toggling save: " + err.message);
     }
   };
 
-  const handleReviewSubmit = async ({ comment, rating, photo }) => {
-    if (!comment.trim() || rating <= 0) {
-      alert("Please enter a valid comment and rating.");
-      return;
-    }
-
-    try {
-      if (userReview && editing) {
-        await supabase
-          .from("reviews")
-          .update({ comment, rating, photo })
-          .eq("id", userReview.id);
-        setEditing(false);
-      } else {
-        await supabase.from("reviews").insert([
-          {
-            comment,
-            rating,
-            photo,
-            place_id: id,
-            user_id: userId,
-            name: userName,
-          },
-        ]);
-      }
-      refetchReviews();
-    } catch (err) {
-      alert("Error submitting review: " + err.message);
-    }
-  };
-
-  const handleDeleteReview = async () => {
-    if (!userReview) return;
-    if (!window.confirm("Are you sure you want to delete your review?")) return;
-
-    try {
-      await supabase.from("reviews").delete().eq("id", userReview.id);
-      setEditing(false);
-      refetchReviews();
-    } catch (err) {
-      alert("Error deleting review: " + err.message);
-    }
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setActiveMenu(null); // Close the dropdown
+        setActiveMenu(null);
       }
     };
 
@@ -253,22 +193,19 @@ export default function PlaceDetails() {
         </div>
 
         <div className={styles.reviewFormWrapper}>
-          <ReviewForm
-            onSubmit={handleReviewSubmit}
-            initialComment={userReview?.comment || ""}
-            initialRating={userReview?.rating || 0}
-            isEditing={editing}
-            placeId={placeId}
-            onCancel={() => setEditing(false)}
-          />
+          <ReviewForm placeId={id} onReviewAdded={refetchReviews} />
         </div>
 
         {reviewsLoading && <Loading />}
         {reviewsError && <p>Error loading reviews: {reviewsError.message}</p>}
-
-        {reviews.length > 0 && (
+        {reviews.length === 0 ? (
           <div className={styles.reviewsSection}>
             <h3 className={styles.sectionTitle}>Reviews</h3>
+            <p>No reviews yet</p>
+          </div>
+        ) : (
+          <div className={styles.reviewsSection}>
+            {/* <h3 className={styles.sectionTitle}>Reviews</h3> */}
             {reviews.map((review) => (
               <div key={review.id} className={styles.reviewItem}>
                 <div className={styles.reviewTop}>
@@ -292,9 +229,9 @@ export default function PlaceDetails() {
                       </button>
                       {activeMenu === review.id && (
                         <div className={styles.menuDropdown} ref={dropdownRef}>
-                          <button onClick={() => handleEdit(review)}>
+                          {/* <button onClick={() => handleEdit(review)}>
                             Edit
-                          </button>
+                          </button> */}
                           <button onClick={() => handleDelete(review.id)}>
                             Delete
                           </button>

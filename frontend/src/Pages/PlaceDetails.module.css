@@ -73,6 +73,8 @@
 /* ========== Save Button ========== */
 .saveButton {
   position: relative;
+  top: 140px;
+  left: 630px;
   display: flex;
   align-items: center;
   gap: 10px;
