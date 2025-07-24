@@ -47,7 +47,7 @@ const ReviewForm = ({ placeId, onReviewAdded }) => {
 
     try {
       const res = await axios.post(
-        "https://place-review-website-real.onrender.com//api/reviews",
+        "https://place-review-website-real.onrender.com/api/reviews",
         formData
       );
       if (res.data.success) {
