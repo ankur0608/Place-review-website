@@ -1,71 +1,75 @@
-/* src/Pages/BlogList.module.css */
-.container {
+.blogList {
   padding: 2rem;
-  max-width: 1200px;
-  margin: auto;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+.light {
+  background-color: #f9f9f9;
+  color: #1a1a1a;
+}
+
+.dark {
+  background-color: #1a1a1a;
+  color: #f0f0f0;
 }
 
 .heading {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
   text-align: center;
-  color: #222;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .card {
-  background-color: #fff;
+  background-color: inherit;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  transition: transform 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 .image {
   width: 100%;
-  height: 200px;
+  height: 180px;
   object-fit: cover;
 }
 
-.content {
+.cardContent {
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
 }
 
 .title {
   font-size: 1.25rem;
+  font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #111;
 }
 
-.excerpt {
-  color: #444;
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
+.date {
+  font-size: 0.875rem;
+  color: gray;
 }
 
-.readMore {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background-color: #0077ff;
-  color: white;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
-}
-
-.readMore:hover {
-  background-color: #005ccc;
-}
-.dark .heading {
-  color: #fff;
+.skeletonWrapper {
+  padding: 2rem;
 }

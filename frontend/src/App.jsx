@@ -18,8 +18,9 @@ const ChatBox = lazy(() => import("./Components/ChatBox.jsx"));
 const Editprofile = lazy(() => import("./Components/Editprofile.jsx"));
 const Signup = lazy(() => import("./Pages/Sign-up.jsx"));
 const Login = lazy(() => import("./Pages/Login.jsx"));
-const Blog = lazy(() => import("./Pages/Blog.jsx"));
-// import BlogDetails from "./Pages/BlogDetails.jsx";
+const BlogList = lazy(() => import("./Pages/BlogList.jsx"));
+const BlogPost = lazy(() => import("./Pages/BlogPost.jsx"));
+
 // Chat widget (optional)
 import ChatWidget from "./Components/ChatWidget";
 // const ResetPassword = lazy(() => import("./Pages/ResetPassword.jsx"));
@@ -103,22 +104,23 @@ const router = createBrowserRouter([
       //   ),
       // },
 
-      // {
-      //   path: "blog",
-      //   element: (
-      //     <Suspense fallback={<div>Loading Blog...</div>}>
-      //       <Blog />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "blog/:slug",
-      //   element: (
-      //     <Suspense fallback={<div>Loading Blogs...</div>}>
-      //       <BlogDetails />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "blog",
+        element: (
+          <Suspense fallback={<div>Loading Blog...</div>}>
+            <BlogList />
+          </Suspense>
+        ),
+      },
+      {
+        path: "blog/:slug",
+        element: (
+          <Suspense fallback={<div>Loading Blog...</div>}>
+            <BlogPost />
+          </Suspense>
+        ),
+      },
+
       { path: "*", element: <h2>404 - Page Not Found</h2> },
     ],
   },

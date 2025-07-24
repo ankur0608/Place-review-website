@@ -4,7 +4,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useTheme } from "../store/ThemeContext.jsx";
 import "./SliderModule.css";
-import Loading from "./Loading.jsx";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
 
 function fetchPlaces() {
@@ -41,6 +42,17 @@ export default function PlacesSlider() {
     ],
   };
 
+  const renderSkeletonCards = () =>
+    Array(4)
+      .fill(0)
+      .map((_, i) => (
+        <div className="place-card skeleton-card">
+          <Skeleton height={180} />
+          <Skeleton height={20} width="80%" />
+          <Skeleton height={15} width="60%" />
+        </div>
+      ));
+
   return (
     <div
       className={`slider-container ${
@@ -53,33 +65,32 @@ export default function PlacesSlider() {
       </div>
 
       <Slider {...sliderSettings}>
-        {isLoading ? (
-          <Loading />
-        ) : error ? (
-          <div style={{ padding: "2rem", color: "red" }}>
-            Failed to load places.
-          </div>
-        ) : (
-          places?.map((place) => (
-            <Link
-              key={place.id}
-              to={`/places/${place.id}`}
-              className="cardLink"
-            >
-              <div className="place-card">
-                <img
-                  src={place.image_url || "/placeholder.jpg"}
-                  alt={place.name}
-                  className="place-image"
-                  loading="lazy"
-                />
-                <h3 className="place-name">{place.name}</h3>
-                <p className="place-location">{place.location}</p>
-                {/* <p className="place-description">{place.description}</p> */}
-              </div>
-            </Link>
-          ))
-        )}
+        {isLoading
+          ? renderSkeletonCards()
+          : error
+          ? [
+              <div key="error" style={{ padding: "2rem", color: "red" }}>
+                Failed to load places.
+              </div>,
+            ]
+          : places?.map((place) => (
+              <Link
+                key={place.id}
+                to={`/places/${place.id}`}
+                className="cardLink"
+              >
+                <div className="place-card">
+                  <img
+                    src={place.image_url || "/placeholder.jpg"}
+                    alt={place.name}
+                    className="place-image"
+                    loading="lazy"
+                  />
+                  <h3 className="place-name">{place.name}</h3>
+                  <p className="place-location">{place.location}</p>
+                </div>
+              </Link>
+            ))}
       </Slider>
     </div>
   );

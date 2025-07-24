@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 import styles from "./Places.module.css";
 import { useTheme } from "../store/ThemeContext";
-import Loding from "../Components/Loading.jsx";
-import { useQuery } from "@tanstack/react-query";
 
 function fetchPlaces() {
   return fetch(
@@ -26,7 +28,6 @@ export default function Places() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const placesPerPage = 6;
-
   const { theme } = useTheme();
 
   const categories = [
@@ -105,7 +106,19 @@ export default function Places() {
 
       <section className={styles.cardGrid} aria-label="Places List">
         {isLoading ? (
-          <Loding />
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={styles.card}>
+              <Skeleton height={160} className={styles.image} />
+              <div className={styles.cardContent}>
+                <h2>
+                  <Skeleton width={120} />
+                </h2>
+                <p>
+                  <Skeleton width={80} />
+                </p>
+              </div>
+            </div>
+          ))
         ) : paginatedPlaces?.length > 0 ? (
           paginatedPlaces.map((place) => (
             <Link
