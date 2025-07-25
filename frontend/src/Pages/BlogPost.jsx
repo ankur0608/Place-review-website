@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import supabase from "../../lib/supabaseClient";
@@ -8,6 +8,7 @@ import styles from "./BlogPost.module.css";
 
 const BlogPost = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const { theme } = useTheme();
 
@@ -24,6 +25,10 @@ const BlogPost = () => {
 
     fetchPost();
   }, [slug]);
+
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
 
   if (!post) {
     return (
@@ -48,7 +53,12 @@ const BlogPost = () => {
         theme === "dark" ? styles.dark : styles.light
       }`}
     >
+      <button onClick={handleBack} className={styles.backButton}>
+        ← Back
+      </button>
+
       <h1 className={styles.title}>{post.title}</h1>
+
       {post.cover_image && (
         <img
           src={post.cover_image}
@@ -56,10 +66,12 @@ const BlogPost = () => {
           className={styles.cover}
         />
       )}
+
       <p className={styles.meta}>
         {post.author ? `By ${post.author}` : "Unknown"} •{" "}
         {new Date(post.created_at).toDateString()}
       </p>
+
       <div
         className={styles.content}
         dangerouslySetInnerHTML={{ __html: post.content }}

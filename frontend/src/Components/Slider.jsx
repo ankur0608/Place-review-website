@@ -46,10 +46,18 @@ export default function PlacesSlider() {
     Array(4)
       .fill(0)
       .map((_, i) => (
-        <div className="place-card skeleton-card">
-          <Skeleton height={180} />
-          <Skeleton height={20} width="80%" />
-          <Skeleton height={15} width="60%" />
+        <div key={i} className="place-card skeleton-card">
+          <div className="skeleton-image">
+            <Skeleton height={180} width="100%" borderRadius={12} />
+          </div>
+          <div style={{ padding: "0.5rem" }}>
+            <Skeleton
+              height={20}
+              width="70%"
+              style={{ marginBottom: "0.5rem" }}
+            />
+            <Skeleton height={15} width="50%" />
+          </div>
         </div>
       ));
 
