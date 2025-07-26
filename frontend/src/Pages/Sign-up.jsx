@@ -6,6 +6,7 @@ import { FaRegUser } from "react-icons/fa";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
+import SignInWithGoogle from "../Components/SignInWithGoogle";
 
 export default function Signup() {
   const { theme } = useTheme();
@@ -33,6 +34,10 @@ export default function Signup() {
       );
 
       const result = await res.json();
+      if (res.ok) {
+        toast.success("Signup successful. Check your email to verify.");
+        navigate("/login");
+      }
 
       if (res.status === 409) {
         toast.error("User already exists. Please log in instead.");
@@ -53,7 +58,6 @@ export default function Signup() {
     <div className={`${styles.container} ${styles[theme]}`}>
       <div className={styles.card}>
         <h2 className={styles.heading}>Sign Up</h2>
-
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Username */}
           <div className={styles.formGroup}>
@@ -158,10 +162,19 @@ export default function Signup() {
             {isSubmitting ? "Submitting..." : "Sign Up"}
           </button>
         </form>
-
         <p className={styles.loginLink}>
           <Link to="/login">Already have an account? Log In</Link>
-        </p>
+        </p>{" "}
+        {/* OR Divider */}
+        <div className={styles.dividerContainer}>
+          <span className={styles.dividerLine}></span>
+          <span className={styles.dividerText}>OR</span>
+          <span className={styles.dividerLine}></span>
+        </div>
+        {/* Google Sign-In */}
+        <div className={styles.googleContainer}>
+          <SignInWithGoogle />
+        </div>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { TbLockPassword } from "react-icons/tb";
 import { IoMailOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
-
+import SignInWithGoogle from "../Components/SignInWithGoogle";
 export default function Login() {
   const { theme } = useTheme();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -122,6 +122,16 @@ export default function Login() {
             <Link to="/signup" className={styles.siguplink}>
               Don't have an account? Sign up
             </Link>
+          </div>
+          {/* OR Divider */}
+          <div className={styles.dividerContainer}>
+            <span className={styles.dividerLine}></span>
+            <span className={styles.dividerText}>OR</span>
+            <span className={styles.dividerLine}></span>
+          </div>
+          {/* Google Sign-In */}
+          <div className={styles.googleContainer}>
+            <SignInWithGoogle />
           </div>
         </form>
       </div>

@@ -2,84 +2,68 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import {supabase} from "../supabaseClient.js";
+import { supabase } from "../supabaseClient.js";
 
 dotenv.config();
 
 const router = express.Router();
 
-// ✅ Signup route
 router.post("/signup", async (req, res) => {
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
   try {
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    // Check if user already exists
-    const { data: existingUser, error: fetchError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle(); // Use maybeSingle() to avoid throwing if no match
-
-    if (fetchError) throw fetchError;
-
-    if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const { error: insertError } = await supabase.from("users").insert([
-      {
-        username,
-        email,
-        password: hashedPassword,
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username },
+        emailRedirectTo: "https://place-review-website-real.onrender.com/verify-email",
       },
-    ]);
+    });
 
-    if (insertError) throw insertError;
+    if (error) {
+      if (error.message.includes("User already registered")) {
+        return res.status(409).json({ message: "User already exists" });
+      }
+      throw error;
+    }
 
-    res.status(201).json({ message: "Signup successful" });
-  } catch (error) {
-    console.error("🔴 Signup error:", error.message || error);
+    res.status(200).json({
+      success: true,
+      message: "Signup successful. Please verify your email.",
+    });
+  } catch (err) {
+    console.error("Signup error:", err.message);
     res.status(500).json({ message: "Signup failed" });
   }
 });
 
 // ✅ Login route
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (userError || !user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (!user.password) {
-      return res.status(400).json({ message: "Use Google login instead" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
+    if (error) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    if (!data.user?.email_confirmed_at) {
+      return res
+        .status(403)
+        .json({ message: "Please verify your email before logging in." });
+    }
+
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: data.user.id, email: data.user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -89,13 +73,13 @@ router.post("/login", async (req, res) => {
       message: "Login successful",
       token,
       user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
+        id: data.user.id,
+        username: data.user.user_metadata?.username || "",
+        email: data.user.email,
       },
     });
-  } catch (error) {
-    console.error("🔴 Login error:", error.message || error);
+  } catch (err) {
+    console.error("Login error:", err.message);
     res.status(500).json({ message: "Server error during login" });
   }
 });

@@ -162,4 +162,27 @@
   box-sizing: border-box;
 }
 
+.dividerContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
 
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  margin-top: 0.5rem;
+  background-color: #ccc;
+}
+
+.dividerText {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.googleContainer {
+  display: flex;
+  justify-content: center;
+  /* margin-top: 1rem; */
+}

@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // local dev (Vite)
+      "https://place-review-website-real.onrender.com/5173", // local dev (Vite)
       "https://place-review-website-real.vercel.app",
       "https://place-review-website-git-eecdf1-ankur-patels-projects-15e166ca.vercel.app",
       "https://place-review-website-real-dxm9j4602.vercel.app",

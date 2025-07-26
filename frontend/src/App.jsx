@@ -9,6 +9,7 @@ import Footer from "./Pages/Footer.jsx";
 import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import { useTheme } from "./store/ThemeContext.jsx";
 import ScrollTop from "./Components/ScrollTop.jsx";
+import VerifyEmail from "./Pages/VerifyEmail.jsx";
 // Lazy-loaded routes (heavier)
 const Places = lazy(() => import("./Pages/Places.jsx"));
 const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
@@ -23,7 +24,7 @@ const BlogPost = lazy(() => import("./Pages/BlogPost.jsx"));
 
 // Chat widget (optional)
 import ChatWidget from "./Components/ChatWidget";
-// const ResetPassword = lazy(() => import("./Pages/ResetPassword.jsx"));
+const ResetPassword = lazy(() => import("./Pages/ResetPassword.jsx"));
 
 // Shared layout
 const Layout = () => (
@@ -95,14 +96,14 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      // {
-      //   path: "reset-password",
-      //   element: (
-      //     <Suspense fallback={<div>Loading Reset Password...</div>}>
-      //       <ResetPassword />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "reset-password",
+        element: (
+          <Suspense fallback={<div>Loading Reset Password...</div>}>
+            <ResetPassword />
+          </Suspense>
+        ),
+      },
 
       {
         path: "blog",
@@ -126,8 +127,10 @@ const router = createBrowserRouter([
   },
   { path: "signup", element: <Signup /> },
   { path: "login", element: <Login /> },
+  { path: "email-verified", element: <VerifyEmail /> },
   { path: "forgot-password", element: <ForgotPassword /> },
 ]);
+
 // console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
 // console.log('Supabase Key:', import.meta.env.VITE_SUPABASE_ANON_KEY);
 

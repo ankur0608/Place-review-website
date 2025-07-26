@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { CiDark } from "react-icons/ci";
 import { LuSun } from "react-icons/lu";
-import { useTheme } from "../../store/ThemeContext";
-import styles from "./Navbar.module.css";
-import userLogo2 from "../../assets/user.png";
-import Dropdown from "../../Components/Dropdown.jsx";
-import { FaBlog } from "react-icons/fa";
 import {
+  FaBlog,
   FaHome,
   FaMapMarkedAlt,
   FaInfoCircle,
   FaEnvelope,
 } from "react-icons/fa";
+import { useTheme } from "../../store/ThemeContext";
+import styles from "./Navbar.module.css";
+import userLogo2 from "../../assets/user.png";
+import Dropdown from "../../Components/Dropdown.jsx";
+import supabase from "../../../lib/supabaseClient.js";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -31,12 +32,35 @@ export default function Navbar() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
     const storedImage = localStorage.getItem("image");
+
+    setIsLoggedIn(!!token);
     if (storedImage) setAvatar(storedImage);
   }, []);
 
-  const handleLogout = () => {
+  useEffect(() => {
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user) {
+        setIsLoggedIn(true);
+        const userAvatar = session.user.user_metadata?.avatar_url || userLogo2;
+        setAvatar(userAvatar);
+      }
+    };
+
+    getSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      getSession();
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem("token");
     localStorage.removeItem("image");
     setIsLoggedIn(false);
@@ -46,40 +70,23 @@ export default function Navbar() {
 
   return (
     <nav className={styles.navbar}>
-      {/* Hamburger Menu (Mobile) */}
-      <button
-        className={styles.menuToggle}
-        onClick={() => setMenuOpen((prev) => !prev)}
-        aria-label="Toggle Menu"
-        aria-expanded={menuOpen}
-      >
-        ☰
-      </button>
-
-      {/* Profile Avatar (mobile top-right) */}
-      {isLoggedIn && (
-        <div className={styles.menuToggle}>
-          <Dropdown />
-        </div>
-      )}
-
-      {/* Theme Toggle (mobile top-right) */}
-      <div className={styles.menuToggle}>
+      {/* === Left Section: Logo + Hamburger === */}
+      <div className={styles.leftSection}>
         <button
-          onClick={toggleTheme}
-          className={styles.themeButton}
-          aria-label="Toggle Theme"
+          className={styles.menuToggle}
+          onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label="Toggle Menu"
+          aria-expanded={menuOpen}
         >
-          {theme === "light" ? <CiDark size={26} /> : <LuSun size={26} />}
+          ☰
         </button>
+
+        <div className={styles.logo}>
+          <Link to="/">PlaceReview</Link>
+        </div>
       </div>
 
-      {/* Logo */}
-      <div className={styles.logo}>
-        <Link to="/">PlaceReview</Link>
-      </div>
-
-      {/* Nav Links */}
+      {/* === Center: Nav Links === */}
       <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
         <li className={styles.menuToggle}>
           <button
@@ -89,6 +96,7 @@ export default function Navbar() {
             ✕
           </button>
         </li>
+
         {navItems.map(({ name, path, icon }) => (
           <li key={name} className={styles.linkWrapper}>
             <NavLink
@@ -105,8 +113,16 @@ export default function Navbar() {
           </li>
         ))}
 
-        {/* Mobile Auth Buttons */}
+        {/* === Mobile Auth & Theme Toggle === */}
         <li className={styles.mobileExtras}>
+          <button
+            onClick={toggleTheme}
+            className={styles.themeButton}
+            aria-label="Toggle Theme"
+          >
+            {theme === "light" ? <CiDark size={24} /> : <LuSun size={24} />}
+          </button>
+
           {isLoggedIn ? (
             <button
               className={styles.btn}
@@ -138,26 +154,18 @@ export default function Navbar() {
         </li>
       </ul>
 
-      {/* Desktop Auth and Theme */}
-      <div className={styles.authButtons}>
+      {/* === Right Section: Avatar + Theme Toggle === */}
+      <div className={styles.rightSection}>
         <button
           onClick={toggleTheme}
           className={styles.themeButton}
           aria-label="Toggle Theme"
         >
-          {theme === "light" ? <CiDark size={26} /> : <LuSun size={26} />}
+          {theme === "light" ? <CiDark size={30} /> : <LuSun size={30} />}
         </button>
 
         {isLoggedIn ? (
-          <>
-            <button
-              className={`${styles.btn} ${styles.logoutBtn}`}
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-            <Dropdown />
-          </>
+          <Dropdown avatar={avatar} onLogout={handleLogout} />
         ) : (
           <>
             <Link to="/signup" className={styles.btn}>
