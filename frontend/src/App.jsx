@@ -127,7 +127,7 @@ const router = createBrowserRouter([
   },
   { path: "signup", element: <Signup /> },
   { path: "login", element: <Login /> },
-  { path: "email-verified", element: <VerifyEmail /> },
+  { path: "verify-email", element: <VerifyEmail /> },
   { path: "forgot-password", element: <ForgotPassword /> },
 ]);
 
