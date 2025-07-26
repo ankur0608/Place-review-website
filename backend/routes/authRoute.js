@@ -21,7 +21,8 @@ router.post("/signup", async (req, res) => {
       password,
       options: {
         data: { username },
-        emailRedirectTo: "https://place-review-website-real.onrender.com/verify-email",
+        emailRedirectTo:
+          "https://place-review-website-real.vercel.app/verify-email",
       },
     });
 
