@@ -36,37 +36,40 @@ export default function Profile() {
       const googleUser = user.app_metadata?.provider === "google";
       setIsGoogleUser(googleUser);
 
-      if (googleUser) {
-        const name =
-          user.user_metadata.full_name ||
-          user.user_metadata.name ||
-          "Google User";
-        const avatar = user.user_metadata.avatar_url || userLogo;
-        setUserData({ email: user.email, name, avatar, id: user.id });
-        setForm({ name, email: user.email, avatar });
-      } else {
-        const { data, error } = await supabase
-          .from("users")
-          .select("username, email, avatar")
-          .eq("id", user.id)
-          .single();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("name, avatar_url")
+        .eq("id", user.id)
+        .single();
 
-        if (error) {
-          console.error("DB fetch error:", error.message);
-        } else {
-          setUserData({
-            id: user.id,
-            email: data.email,
-            name: data.username || "User",
-            avatar: data.avatar || userLogo,
-          });
-          setForm({
-            name: data.username || "",
-            email: data.email,
-            avatar: data.avatar || "",
-          });
-        }
+      if (error) {
+        console.error("DB fetch error:", error.message);
       }
+
+      const name =
+        data?.name ||
+        user.user_metadata.full_name ||
+        user.user_metadata.name ||
+        "User";
+
+      const avatar =
+        data?.avatar_url ||
+        user.user_metadata.avatar_url ||
+        user.user_metadata.picture ||
+        userLogo;
+
+      setUserData({
+        id: user.id,
+        email: user.email,
+        name,
+        avatar,
+      });
+
+      setForm({
+        name,
+        email: user.email,
+        avatar,
+      });
     }
 
     fetchUserData();
@@ -80,7 +83,6 @@ export default function Profile() {
 
   const handleSave = async () => {
     if (isGoogleUser) {
-      // Update Google user metadata
       const { error } = await supabase.auth.updateUser({
         data: {
           full_name: form.name,
@@ -88,19 +90,32 @@ export default function Profile() {
         },
       });
 
-      if (error) return console.error("Google update failed:", error);
+      if (error) {
+        console.error("Google update failed:", error);
+        return;
+      }
+
+      // Update profile table too for consistency
+      const { error: profileError } = await supabase.from("profiles").upsert({
+        id: userData.id,
+        name: form.name,
+        avatar_url: form.avatar,
+      });
+
+      if (profileError) console.error("Profile update failed:", profileError);
     } else {
-      // Update users table
       const { error } = await supabase
-        .from("users")
+        .from("profiles")
         .update({
-          username: form.name,
-          email: form.email,
-          avatar: form.avatar,
+          name: form.name,
+          avatar_url: form.avatar,
         })
         .eq("id", userData.id);
 
-      if (error) return console.error("Update failed:", error);
+      if (error) {
+        console.error("Update failed:", error);
+        return;
+      }
     }
 
     setUserData({
@@ -113,15 +128,15 @@ export default function Profile() {
     setIsEditing(false);
   };
 
+  const handleBack = () => {
+    navigate("/");
+  };
+
   if (!userData) {
     return (
       <Typography sx={{ mt: 4, textAlign: "center" }}>Loading...</Typography>
     );
   }
-
-  const handleBack = () => {
-    navigate("/");
-  };
 
   return (
     <Container maxWidth="sm" sx={{ mt: 6 }}>
@@ -156,7 +171,7 @@ export default function Profile() {
                   margin="dense"
                   value={form.email}
                   onChange={handleChange}
-                  disabled={isGoogleUser}
+                  disabled
                 />
                 <TextField
                   label="Avatar URL"

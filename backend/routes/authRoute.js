@@ -33,6 +33,22 @@ router.post("/signup", async (req, res) => {
       throw error;
     }
 
+    // ✅ INSERT INTO PROFILES TABLE
+    if (data?.user) {
+      await supabase.from("profiles").insert({
+        id: data.user.id,
+        email,
+        name: username,
+      });
+    }
+
+    if (error) {
+      if (error.message.includes("User already registered")) {
+        return res.status(409).json({ message: "User already exists" });
+      }
+      throw error;
+    }
+
     res.status(200).json({
       success: true,
       message: "Signup successful. Please verify your email.",
@@ -48,40 +64,57 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data: loginData, error: loginError } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
+    if (loginError) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    if (!data.user?.email_confirmed_at) {
+    const user = loginData.user;
+
+    if (!user?.email_confirmed_at) {
       return res
         .status(403)
         .json({ message: "Please verify your email before logging in." });
     }
 
+    // ✅ Fetch latest user info using session access_token
+    const accessToken = loginData.session.access_token;
+
+    const { data: userInfo, error: userError } = await supabase.auth.getUser(
+      accessToken
+    );
+
+    if (userError || !userInfo?.user) {
+      console.error("Failed to fetch user data:", userError);
+      return res.status(500).json({ message: "Could not fetch user profile" });
+    }
+
+    const fullUser = userInfo.user;
+
     const token = jwt.sign(
-      { id: data.user.id, email: data.user.email },
+      { id: fullUser.id, email: fullUser.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Login successful",
       token,
       user: {
-        id: data.user.id,
-        username: data.user.user_metadata?.username || "",
-        email: data.user.email,
+        id: fullUser.id,
+        email: fullUser.email,
+        username: fullUser.user_metadata?.username || "",
       },
     });
   } catch (err) {
     console.error("Login error:", err.message);
-    res.status(500).json({ message: "Server error during login" });
+    return res.status(500).json({ message: "Server error during login" });
   }
 });
 

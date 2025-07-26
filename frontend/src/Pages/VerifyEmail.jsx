@@ -16,7 +16,7 @@ export default function VerifyEmail() {
         toast.error("Verification failed or expired.");
       } else {
         toast.success("Email verified successfully!");
-        navigate("/profile"); // or wherever you want
+        navigate("/login"); // or wherever you want
       }
     };
 
