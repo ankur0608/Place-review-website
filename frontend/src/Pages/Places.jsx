@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Skeleton from "react-loading-skeleton";
@@ -6,6 +6,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 import styles from "./Places.module.css";
 import { useTheme } from "../store/ThemeContext";
+import React from "react";
 
 function fetchPlaces() {
   return fetch(
@@ -13,12 +14,33 @@ function fetchPlaces() {
   ).then((res) => res.json());
 }
 
+// Memoized Place Card
+const PlaceCard = React.memo(({ place }) => (
+  <Link
+    key={place.id}
+    to={`/places/${place.id}`}
+    className={styles.cardLink}
+    aria-label={`View details for ${place.name}`}
+  >
+    <article className={styles.card}>
+      <img
+        src={place.image_url || "/placeholder.jpg"}
+        alt={place.name}
+        className={styles.image}
+        loading="lazy"
+        width={250}
+        height={160}
+      />
+      <div className={styles.cardContent}>
+        <h2 className={styles.name}>{place.name}</h2>
+        <p className={styles.location}>{place.location}</p>
+      </div>
+    </article>
+  </Link>
+));
+
 export default function Places() {
-  const {
-    data: places,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: places, isLoading } = useQuery({
     queryKey: ["places"],
     queryFn: fetchPlaces,
     staleTime: 1000 * 60 * 5,
@@ -30,30 +52,35 @@ export default function Places() {
   const placesPerPage = 6;
   const { theme } = useTheme();
 
-  const categories = [
-    "All",
-    ...new Set(places?.map((p) => p.category).filter(Boolean)),
-  ];
+  // Derive unique categories from data
+  const categories = useMemo(() => {
+    return ["All", ...new Set(places?.map((p) => p.category).filter(Boolean))];
+  }, [places]);
 
-  const filteredPlaces = places?.filter((place) => {
-    const name = place.name || "";
-    const location = place.location || "";
+  // Filtered and paginated data
+  const filteredPlaces = useMemo(() => {
+    return places?.filter((place) => {
+      const name = place.name?.toLowerCase() || "";
+      const location = place.location?.toLowerCase() || "";
+      const matchesSearch =
+        name.includes(searchQuery.toLowerCase()) ||
+        location.includes(searchQuery.toLowerCase());
 
-    const matchesSearch =
-      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      location.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "All" || place.category === selectedCategory;
 
-    const matchesCategory =
-      selectedCategory === "All" || place.category === selectedCategory;
-
-    return matchesSearch && matchesCategory;
-  });
+      return matchesSearch && matchesCategory;
+    });
+  }, [places, searchQuery, selectedCategory]);
 
   const totalPages = Math.ceil((filteredPlaces?.length || 0) / placesPerPage);
-  const paginatedPlaces = filteredPlaces?.slice(
-    (currentPage - 1) * placesPerPage,
-    currentPage * placesPerPage
-  );
+
+  const paginatedPlaces = useMemo(() => {
+    return filteredPlaces?.slice(
+      (currentPage - 1) * placesPerPage,
+      currentPage * placesPerPage
+    );
+  }, [filteredPlaces, currentPage]);
 
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
@@ -70,9 +97,9 @@ export default function Places() {
       <h1 className={styles.heading}>Explore Tourist Places</h1>
 
       <section aria-label="Category Filters" className={styles.categoryTabs}>
-        {categories.map((cat, index) => (
+        {categories.map((cat) => (
           <button
-            key={`${cat}-${index}`}
+            key={cat}
             className={`${styles.tabButton} ${
               selectedCategory === cat ? styles.activeTab : ""
             }`}
@@ -121,26 +148,7 @@ export default function Places() {
           ))
         ) : paginatedPlaces?.length > 0 ? (
           paginatedPlaces.map((place) => (
-            <Link
-              key={place.id}
-              to={`/places/${place.id}`}
-              className={styles.cardLink}
-              aria-label={`View details for ${place.name}`}
-            >
-              <article className={styles.card}>
-                <img
-                  src={place.image_url || "/placeholder.jpg"}
-                  alt={place.name}
-                  className={styles.image}
-                  loading="lazy"
-                />
-
-                <div className={styles.cardContent}>
-                  <h2 className={styles.name}>{place.name}</h2>
-                  <p className={styles.location}>{place.location}</p>
-                </div>
-              </article>
-            </Link>
+            <PlaceCard key={place.id} place={place} />
           ))
         ) : (
           <p className={styles.noResults}>No places found.</p>

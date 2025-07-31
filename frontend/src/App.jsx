@@ -16,7 +16,6 @@ const PlaceDetails = lazy(() => import("./Pages/PlaceDetails.jsx"));
 const SavedPlace = lazy(() => import("./Components/SavedPlace.jsx"));
 const Profile = lazy(() => import("./Pages/Profile.jsx"));
 const ChatBox = lazy(() => import("./Components/ChatBox.jsx"));
-const Editprofile = lazy(() => import("./Components/Editprofile.jsx"));
 const Signup = lazy(() => import("./Pages/Sign-up.jsx"));
 const Login = lazy(() => import("./Pages/Login.jsx"));
 const BlogList = lazy(() => import("./Pages/BlogList.jsx"));
@@ -80,14 +79,7 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
-        path: "Editprofile",
-        element: (
-          <Suspense fallback={<div>Loading Edit Profile...</div>}>
-            <Editprofile />
-          </Suspense>
-        ),
-      },
+
       {
         path: "ChatBox",
         element: (
