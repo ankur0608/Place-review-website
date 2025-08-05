@@ -14,9 +14,9 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    state: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm();
+
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
@@ -118,7 +118,6 @@ export default function Login() {
           <button
             type="submit"
             className={styles.button}
-            isSubmitting={isSubmitting}
             disabled={isSubmitting}
             aria-label="Login Button"
           >
