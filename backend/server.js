@@ -13,6 +13,8 @@ import contactRoute from "./routes/contact.js";
 import saveplaceRoute from "./routes/savedPlacesRoute.js";
 import placesRoute from "./routes/placesRoute.js";
 import reviewsRoute from "./routes/reviewsRoute.js";
+import compression from "compression";
+
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,6 +35,8 @@ app.use(
 
 // ✅ Parse incoming JSON requests
 app.use(express.json());
+
+app.use(compression());
 
 // ✅ Route middleware
 // app.use("/places", placesRoute);

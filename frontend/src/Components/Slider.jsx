@@ -7,24 +7,29 @@ import "./SliderModule.css";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
+import { memo } from "react";
 
-function fetchPlaces() {
-  return fetch(
+const fetchPlaces = async () => {
+  const res = await fetch(
     "https://place-review-website-real.onrender.com/api/places"
-  ).then((res) => res.json());
-}
+  );
+  if (!res.ok) throw new Error("Failed to fetch places");
+  return res.json();
+};
 
-export default function PlacesSlider() {
+const PlacesSlider = () => {
   const { theme } = useTheme();
 
   const {
     data: places,
     isLoading,
-    error,
+    isError,
   } = useQuery({
     queryKey: ["places"],
     queryFn: fetchPlaces,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
 
   const sliderSettings = {
@@ -32,9 +37,10 @@ export default function PlacesSlider() {
     slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
-    speed: 2000,
-    autoplaySpeed: 2000,
+    speed: 1500,
+    autoplaySpeed: 2500,
     cssEase: "linear",
+    arrows: false,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 3 } },
       { breakpoint: 768, settings: { slidesToShow: 2 } },
@@ -43,23 +49,19 @@ export default function PlacesSlider() {
   };
 
   const renderSkeletonCards = () =>
-    Array(4)
-      .fill(0)
-      .map((_, i) => (
-        <div key={i} className="place-card skeleton-card">
-          <div className="skeleton-image">
-            <Skeleton height={180} width="100%" borderRadius={12} />
-          </div>
-          <div style={{ padding: "0.5rem" }}>
-            <Skeleton
-              height={20}
-              width="70%"
-              style={{ marginBottom: "0.5rem" }}
-            />
-            <Skeleton height={15} width="50%" />
-          </div>
+    Array.from({ length: 4 }).map((_, i) => (
+      <div key={i} className="place-card skeleton-card">
+        <Skeleton height={180} width="100%" borderRadius={12} />
+        <div style={{ padding: "0.5rem" }}>
+          <Skeleton
+            height={20}
+            width="70%"
+            style={{ marginBottom: "0.5rem" }}
+          />
+          <Skeleton height={15} width="50%" />
         </div>
-      ));
+      </div>
+    ));
 
   return (
     <div
@@ -69,37 +71,43 @@ export default function PlacesSlider() {
     >
       <div className="view-all">
         <h2 className="slider-title">Places</h2>
-        <Link to="/places">View All</Link>
+        <Link to="/places" className="view-link">
+          View All
+        </Link>
       </div>
 
       <Slider {...sliderSettings}>
-        {isLoading
-          ? renderSkeletonCards()
-          : error
-          ? [
-              <div key="error" style={{ padding: "2rem", color: "red" }}>
-                Failed to load places.
-              </div>,
-            ]
-          : places?.map((place) => (
-              <Link
-                key={place.id}
-                to={`/places/${place.id}`}
-                className="cardLink"
-              >
-                <div className="place-card">
-                  <img
-                    src={place.image_url || "/placeholder.jpg"}
-                    alt={place.name}
-                    className="place-image"
-                    loading="lazy"
-                  />
-                  <h3 className="place-name">{place.name}</h3>
-                  <p className="place-location">{place.location}</p>
-                </div>
-              </Link>
-            ))}
+        {isLoading ? (
+          renderSkeletonCards()
+        ) : isError ? (
+          <div key="error" style={{ padding: "2rem", color: "red" }}>
+            Failed to load places.
+          </div>
+        ) : (
+          places?.map((place) => (
+            <Link
+              key={place.id}
+              to={`/places/${place.id}`}
+              className="cardLink"
+            >
+              <div className="place-card">
+                <img
+                  src={place.image_url || "/placeholder.jpg"}
+                  alt={place.name}
+                  className="place-image"
+                  loading="lazy"
+                  width="100%"
+                  height="180"
+                />
+                <h3 className="place-name">{place.name}</h3>
+                <p className="place-location">{place.location}</p>
+              </div>
+            </Link>
+          ))
+        )}
       </Slider>
     </div>
   );
-}
+};
+
+export default memo(PlacesSlider);

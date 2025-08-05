@@ -63,6 +63,8 @@ export default function Navbar() {
     await supabase.auth.signOut();
     localStorage.removeItem("token");
     localStorage.removeItem("image");
+    localStorage.removeItem("id");
+    localStorage.removeItem("email");
     setIsLoggedIn(false);
     setAvatar(userLogo2);
     navigate("/login");
@@ -156,13 +158,13 @@ export default function Navbar() {
 
       {/* === Right Section: Avatar + Theme Toggle === */}
       <div className={styles.rightSection}>
-        <button
+        {/* <button
           onClick={toggleTheme}
           className={styles.themeButton}
           aria-label="Toggle Theme"
         >
           {theme === "light" ? <CiDark size={30} /> : <LuSun size={30} />}
-        </button>
+        </button> */}
 
         {isLoggedIn ? (
           <Dropdown avatar={avatar} onLogout={handleLogout} />

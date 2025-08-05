@@ -120,7 +120,7 @@ export default function Places() {
           onChange={handleSearchChange}
           aria-label="Search places"
         />
-        {searchQuery && (
+        {/* {searchQuery && (
           <button
             className={styles.clearButton}
             onClick={() => setSearchQuery("")}
@@ -128,7 +128,7 @@ export default function Places() {
           >
             ×
           </button>
-        )}
+        )} */}
       </section>
 
       <section className={styles.cardGrid} aria-label="Places List">

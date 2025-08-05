@@ -1,85 +1,58 @@
-import { useEffect, useState } from "react";
-import {
-  Container,
-  Card,
-  CardContent,
-  Typography,
-  Avatar,
-  Button,
-  Box,
-  TextField,
-  useTheme,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import supabase from "../../lib/supabaseClient";
-import userLogo from "../assets/user.png";
+import Avatar from "@mui/material/Avatar";
+import styles from "./Profile.module.css";
 import { useNavigate } from "react-router-dom";
-
-export default function Profile() {
-  const [userData, setUserData] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", avatar: "" });
-  const [isGoogleUser, setIsGoogleUser] = useState(false);
+const Profile = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
+  const [userData, setUserData] = useState({
+    id: "",
+    name: "",
+    email: "",
+    avatar: "",
+  });
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    avatar: "",
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
 
   useEffect(() => {
-    async function fetchUserData() {
-      const { data: authData, error: authError } =
-        await supabase.auth.getUser();
-
-      if (authError || !authData?.user) {
-        console.error("Auth error:", authError);
-        return;
-      }
-
-      const user = authData.user;
-      const googleUser = user.app_metadata?.provider === "google";
-      setIsGoogleUser(googleUser);
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("name, avatar_url")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        console.error("DB fetch error:", error.message);
-      }
-
-      const name =
-        data?.name ||
-        user.user_metadata.full_name ||
-        user.user_metadata.name ||
-        "User";
-
-      const avatar =
-        data?.avatar_url ||
-        user.user_metadata.avatar_url ||
-        user.user_metadata.picture ||
-        userLogo;
-
-      setUserData({
-        id: user.id,
-        email: user.email,
-        name,
-        avatar,
-      });
-
-      setForm({
-        name,
-        email: user.email,
-        avatar,
-      });
-    }
-
     fetchUserData();
   }, []);
 
-  const handleEditToggle = () => setIsEditing((prev) => !prev);
+  async function fetchUserData() {
+    const { data: sessionData } = await supabase.auth.getSession();
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+    if (sessionData?.session) {
+      const user = sessionData.session.user;
+      const isGoogle = user.app_metadata?.provider === "google";
+      setIsGoogleUser(isGoogle);
+
+      const name =
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        "Google User";
+
+      const avatar =
+        user.user_metadata?.avatar_url || user.user_metadata?.picture || "";
+
+      setUserData({ id: user.id, name, email: user.email, avatar });
+      setForm({ name, email: user.email, avatar });
+    } else {
+      const name = localStorage.getItem("username") || "Simple User";
+      const email = localStorage.getItem("email") || "no-email@example.com";
+      const avatar = localStorage.getItem("user_avatar") || "";
+
+      setIsGoogleUser(false);
+      setUserData({ id: "local", name, email, avatar });
+      setForm({ name, email, avatar });
+    }
+  }
 
   const handleSave = async () => {
     if (isGoogleUser) {
@@ -91,142 +64,101 @@ export default function Profile() {
       });
 
       if (error) {
-        console.error("Google update failed:", error);
+        console.error("Supabase update error:", error.message);
         return;
       }
-
-      // Update profile table too for consistency
-      const { error: profileError } = await supabase.from("profiles").upsert({
-        id: userData.id,
-        name: form.name,
-        avatar_url: form.avatar,
-      });
-
-      if (profileError) console.error("Profile update failed:", profileError);
     } else {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          name: form.name,
-          avatar_url: form.avatar,
-        })
-        .eq("id", userData.id);
-
-      if (error) {
-        console.error("Update failed:", error);
-        return;
-      }
+      localStorage.setItem("username", form.name);
+      localStorage.setItem("email", form.email);
+      localStorage.setItem("user_avatar", form.avatar);
     }
 
-    setUserData({
-      ...userData,
-      name: form.name,
-      email: form.email,
-      avatar: form.avatar,
-    });
-
+    setUserData({ ...userData, ...form });
     setIsEditing(false);
   };
 
-  const handleBack = () => {
-    navigate("/");
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  if (!userData) {
-    return (
-      <Typography sx={{ mt: 4, textAlign: "center" }}>Loading...</Typography>
-    );
+  function handleBack() {
+    return () => {
+      navigate(-1);
+    };
   }
 
+  const getInitials = (name) =>
+    name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+
   return (
-    <Container maxWidth="sm" sx={{ mt: 6 }}>
-      <Card
-        sx={{
-          padding: 3,
-          backgroundColor:
-            theme.palette.mode === "dark" ? "#1e1e1e" : "#f8f8f8",
-        }}
-      >
-        <CardContent>
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <Avatar
-              src={isEditing ? form.avatar : userData.avatar}
-              sx={{ width: 100, height: 100, mb: 2 }}
+    <div className={styles.profileWrapper}>
+      <div className={styles.profileCard}>
+        <div className={styles.avatarContainer}>
+          <Avatar
+            src={userData.avatar}
+            sx={{ width: 96, height: 96, fontSize: 32 }}
+          >
+            {!userData.avatar && getInitials(userData.name)}
+          </Avatar>
+        </div>
+
+        {isEditing ? (
+          <div className={styles.form}>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Name"
+              className={styles.input}
             />
-
-            {isEditing ? (
-              <>
-                <TextField
-                  label="Name"
-                  name="name"
-                  fullWidth
-                  margin="dense"
-                  value={form.name}
-                  onChange={handleChange}
-                />
-                <TextField
-                  label="Email"
-                  name="email"
-                  fullWidth
-                  margin="dense"
-                  value={form.email}
-                  onChange={handleChange}
-                  disabled
-                />
-                <TextField
-                  label="Avatar URL"
-                  name="avatar"
-                  fullWidth
-                  margin="dense"
-                  value={form.avatar}
-                  onChange={handleChange}
-                />
-              </>
-            ) : (
-              <>
-                <Typography variant="h6">{userData.name}</Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mb: 3 }}
-                >
-                  {userData.email}
-                </Typography>
-              </>
-            )}
-
-            <Box display="flex" gap={2} mt={2}>
-              {isEditing ? (
-                <>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setIsEditing(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button variant="contained" onClick={handleSave}>
-                    Save
-                  </Button>
-                </>
-              ) : (
-                <div>
-                  <Button
-                    variant="contained"
-                    onClick={handleBack}
-                    sx={{ mr: 2 }}
-                    color="primary"
-                  >
-                    Back to Home
-                  </Button>
-                  <Button variant="contained" onClick={handleEditToggle}>
-                    Edit Profile
-                  </Button>
-                </div>
-              )}
-            </Box>
-          </Box>
-        </CardContent>
-      </Card>
-    </Container>
+            <input
+              disabled
+              type="email"
+              name="email"
+              value={form.email}
+              className={styles.input}
+            />
+            <input
+              type="text"
+              name="avatar"
+              value={form.avatar}
+              onChange={handleChange}
+              placeholder="Avatar URL"
+              className={styles.input}
+            />
+            <button onClick={handleSave} className={styles.saveBtn}>
+              Save
+            </button>
+          </div>
+        ) : (
+          <div className={styles.info}>
+            <p>
+              <strong>Name :</strong>
+              {userData.name}
+            </p>
+            <p>
+              <strong>Email :</strong>
+              {userData.email}
+            </p>
+            <button
+              onClick={() => setIsEditing(true)}
+              className={styles.editBtn}
+            >
+              Edit
+            </button>
+            <button onClick={handleBack()} className={styles.editBtn}>
+              Back
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
-}
+};
+
+export default Profile;

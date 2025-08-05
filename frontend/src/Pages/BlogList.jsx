@@ -6,7 +6,7 @@ import { useTheme } from "../store/ThemeContext";
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -17,10 +17,18 @@ const BlogList = () => {
         .order("created_at", { ascending: false });
 
       if (!error) setBlogs(data);
+      setLoading(false);
     };
 
     fetchBlogs();
   }, []);
+
+  const formatDate = (dateStr) =>
+    new Date(dateStr).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
 
   return (
     <div
@@ -29,24 +37,32 @@ const BlogList = () => {
       }`}
     >
       <h2 className={styles.heading}>Latest Blog Posts</h2>
+
       <div className={styles.grid}>
-        {blogs.map((blog) => (
-          <Link key={blog.id} to={`/blog/${blog.slug}`} className={styles.card}>
-            {blog.cover_image && (
-              <img
-                src={blog.cover_image}
-                alt="cover"
-                className={styles.image}
-              />
-            )}
-            <div className={styles.cardContent}>
-              <h3 className={styles.title}>{blog.title}</h3>
-              <p className={styles.date}>
-                {new Date(blog.created_at).toDateString()}
-              </p>
-            </div>
-          </Link>
-        ))}
+        {loading
+          ? Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className={styles.skeletonCard}></div>
+            ))
+          : blogs.map((blog) => (
+              <Link
+                key={blog.id}
+                to={`/blog/${blog.slug}`}
+                className={styles.card}
+              >
+                {blog.cover_image && (
+                  <img
+                    src={blog.cover_image}
+                    alt="cover"
+                    className={styles.image}
+                    loading="lazy"
+                  />
+                )}
+                <div className={styles.cardContent}>
+                  <h3 className={styles.title}>{blog.title}</h3>
+                  <p className={styles.date}>{formatDate(blog.created_at)}</p>
+                </div>
+              </Link>
+            ))}
       </div>
     </div>
   );
