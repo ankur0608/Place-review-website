@@ -104,9 +104,9 @@ export default function AvatarDropdown() {
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
         {(userInfo || storedUsername || storedEmail) && (
-          <>
+          <div>
             <Box sx={{ p: 1.5, display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar src={avatar} sx={{ width: 40, height: 40 }}>
+              <Avatar src={avatar} sx={{ width: 35, height: 35 }}>
                 {!avatar && (displayName?.[0] || "U")}
               </Avatar>
               <Box>
@@ -119,7 +119,7 @@ export default function AvatarDropdown() {
               </Box>
             </Box>
             <Divider sx={{ my: 0.5 }} />
-          </>
+          </div>
         )}
 
         <MenuItem component={RouterLink} to="/Profile">

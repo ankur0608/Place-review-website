@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
-import supabase from "../../lib/supabaseClient";
-import Avatar from "@mui/material/Avatar";
-import styles from "./Profile.module.css";
+import React, { useEffect, useState, lazy, Suspense, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../lib/supabaseClient";
+import styles from "./Profile.module.css";
+import toast, { Toaster } from "react-hot-toast";
+import { Skeleton } from "@mui/material";
+
+const Avatar = lazy(() => import("@mui/material/Avatar"));
+
 const Profile = () => {
   const navigate = useNavigate();
+
   const [userData, setUserData] = useState({
     id: "",
     name: "",
@@ -20,12 +25,15 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch user data
   useEffect(() => {
     fetchUserData();
   }, []);
 
-  async function fetchUserData() {
+  const fetchUserData = async () => {
+    setIsLoading(true);
     const { data: sessionData } = await supabase.auth.getSession();
 
     if (sessionData?.session) {
@@ -52,7 +60,8 @@ const Profile = () => {
       setUserData({ id: "local", name, email, avatar });
       setForm({ name, email, avatar });
     }
-  }
+    setIsLoading(false);
+  };
 
   const handleSave = async () => {
     if (isGoogleUser) {
@@ -64,9 +73,11 @@ const Profile = () => {
       });
 
       if (error) {
-        console.error("Supabase update error:", error.message);
+        toast.error("Failed to update profile.");
         return;
       }
+
+      toast.success("Profile updated successfully!");
     } else {
       localStorage.setItem("username", form.name);
       localStorage.setItem("email", form.email);
@@ -81,39 +92,54 @@ const Profile = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  function handleBack() {
-    return () => {
-      navigate(-1);
-    };
-  }
+  const handleBack = () => {
+    navigate(-1);
+  };
 
-  const getInitials = (name) =>
-    name
+  const getInitials = useMemo(() => {
+    return userData.name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase();
+  }, [userData.name]);
 
   return (
     <div className={styles.profileWrapper}>
-      <div className={styles.profileCard}>
+      <Suspense fallback={<div>Loading SEO...</div>}>
+        <title>User Profile</title>
+        <meta
+          name="description"
+          content="Manage your user profile at Place Review"
+        />
+      </Suspense>
+
+      <Toaster position="top-center" />
+
+      <div className={styles.profileCard} aria-label="User Profile Card">
         <div className={styles.avatarContainer}>
-          <Avatar
-            src={userData.avatar}
-            sx={{ width: 96, height: 96, fontSize: 32 }}
+          <Suspense
+            fallback={<Skeleton variant="circular" width={96} height={96} />}
           >
-            {!userData.avatar && getInitials(userData.name)}
-          </Avatar>
+            <Avatar
+              src={userData.avatar}
+              alt={userData.name}
+              sx={{ width: 96, height: 96, fontSize: 32 }}
+            >
+              {!userData.avatar && getInitials}
+            </Avatar>
+          </Suspense>
         </div>
 
         {isEditing ? (
-          <div className={styles.form}>
+          <div className={styles.form} aria-label="Edit Profile Form">
             <input
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
               placeholder="Name"
+              aria-label="Name input"
               className={styles.input}
             />
             <input
@@ -121,6 +147,7 @@ const Profile = () => {
               type="email"
               name="email"
               value={form.email}
+              aria-label="Email (disabled)"
               className={styles.input}
             />
             <input
@@ -129,29 +156,48 @@ const Profile = () => {
               value={form.avatar}
               onChange={handleChange}
               placeholder="Avatar URL"
+              aria-label="Avatar URL input"
               className={styles.input}
             />
-            <button onClick={handleSave} className={styles.saveBtn}>
+            <button
+              onClick={handleSave}
+              className={styles.saveBtn}
+              aria-label="Save Button"
+            >
               Save
             </button>
           </div>
         ) : (
-          <div className={styles.info}>
-            <p>
-              <strong>Name :</strong>
-              {userData.name}
-            </p>
-            <p>
-              <strong>Email :</strong>
-              {userData.email}
-            </p>
+          <div className={styles.info} aria-label="User Info Section">
+            {isLoading ? (
+              <>
+                <Skeleton width={150} height={30} />
+                <Skeleton width={250} height={30} />
+              </>
+            ) : (
+              <>
+                <p>
+                  <strong>Name: </strong>
+                  {userData.name}
+                </p>
+                <p>
+                  <strong>Email: </strong>
+                  {userData.email}
+                </p>
+              </>
+            )}
             <button
               onClick={() => setIsEditing(true)}
               className={styles.editBtn}
+              aria-label="Edit Button"
             >
               Edit
             </button>
-            <button onClick={handleBack()} className={styles.editBtn}>
+            <button
+              onClick={handleBack}
+              className={styles.editBtn}
+              aria-label="Back Button"
+            >
               Back
             </button>
           </div>
@@ -161,4 +207,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default React.memo(Profile);

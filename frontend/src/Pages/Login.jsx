@@ -15,6 +15,7 @@ export default function Login() {
     register,
     handleSubmit,
     formState: { errors },
+    state: { isSubmitting },
   } = useForm();
   const navigate = useNavigate();
 
@@ -114,8 +115,14 @@ export default function Login() {
             </Link>
           </div>
 
-          <button type="submit" className={styles.button}>
-            Login
+          <button
+            type="submit"
+            className={styles.button}
+            isSubmitting={isSubmitting}
+            disabled={isSubmitting}
+            aria-label="Login Button"
+          >
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
 
           <div className={styles.sigupcontainer}>

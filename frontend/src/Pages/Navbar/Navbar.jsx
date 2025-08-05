@@ -1,41 +1,57 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { CiDark } from "react-icons/ci";
-import { LuSun } from "react-icons/lu";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  Box,
+  useMediaQuery,
+  useTheme as useMuiTheme,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+} from "@mui/material";
 import {
   FaBlog,
   FaHome,
   FaMapMarkedAlt,
   FaInfoCircle,
   FaEnvelope,
+  FaSignInAlt,
+  FaUserPlus,
+  FaSignOutAlt,
 } from "react-icons/fa";
-import { useTheme } from "../../store/ThemeContext";
-import styles from "./Navbar.module.css";
-import userLogo2 from "../../assets/user.png";
+
 import Dropdown from "../../Components/Dropdown.jsx";
+import { useTheme } from "../../store/ThemeContext";
 import supabase from "../../../lib/supabaseClient.js";
+import CloseIcon from "@mui/icons-material/Close";
+
+const navItems = [
+  { name: "Home", path: "/", icon: <FaHome /> },
+  { name: "Places", path: "/places", icon: <FaMapMarkedAlt /> },
+  { name: "About", path: "/about", icon: <FaInfoCircle /> },
+  { name: "Contact", path: "/contact", icon: <FaEnvelope /> },
+  { name: "Blog", path: "/blog", icon: <FaBlog /> },
+];
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [avatar, setAvatar] = useState(userLogo2);
+  const [avatar, setAvatar] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
-
-  const navItems = [
-    { name: "Home", path: "/", icon: <FaHome /> },
-    { name: "Places", path: "/places", icon: <FaMapMarkedAlt /> },
-    { name: "About", path: "/about", icon: <FaInfoCircle /> },
-    { name: "Contact", path: "/contact", icon: <FaEnvelope /> },
-    { name: "Blog", path: "/blog", icon: <FaBlog /> },
-  ];
+  const muiTheme = useMuiTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const storedImage = localStorage.getItem("image");
-
     setIsLoggedIn(!!token);
-    if (storedImage) setAvatar(storedImage);
   }, []);
 
   useEffect(() => {
@@ -45,13 +61,12 @@ export default function Navbar() {
       } = await supabase.auth.getSession();
       if (session?.user) {
         setIsLoggedIn(true);
-        const userAvatar = session.user.user_metadata?.avatar_url || userLogo2;
+        const userAvatar = session.user.user_metadata?.avatar_url || "";
         setAvatar(userAvatar);
       }
     };
 
     getSession();
-
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
       getSession();
     });
@@ -62,123 +77,272 @@ export default function Navbar() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem("token");
-    localStorage.removeItem("image");
-    localStorage.removeItem("id");
-    localStorage.removeItem("email");
     setIsLoggedIn(false);
-    setAvatar(userLogo2);
+    setMobileOpen(false);
     navigate("/login");
   };
 
-  return (
-    <nav className={styles.navbar}>
-      {/* === Left Section: Logo + Hamburger === */}
-      <div className={styles.leftSection}>
-        <button
-          className={styles.menuToggle}
-          onClick={() => setMenuOpen((prev) => !prev)}
-          aria-label="Toggle Menu"
-          aria-expanded={menuOpen}
-        >
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const activeStyle = {
+    backgroundColor: "#38bdf8",
+    color: "#0f172a",
+    fontWeight: "bold",
+    borderRadius: "6px",
+    padding: "6px 12px",
+    transition: "0.3s ease",
+  };
+  const MobileView = () => (
+    <>
+      <Toolbar sx={{ justifyContent: "space-between" }}>
+        <IconButton color="inherit" onClick={handleDrawerToggle} edge="start">
           ☰
-        </button>
+        </IconButton>
 
-        <div className={styles.logo}>
-          <Link to="/">PlaceReview</Link>
-        </div>
-      </div>
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/"
+          sx={{
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
+            textDecoration: "none",
+            fontWeight: "bold",
+            fontSize: "1.5rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            color: "#ffffff",
+            "& span": {
+              color: "#38bdf8",
+            },
+          }}
+        >
+          Place<span>Review</span>
+        </Typography>
 
-      {/* === Center: Nav Links === */}
-      <ul className={`${styles.links} ${menuOpen ? styles.open : ""}`}>
-        <li className={styles.menuToggle}>
-          <button
-            className={styles.closeBtn}
-            onClick={() => setMenuOpen(false)}
-          >
-            ✕
-          </button>
-        </li>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Dropdown avatar={avatar} onLogout={handleLogout} />
+        </Box>
+      </Toolbar>
 
-        {navItems.map(({ name, path, icon }) => (
-          <li key={name} className={styles.linkWrapper}>
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        PaperProps={{
+          sx: {
+            width: "70%",
+            backgroundColor: "#0f172a",
+            color: "#ffffff",
+            paddingX: 2,
+            paddingY: 1,
+          },
+        }}
+      >
+        {/* Top Bar with Close Button */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: "bold", pl: 1 }}>
+            Menu
+          </Typography>
+          <IconButton onClick={handleDrawerToggle} sx={{ color: "#ffffff" }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        {/* Nav Items */}
+        <List>
+          {navItems.map(({ name, path, icon }) => (
             <NavLink
               to={path}
-              end={path === "/"}
-              className={({ isActive }) =>
-                `${styles.link} ${isActive ? styles.active : ""}`
-              }
-              onClick={() => setMenuOpen(false)}
+              key={name}
+              style={() => ({
+                textDecoration: "none",
+                color: "#ffffff",
+              })}
+              onClick={handleDrawerToggle}
             >
-              <span className={styles.mobileIcon}>{icon}</span>
-              <span className={styles.linkText}>{name}</span>
+              <ListItem
+                button
+                sx={{
+                  borderRadius: 2,
+                  mb: 1,
+                  backgroundColor: ({ isActive }) =>
+                    isActive ? "#38bdf8" : "transparent",
+                  "&:hover": {
+                    backgroundColor: "#1e293b",
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ color: "inherit" }}>{icon}</ListItemIcon>
+                <ListItemText
+                  primary={name}
+                  primaryTypographyProps={{ fontSize: "1rem" }}
+                />
+              </ListItem>
             </NavLink>
-          </li>
-        ))}
+          ))}
+        </List>
 
-        {/* === Mobile Auth & Theme Toggle === */}
-        <li className={styles.mobileExtras}>
-          <button
-            onClick={toggleTheme}
-            className={styles.themeButton}
-            aria-label="Toggle Theme"
-          >
-            {theme === "light" ? <CiDark size={24} /> : <LuSun size={24} />}
-          </button>
+        <Divider sx={{ backgroundColor: "rgba(255,255,255,0.2)", my: 2 }} />
 
+        {/* Auth Buttons */}
+        <List>
           {isLoggedIn ? (
-            <button
-              className={styles.btn}
-              onClick={() => {
-                handleLogout();
-                setMenuOpen(false);
+            <ListItem
+              button
+              onClick={handleLogout}
+              sx={{
+                borderRadius: 2,
+                "&:hover": { backgroundColor: "#1e293b" },
               }}
             >
-              Logout
-            </button>
+              <ListItemIcon sx={{ color: "#ffffff" }}>
+                <FaSignOutAlt />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItem>
           ) : (
             <>
-              <Link
+              <NavLink
                 to="/signup"
-                className={styles.btn}
-                onClick={() => setMenuOpen(false)}
+                style={({ isActive }) => ({
+                  textDecoration: "none",
+                  color: isActive ? "#0f172a" : "#ffffff",
+                })}
+                onClick={handleDrawerToggle}
               >
-                Sign Up
-              </Link>
-              <Link
+                <ListItem
+                  button
+                  sx={{
+                    borderRadius: 2,
+                    mb: 1,
+                    backgroundColor: ({ isActive }) =>
+                      isActive ? "#38bdf8" : "transparent",
+                    "&:hover": {
+                      backgroundColor: "#1e293b",
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ color: "inherit" }}>
+                    <FaUserPlus />
+                  </ListItemIcon>
+                  <ListItemText primary="Sign Up" />
+                </ListItem>
+              </NavLink>
+              <NavLink
                 to="/login"
-                className={styles.btn}
-                onClick={() => setMenuOpen(false)}
+                style={({ isActive }) => ({
+                  textDecoration: "none",
+                  color: isActive ? "#0f172a" : "#ffffff",
+                })}
+                onClick={handleDrawerToggle}
               >
-                Login
-              </Link>
+                <ListItem
+                  button
+                  sx={{
+                    borderRadius: 2,
+                    backgroundColor: ({ isActive }) =>
+                      isActive ? "#38bdf8" : "transparent",
+                    "&:hover": {
+                      backgroundColor: "#1e293b",
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ color: "inherit" }}>
+                    <FaSignInAlt />
+                  </ListItemIcon>
+                  <ListItemText primary="Login" />
+                </ListItem>
+              </NavLink>
             </>
           )}
-        </li>
-      </ul>
+        </List>
+      </Drawer>
+    </>
+  );
 
-      {/* === Right Section: Avatar + Theme Toggle === */}
-      <div className={styles.rightSection}>
-        {/* <button
-          onClick={toggleTheme}
-          className={styles.themeButton}
-          aria-label="Toggle Theme"
+  const DesktopView = () => (
+    <Toolbar sx={{ justifyContent: "space-between" }}>
+      <Typography
+        variant="h6"
+        component={Link}
+        to="/"
+        sx={{
+          color: "#ffffff",
+          textDecoration: "none",
+          fontWeight: "bold",
+          pr: 4,
+          fontSize: "1.5rem",
+        }}
+      >
+        Place
+        <span
+          style={{
+            color: "#38bdf8",
+            fontWeight: "bold",
+          }}
         >
-          {theme === "light" ? <CiDark size={30} /> : <LuSun size={30} />}
-        </button> */}
+          Review
+        </span>
+      </Typography>
 
+      <Box
+        sx={{ display: "flex", gap: 5, alignItems: "center" }}
+        aria-label="Navigation Links"
+      >
+        {navItems.map(({ name, path }) => (
+          <NavLink
+            key={name}
+            to={path}
+            style={({ isActive }) => ({
+              color: "#ffffff",
+              textDecoration: "none",
+              ...(isActive ? activeStyle : {}),
+            })}
+          >
+            <p
+              style={{
+                fontSize: "1.1rem",
+                // fontWeight: "500",
+              }}
+            >
+              {name}
+            </p>
+          </NavLink>
+        ))}
+      </Box>
+
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         {isLoggedIn ? (
           <Dropdown avatar={avatar} onLogout={handleLogout} />
         ) : (
           <>
-            <Link to="/signup" className={styles.btn}>
+            <Button color="inherit" component={Link} to="/signup">
               Sign Up
-            </Link>
-            <Link to="/login" className={styles.btn}>
+            </Button>
+            <Button color="inherit" component={Link} to="/login">
               Login
-            </Link>
+            </Button>
           </>
         )}
-      </div>
-    </nav>
+      </Box>
+    </Toolbar>
+  );
+
+  return (
+    <AppBar position="static" sx={{ backgroundColor: "#0f172a" }}>
+      {isMobile ? <MobileView /> : <DesktopView />}
+    </AppBar>
   );
 }
